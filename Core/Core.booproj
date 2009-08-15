@@ -36,10 +36,10 @@
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="OpenTK">
-      <HintPath>..\Libs\OpenTK.dll</HintPath>
+      <HintPath>..\Libs\Debug\OpenTK.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK.Utilities">
-      <HintPath>..\Libs\OpenTK.Utilities.dll</HintPath>
+      <HintPath>..\Libs\Debug\OpenTK.Utilities.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
