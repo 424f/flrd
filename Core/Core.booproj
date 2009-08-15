@@ -1,0 +1,241 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{f61c27c0-2ec7-4095-8443-e928af32dcd2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Core</AssemblyName>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <Name>floored</Name>
+    <SourceAnalysisOverrideSettingsFile>C:\Documents and Settings\bo\Application Data\ICSharpCode/SharpDevelop3.0\Settings.SourceAnalysis</SourceAnalysisOverrideSettingsFile>
+    <StartupObject>floored.ProgramModule</StartupObject>
+    <NoStdLib>False</NoStdLib>
+    <Ducky>False</Ducky>
+    <StartWorkingDirectory>../floored/</StartWorkingDirectory>
+    <SignAssembly>False</SignAssembly>
+    <DelaySign>False</DelaySign>
+    <DebugType>Full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+    <Strict>False</Strict>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <StartAction>Project</StartAction>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Boo.Lang.Compiler">
+      <HintPath>C:\dev\boo\bin\Boo.Lang.Compiler.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib" />
+    <Reference Include="OpenTK">
+      <HintPath>..\Libs\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK.Utilities">
+      <HintPath>..\Libs\OpenTK.Utilities.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="Boo.Lang">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(BooBinPath)\Boo.Lang.dll</HintPath>
+    </Reference>
+    <Reference Include="Boo.Lang.Useful">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(BooBinPath)\Boo.Lang.Useful.dll</HintPath>
+    </Reference>
+    <Reference Include="Tao.Cg">
+      <HintPath>..\Libs\Tao.Cg.dll</HintPath>
+    </Reference>
+    <Reference Include="Tao.DevIl">
+      <HintPath>..\Libs\Tao.DevIl.dll</HintPath>
+    </Reference>
+    <Reference Include="Tao.FFmpeg">
+      <HintPath>..\Libs\Tao.FFmpeg.dll</HintPath>
+    </Reference>
+    <Reference Include="Tao.FreeGlut">
+      <HintPath>..\Libs\Tao.FreeGlut.dll</HintPath>
+    </Reference>
+    <Reference Include="Tao.FreeType">
+      <HintPath>..\Libs\Tao.FreeType.dll</HintPath>
+    </Reference>
+    <Reference Include="Tao.FtGl">
+      <HintPath>..\Libs\Tao.FtGl.dll</HintPath>
+    </Reference>
+    <Reference Include="Tao.FtGl">
+      <HintPath>..\Libs\Tao.FtGl.dll</HintPath>
+    </Reference>
+    <Reference Include="Tao.Glfw">
+      <HintPath>..\Libs\Tao.Glfw.dll</HintPath>
+    </Reference>
+    <Reference Include="Tao.Lua">
+      <HintPath>..\Libs\Tao.Lua.dll</HintPath>
+    </Reference>
+    <Reference Include="Tao.Ode">
+      <HintPath>..\Libs\Tao.Ode.dll</HintPath>
+    </Reference>
+    <Reference Include="Tao.OpenAl">
+      <HintPath>..\Libs\Tao.OpenAl.dll</HintPath>
+    </Reference>
+    <Reference Include="Tao.OpenGl">
+      <HintPath>C:\Program Files\TaoFramework\bin\Tao.OpenGl.dll</HintPath>
+    </Reference>
+    <Reference Include="Tao.PhysFs">
+      <HintPath>..\Libs\Tao.PhysFs.dll</HintPath>
+    </Reference>
+    <Reference Include="Tao.Platform.Windows">
+      <HintPath>..\Libs\Tao.Platform.Windows.dll</HintPath>
+    </Reference>
+    <Reference Include="Tao.Platform.X11">
+      <HintPath>..\Libs\Tao.Platform.X11.dll</HintPath>
+    </Reference>
+    <Reference Include="Tao.Sdl">
+      <HintPath>..\Libs\Tao.Sdl.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="src\floored\core\Application.boo">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\floored\core\FPSCounter.boo" />
+    <Compile Include="src\floored\core\GameObject.boo" />
+    <Compile Include="src\floored\core\Logger.boo" />
+    <Compile Include="src\floored\core\ResourceManager.boo" />
+    <Compile Include="src\floored\core\World.boo">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\floored\gfx\Bodies.boo" />
+    <Compile Include="src\floored\gfx\Camera.boo">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\floored\gfx\Font.boo" />
+    <Compile Include="src\floored\gfx\ITexture.boo" />
+    <Compile Include="src\floored\gfx\Light.boo" />
+    <Compile Include="src\floored\gfx\md3\AnimationSet.boo" />
+    <Compile Include="src\floored\gfx\md3\Util.boo" />
+    <Compile Include="src\floored\gfx\Shader.boo" />
+    <Compile Include="src\floored\gfx\ShaderProgram.boo" />
+    <Compile Include="src\floored\gfx\wavefront\ModelReader.boo" />
+    <Compile Include="src\floored\gfx\wavefront\Material.boo" />
+    <Compile Include="src\floored\gfx\wavefront\Mesh.boo" />
+    <Compile Include="src\floored\gfx\wavefront\Model.boo" />
+    <Compile Include="src\floored\gfx\Ortho.boo" />
+    <Compile Include="src\floored\gfx\Particle.boo" />
+    <Compile Include="src\floored\gfx\PlaneReflection.boo" />
+    <Compile Include="src\floored\gfx\md3\CharacterInstance.boo" />
+    <Compile Include="src\floored\gfx\md3\CharacterModel.boo" />
+    <Compile Include="src\floored\gfx\md3\CharacterSkin.boo" />
+    <Compile Include="src\floored\gfx\md3\Mesh.boo" />
+    <Compile Include="src\floored\gfx\md3\Model.boo">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\floored\gfx\md3\Structs.boo" />
+    <Compile Include="src\floored\gfx\IRenderable.boo">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\floored\gfx\Skybox.boo" />
+    <Compile Include="src\floored\gfx\Texture.boo" />
+    <Compile Include="src\floored\gui\AbstractButton.boo" />
+    <Compile Include="src\floored\gui\Console.boo">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\floored\gui\decorator\AbstractDecorator.boo" />
+    <Compile Include="src\floored\gui\decorator\BackgroundColor.boo" />
+    <Compile Include="src\floored\gui\decorator\WindowBorder.boo" />
+    <Compile Include="src\floored\gui\Dialog.boo" />
+    <Compile Include="src\floored\gui\Image.boo" />
+    <Compile Include="src\floored\gui\Label.boo" />
+    <Compile Include="src\floored\gui\layout\BoxLayout.boo" />
+    <Compile Include="src\floored\gui\Screen.boo" />
+    <Compile Include="src\floored\gui\SlicedButton.boo" />
+    <Compile Include="src\floored\gui\TextField.boo">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\floored\gui\Widget.boo">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\floored\input\Input.boo">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\floored\input\Joystick.boo">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\floored\input\Keyboard.boo">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\floored\input\Mouse.boo">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\floored\math\Quad.boo">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\floored\math\Rect.boo">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\floored\math\Sphere.boo">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\floored\script\ScriptEnvironment.boo">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\floored\sound\Buffer.boo" />
+    <Compile Include="src\floored\sound\Listener.boo" />
+    <Compile Include="src\floored\sound\Sound.boo" />
+    <Compile Include="src\floored\sound\Source.boo" />
+    <Compile Include="src\floored\util\Structs.boo">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\game\ai\GenericAI.boo" />
+    <Compile Include="src\game\ai\IdleState.boo" />
+    <Compile Include="src\game\Controller.boo" />
+    <Compile Include="src\game\Faction.boo" />
+    <Compile Include="src\game\Game.boo" />
+    <Compile Include="src\game\gui\PlayerImage.boo" />
+    <Compile Include="src\game\HunterController.boo" />
+    <Compile Include="src\game\objects\AbstractGun.boo" />
+    <Compile Include="src\game\objects\Character.boo" />
+    <Compile Include="src\game\objects\AbstractWeapon.boo" />
+    <Compile Include="src\game\objects\Collectable.boo" />
+    <Compile Include="src\game\objects\Decoration.boo" />
+    <Compile Include="src\game\objects\MachineGun.boo" />
+    <Compile Include="src\game\objects\Sculpture.boo" />
+    <Compile Include="src\game\objects\Wall.boo" />
+    <Compile Include="src\game\sound\SoundSet.boo" />
+    <Compile Include="src\AssemblyInfo.boo">
+      <SubType>Code</SubType>
+    </Compile>
+    <None Include="src\floored\core\Cutscene.boo" />
+    <None Include="src\floored\math\Extensions.boo" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\" />
+    <Folder Include="src\floored\" />
+    <Folder Include="src\floored\gfx\" />
+    <Folder Include="src\floored\gfx\md3\" />
+    <Folder Include="src\floored\gfx\wavefront" />
+    <Folder Include="src\floored\gui\layout" />
+    <Folder Include="src\floored\gui\decorator" />
+    <Folder Include="src\floored\input\" />
+    <Folder Include="src\floored\math" />
+    <Folder Include="src\floored\core" />
+    <Folder Include="src\floored\gui" />
+    <Folder Include="src\floored\sound" />
+    <Folder Include="src\floored\util" />
+    <Folder Include="src\floored\script" />
+    <Folder Include="src\game" />
+    <Folder Include="src\game\gui" />
+    <Folder Include="src\game\levels" />
+    <Folder Include="src\game\ai" />
+    <Folder Include="src\game\sound" />
+    <Folder Include="src\game\objects" />
+  </ItemGroup>
+  <Import Project="$(BooBinPath)\Boo.Microsoft.Build.targets" />
+</Project>
