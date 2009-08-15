@@ -102,140 +102,140 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\floored\core\Application.boo">
+    <Compile Include="src\Core\Common\Application.boo">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\floored\core\FPSCounter.boo" />
-    <Compile Include="src\floored\core\GameObject.boo" />
-    <Compile Include="src\floored\core\Logger.boo" />
-    <Compile Include="src\floored\core\ResourceManager.boo" />
-    <Compile Include="src\floored\core\World.boo">
+    <Compile Include="src\Core\Common\FPSCounter.boo" />
+    <Compile Include="src\Core\Common\GameObject.boo" />
+    <Compile Include="src\Core\Common\Logger.boo" />
+    <Compile Include="src\Core\Common\ResourceManager.boo" />
+    <Compile Include="src\Core\Common\World.boo">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\floored\gfx\Bodies.boo" />
-    <Compile Include="src\floored\gfx\Camera.boo">
+    <Compile Include="src\Core\Graphics\Bodies.boo" />
+    <Compile Include="src\Core\Graphics\Camera.boo">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\floored\gfx\Font.boo" />
-    <Compile Include="src\floored\gfx\ITexture.boo" />
-    <Compile Include="src\floored\gfx\Light.boo" />
-    <Compile Include="src\floored\gfx\md3\AnimationSet.boo" />
-    <Compile Include="src\floored\gfx\md3\Util.boo" />
-    <Compile Include="src\floored\gfx\Shader.boo" />
-    <Compile Include="src\floored\gfx\ShaderProgram.boo" />
-    <Compile Include="src\floored\gfx\wavefront\ModelReader.boo" />
-    <Compile Include="src\floored\gfx\wavefront\Material.boo" />
-    <Compile Include="src\floored\gfx\wavefront\Mesh.boo" />
-    <Compile Include="src\floored\gfx\wavefront\Model.boo" />
-    <Compile Include="src\floored\gfx\Ortho.boo" />
-    <Compile Include="src\floored\gfx\Particle.boo" />
-    <Compile Include="src\floored\gfx\PlaneReflection.boo" />
-    <Compile Include="src\floored\gfx\md3\CharacterInstance.boo" />
-    <Compile Include="src\floored\gfx\md3\CharacterModel.boo" />
-    <Compile Include="src\floored\gfx\md3\CharacterSkin.boo" />
-    <Compile Include="src\floored\gfx\md3\Mesh.boo" />
-    <Compile Include="src\floored\gfx\md3\Model.boo">
+    <Compile Include="src\Core\Graphics\Font.boo" />
+    <Compile Include="src\Core\Graphics\ITexture.boo" />
+    <Compile Include="src\Core\Graphics\Light.boo" />
+    <Compile Include="src\Core\Graphics\Md3\AnimationSet.boo" />
+    <Compile Include="src\Core\Graphics\Md3\Util.boo" />
+    <Compile Include="src\Core\Graphics\Shader.boo" />
+    <Compile Include="src\Core\Graphics\ShaderProgram.boo" />
+    <Compile Include="src\Core\Graphics\Wavefront\ModelReader.boo" />
+    <Compile Include="src\Core\Graphics\Wavefront\Material.boo" />
+    <Compile Include="src\Core\Graphics\Wavefront\Mesh.boo" />
+    <Compile Include="src\Core\Graphics\Wavefront\Model.boo" />
+    <Compile Include="src\Core\Graphics\Ortho.boo" />
+    <Compile Include="src\Core\Graphics\Particle.boo" />
+    <Compile Include="src\Core\Graphics\PlaneReflection.boo" />
+    <Compile Include="src\Core\Graphics\Md3\CharacterInstance.boo" />
+    <Compile Include="src\Core\Graphics\Md3\CharacterModel.boo" />
+    <Compile Include="src\Core\Graphics\Md3\CharacterSkin.boo" />
+    <Compile Include="src\Core\Graphics\Md3\Mesh.boo" />
+    <Compile Include="src\Core\Graphics\Md3\Model.boo">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\floored\gfx\md3\Structs.boo" />
-    <Compile Include="src\floored\gfx\IRenderable.boo">
+    <Compile Include="src\Core\Graphics\Md3\Structs.boo" />
+    <Compile Include="src\Core\Graphics\IRenderable.boo">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\floored\gfx\Skybox.boo" />
-    <Compile Include="src\floored\gfx\Texture.boo" />
-    <Compile Include="src\floored\gui\AbstractButton.boo" />
-    <Compile Include="src\floored\gui\Console.boo">
+    <Compile Include="src\Core\Graphics\Skybox.boo" />
+    <Compile Include="src\Core\Graphics\Texture.boo" />
+    <Compile Include="src\Core\Gui\AbstractButton.boo" />
+    <Compile Include="src\Core\Gui\Console.boo">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\floored\gui\decorator\AbstractDecorator.boo" />
-    <Compile Include="src\floored\gui\decorator\BackgroundColor.boo" />
-    <Compile Include="src\floored\gui\decorator\WindowBorder.boo" />
-    <Compile Include="src\floored\gui\Dialog.boo" />
-    <Compile Include="src\floored\gui\Image.boo" />
-    <Compile Include="src\floored\gui\Label.boo" />
-    <Compile Include="src\floored\gui\layout\BoxLayout.boo" />
-    <Compile Include="src\floored\gui\Screen.boo" />
-    <Compile Include="src\floored\gui\SlicedButton.boo" />
-    <Compile Include="src\floored\gui\TextField.boo">
+    <Compile Include="src\Core\Gui\Decorator\AbstractDecorator.boo" />
+    <Compile Include="src\Core\Gui\Decorator\BackgroundColor.boo" />
+    <Compile Include="src\Core\Gui\Decorator\WindowBorder.boo" />
+    <Compile Include="src\Core\Gui\Dialog.boo" />
+    <Compile Include="src\Core\Gui\Image.boo" />
+    <Compile Include="src\Core\Gui\Label.boo" />
+    <Compile Include="src\Core\Gui\Layout\BoxLayout.boo" />
+    <Compile Include="src\Core\Gui\Screen.boo" />
+    <Compile Include="src\Core\Gui\SlicedButton.boo" />
+    <Compile Include="src\Core\Gui\TextField.boo">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\floored\gui\Widget.boo">
+    <Compile Include="src\Core\Gui\Widget.boo">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\floored\input\Input.boo">
+    <Compile Include="src\Core\Input\Input.boo">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\floored\input\Joystick.boo">
+    <Compile Include="src\Core\Input\Joystick.boo">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\floored\input\Keyboard.boo">
+    <Compile Include="src\Core\Input\Keyboard.boo">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\floored\input\Mouse.boo">
+    <Compile Include="src\Core\Input\Mouse.boo">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\floored\math\Quad.boo">
+    <Compile Include="src\Core\Math\Quad.boo">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\floored\math\Rect.boo">
+    <Compile Include="src\Core\Math\Rect.boo">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\floored\math\Sphere.boo">
+    <Compile Include="src\Core\Math\Sphere.boo">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\floored\script\ScriptEnvironment.boo">
+    <Compile Include="src\Core\Script\ScriptEnvironment.boo">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\floored\sound\Buffer.boo" />
-    <Compile Include="src\floored\sound\Listener.boo" />
-    <Compile Include="src\floored\sound\Sound.boo" />
-    <Compile Include="src\floored\sound\Source.boo" />
-    <Compile Include="src\floored\util\Structs.boo">
+    <Compile Include="src\Core\Sound\Buffer.boo" />
+    <Compile Include="src\Core\Sound\Listener.boo" />
+    <Compile Include="src\Core\Sound\Sound.boo" />
+    <Compile Include="src\Core\Sound\Source.boo" />
+    <Compile Include="src\Core\Util\Structs.boo">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\game\ai\GenericAI.boo" />
-    <Compile Include="src\game\ai\IdleState.boo" />
-    <Compile Include="src\game\Controller.boo" />
-    <Compile Include="src\game\Faction.boo" />
-    <Compile Include="src\game\Game.boo" />
-    <Compile Include="src\game\gui\PlayerImage.boo" />
-    <Compile Include="src\game\HunterController.boo" />
-    <Compile Include="src\game\objects\AbstractGun.boo" />
-    <Compile Include="src\game\objects\Character.boo" />
-    <Compile Include="src\game\objects\AbstractWeapon.boo" />
-    <Compile Include="src\game\objects\Collectable.boo" />
-    <Compile Include="src\game\objects\Decoration.boo" />
-    <Compile Include="src\game\objects\MachineGun.boo" />
-    <Compile Include="src\game\objects\Sculpture.boo" />
-    <Compile Include="src\game\objects\Wall.boo" />
-    <Compile Include="src\game\sound\SoundSet.boo" />
+    <Compile Include="src\Game\AI\GenericAI.boo" />
+    <Compile Include="src\Game\AI\IdleState.boo" />
+    <Compile Include="src\Game\Controller.boo" />
+    <Compile Include="src\Game\Faction.boo" />
+    <Compile Include="src\Game\Game.boo" />
+    <Compile Include="src\Game\Gui\PlayerImage.boo" />
+    <Compile Include="src\Game\HunterController.boo" />
+    <Compile Include="src\Game\Objects\AbstractGun.boo" />
+    <Compile Include="src\Game\Objects\Character.boo" />
+    <Compile Include="src\Game\Objects\AbstractWeapon.boo" />
+    <Compile Include="src\Game\Objects\Collectable.boo" />
+    <Compile Include="src\Game\Objects\Decoration.boo" />
+    <Compile Include="src\Game\Objects\MachineGun.boo" />
+    <Compile Include="src\Game\Objects\Sculpture.boo" />
+    <Compile Include="src\Game\Objects\Wall.boo" />
+    <Compile Include="src\Game\Sound\SoundSet.boo" />
     <Compile Include="src\AssemblyInfo.boo">
       <SubType>Code</SubType>
     </Compile>
-    <None Include="src\floored\core\Cutscene.boo" />
-    <None Include="src\floored\math\Extensions.boo" />
+    <None Include="src\Core\Common\Cutscene.boo" />
+    <None Include="src\Core\Math\Extensions.boo" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />
-    <Folder Include="src\floored\" />
-    <Folder Include="src\floored\gfx\" />
-    <Folder Include="src\floored\gfx\md3\" />
-    <Folder Include="src\floored\gfx\wavefront" />
-    <Folder Include="src\floored\gui\layout" />
-    <Folder Include="src\floored\gui\decorator" />
-    <Folder Include="src\floored\input\" />
-    <Folder Include="src\floored\math" />
-    <Folder Include="src\floored\core" />
-    <Folder Include="src\floored\gui" />
-    <Folder Include="src\floored\sound" />
-    <Folder Include="src\floored\util" />
-    <Folder Include="src\floored\script" />
-    <Folder Include="src\game" />
-    <Folder Include="src\game\gui" />
-    <Folder Include="src\game\levels" />
-    <Folder Include="src\game\ai" />
-    <Folder Include="src\game\sound" />
-    <Folder Include="src\game\objects" />
+    <Folder Include="src\Core" />
+    <Folder Include="src\Core\Graphics" />
+    <Folder Include="src\Core\Graphics\Md3" />
+    <Folder Include="src\Core\Graphics\Wavefront" />
+    <Folder Include="src\Core\Gui\Layout" />
+    <Folder Include="src\Core\Gui\Decorator" />
+    <Folder Include="src\Core\Input" />
+    <Folder Include="src\Core\Math" />
+    <Folder Include="src\Core\Common" />
+    <Folder Include="src\Core\Gui" />
+    <Folder Include="src\Core\Sound" />
+    <Folder Include="src\Core\Util" />
+    <Folder Include="src\Core\Script" />
+    <Folder Include="src\Game" />
+    <Folder Include="src\Game\Gui" />
+    <Folder Include="src\Game\Levels" />
+    <Folder Include="src\Game\AI" />
+    <Folder Include="src\Game\Sound" />
+    <Folder Include="src\Game\Objects" />
   </ItemGroup>
   <Import Project="$(BooBinPath)\Boo.Microsoft.Build.targets" />
 </Project>
