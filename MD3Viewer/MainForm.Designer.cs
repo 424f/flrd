@@ -37,11 +37,11 @@ namespace MD3Viewer
 			this.glControl = new OpenTK.GLControl();
 			this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.button2 = new System.Windows.Forms.Button();
-			this.lowerAnimationSelection = new System.Windows.Forms.ComboBox();
+			this.LowerAnimationSelection = new System.Windows.Forms.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.renderTimer = new System.Windows.Forms.Timer(this.components);
 			this.label2 = new System.Windows.Forms.Label();
-			this.upperAnimationSelection = new System.Windows.Forms.ComboBox();
+			this.UpperAnimationSelection = new System.Windows.Forms.ComboBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.skinSelection = new System.Windows.Forms.ComboBox();
 			this.loadWeaponButton = new System.Windows.Forms.Button();
@@ -90,13 +90,13 @@ namespace MD3Viewer
 			// 
 			// lowerAnimationSelection
 			// 
-			this.lowerAnimationSelection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.lowerAnimationSelection.FormattingEnabled = true;
-			this.lowerAnimationSelection.Location = new System.Drawing.Point(13, 158);
-			this.lowerAnimationSelection.Name = "lowerAnimationSelection";
-			this.lowerAnimationSelection.Size = new System.Drawing.Size(195, 21);
-			this.lowerAnimationSelection.TabIndex = 4;
-			this.lowerAnimationSelection.SelectedIndexChanged += new System.EventHandler(this.AnimationSelectionSelectedIndexChanged);
+			this.LowerAnimationSelection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.LowerAnimationSelection.FormattingEnabled = true;
+			this.LowerAnimationSelection.Location = new System.Drawing.Point(13, 158);
+			this.LowerAnimationSelection.Name = "lowerAnimationSelection";
+			this.LowerAnimationSelection.Size = new System.Drawing.Size(195, 21);
+			this.LowerAnimationSelection.TabIndex = 4;
+			this.LowerAnimationSelection.SelectedIndexChanged += new System.EventHandler(this.AnimationSelectionSelectedIndexChanged);
 			// 
 			// label1
 			// 
@@ -125,13 +125,13 @@ namespace MD3Viewer
 			// 
 			// upperAnimationSelection
 			// 
-			this.upperAnimationSelection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.upperAnimationSelection.FormattingEnabled = true;
-			this.upperAnimationSelection.Location = new System.Drawing.Point(13, 209);
-			this.upperAnimationSelection.Name = "upperAnimationSelection";
-			this.upperAnimationSelection.Size = new System.Drawing.Size(195, 21);
-			this.upperAnimationSelection.TabIndex = 6;
-			this.upperAnimationSelection.SelectedIndexChanged += new System.EventHandler(this.UpperAnimationSelectionSelectedIndexChanged);
+			this.UpperAnimationSelection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.UpperAnimationSelection.FormattingEnabled = true;
+			this.UpperAnimationSelection.Location = new System.Drawing.Point(13, 209);
+			this.UpperAnimationSelection.Name = "upperAnimationSelection";
+			this.UpperAnimationSelection.Size = new System.Drawing.Size(195, 21);
+			this.UpperAnimationSelection.TabIndex = 6;
+			this.UpperAnimationSelection.SelectedIndexChanged += new System.EventHandler(this.UpperAnimationSelectionSelectedIndexChanged);
 			// 
 			// label3
 			// 
@@ -296,9 +296,9 @@ namespace MD3Viewer
 			this.Controls.Add(this.skinSelection);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.label2);
-			this.Controls.Add(this.upperAnimationSelection);
+			this.Controls.Add(this.UpperAnimationSelection);
 			this.Controls.Add(this.label1);
-			this.Controls.Add(this.lowerAnimationSelection);
+			this.Controls.Add(this.LowerAnimationSelection);
 			this.Controls.Add(this.button2);
 			this.Controls.Add(this.glControl);
 			this.Controls.Add(this.menuStrip1);
@@ -327,9 +327,9 @@ namespace MD3Viewer
 		private System.Windows.Forms.Button loadWeaponButton;
 		private System.Windows.Forms.ComboBox skinSelection;
 		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.ComboBox upperAnimationSelection;
+		private System.Windows.Forms.ComboBox UpperAnimationSelection;
 		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.ComboBox lowerAnimationSelection;
+		private System.Windows.Forms.ComboBox LowerAnimationSelection;
 		private System.Windows.Forms.Timer renderTimer;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.OpenFileDialog openFileDialog;
@@ -390,7 +390,7 @@ namespace MD3Viewer
 		
 		void AnimationSelectionSelectedIndexChanged(object sender, EventArgs e)
 		{
-			string val = (string)lowerAnimationSelection.SelectedItem;
+			string val = (string)LowerAnimationSelection.SelectedItem;
 			AnimationId animation = (AnimationId)AnimationId.Parse(typeof(AnimationId), val);
 			if(Renderer != null)
 				Renderer.PlayLowerAnimation(animation);
@@ -398,7 +398,7 @@ namespace MD3Viewer
 		
 		void UpperAnimationSelectionSelectedIndexChanged(object sender, EventArgs e)
 		{
-			string val = (string)upperAnimationSelection.SelectedItem;
+			string val = (string)UpperAnimationSelection.SelectedItem;
 			AnimationId animation = (AnimationId)AnimationId.Parse(typeof(AnimationId), val);
 			if(Renderer != null)
 				Renderer.PlayUpperAnimation(animation);			

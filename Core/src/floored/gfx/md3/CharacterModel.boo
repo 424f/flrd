@@ -21,9 +21,9 @@ class CharacterModel:
 		_path = path		
 		
 		# Load the models making up the character
-		_lower = Model(IO.Path.Combine(path, "lower.md3"))
-		_upper = Model(IO.Path.Combine(path, "upper.md3"))
-		_head = Model(IO.Path.Combine(path, "head.md3"))
+		_lower = Model(IO.Path.Combine(path, "lower.Md3"))
+		_upper = Model(IO.Path.Combine(path, "upper.Md3"))
+		_head = Model(IO.Path.Combine(path, "head.Md3"))
 		
 		# Load animations
 		_animationSet = AnimationSet(IO.Path.Combine(path, "animation.cfg"))

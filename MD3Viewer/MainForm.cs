@@ -25,18 +25,18 @@ namespace MD3Viewer
 			{
 				if(name.StartsWith("TORSO"))
 				{
-					upperAnimationSelection.Items.Add(name);
+					UpperAnimationSelection.Items.Add(name);
 				} else if(name.StartsWith("LEGS")) {
-					lowerAnimationSelection.Items.Add(name);
+					LowerAnimationSelection.Items.Add(name);
 				} else if(name.StartsWith("BOTH")) {
-					lowerAnimationSelection.Items.Add(name);
-					upperAnimationSelection.Items.Add(name);
+					LowerAnimationSelection.Items.Add(name);
+					UpperAnimationSelection.Items.Add(name);
 				}
 			}
 			
 			// Select first animations
-			upperAnimationSelection.SelectedIndex = 0;
-			lowerAnimationSelection.SelectedIndex = 0;
+			UpperAnimationSelection.SelectedIndex = 0;
+			LowerAnimationSelection.SelectedIndex = 0;
 			
 			// Redirect standard out
 			StringWriterDelegator delegator = new StringWriterDelegator();

@@ -27,7 +27,7 @@ class CharacterInstance(IRenderable):
 			return _lookAngle
 		set:
 			v = value * Math.PI / 180.0
-			lookDirection = Vector3(Math.Sin(v), 0, -Math.Cos(v))			
+			LookDirection = Vector3(Math.Sin(v), 0, -Math.Cos(v))			
 	_lookAngle as single			
 
 	WalkDirection: 
@@ -43,7 +43,7 @@ class CharacterInstance(IRenderable):
 			return _walkAngle
 		set:
 			v = value * Math.PI / 180.0
-			walkDirection = Vector3(Math.Sin(v), 0, -Math.Cos(v))			
+			WalkDirection = Vector3(Math.Sin(v), 0, -Math.Cos(v))			
 	_walkAngle as single		
 	
 	[Property(WeaponModel)] _WeaponModel as IRenderable
@@ -72,8 +72,8 @@ class CharacterInstance(IRenderable):
 		_skin = skin
 		_lowerFrame = 0
 		_upperFrame = 0
-		lookDirection = Vector3(0, 0, -1)
-		walkDirection = Vector3(0, 0, -1)
+		_lookDirection = Vector3(0, 0, -1)
+		_walkDirection = Vector3(0, 0, -1)
 		
 	def Render():
 		glPushMatrix()

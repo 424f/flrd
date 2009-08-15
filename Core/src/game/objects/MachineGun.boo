@@ -24,7 +24,7 @@ class MachineGun(AbstractWeapon):
 		ammo = 0
 		MagSize = 30
 		AmmoInGun = 30
-		_model = Common.ResourceManager.LoadMD3Model("data/models/weapons/machinegun/machinegun.md3")
+		_model = Common.ResourceManager.LoadMD3Model("data/models/weapons/machinegun/machinegun.Md3")
 		_fireSound = Core.Sound.Source(Common.ResourceManager.LoadSound("data/sound/weapon/silenced.wav"))
 		_shellSound = Core.Sound.Source(Common.ResourceManager.LoadSound("data/sound/weapon/shell.wav"))
 		_muzzle = Graphics.Wavefront.Model.Load("data/models/fallout/muzzle.obj")
