@@ -28,7 +28,8 @@ namespace LevelEditor
 			InitializeComponent();
 			
 
-			renderer = new EditorRenderer(this);
+			
+			
 		}
 	}
 }

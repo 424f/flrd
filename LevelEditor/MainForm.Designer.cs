@@ -1,5 +1,6 @@
 ﻿using OpenTK.Math;
 using OpenTK.Graphics;
+using Tao.DevIl;
 using Tao.OpenGl;
 using System.Drawing;
 using System.Diagnostics;
@@ -39,6 +40,7 @@ namespace LevelEditor
 			this.components = new System.ComponentModel.Container();
 			this.GLControl = new OpenTK.GLControl();
 			this.RenderTimer = new System.Windows.Forms.Timer(this.components);
+			this.ReloadShadersButton = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// GLControl
@@ -47,7 +49,7 @@ namespace LevelEditor
 									| System.Windows.Forms.AnchorStyles.Left) 
 									| System.Windows.Forms.AnchorStyles.Right)));
 			this.GLControl.BackColor = System.Drawing.Color.Black;
-			this.GLControl.Location = new System.Drawing.Point(48, 21);
+			this.GLControl.Location = new System.Drawing.Point(144, 12);
 			this.GLControl.Name = "GLControl";
 			this.GLControl.Size = new System.Drawing.Size(640, 455);
 			this.GLControl.TabIndex = 2;
@@ -61,17 +63,30 @@ namespace LevelEditor
 			// 
 			this.RenderTimer.Tick += new System.EventHandler(this.RenderTimerTick);
 			// 
+			// ReloadShadersButton
+			// 
+			this.ReloadShadersButton.Location = new System.Drawing.Point(13, 13);
+			this.ReloadShadersButton.Name = "ReloadShadersButton";
+			this.ReloadShadersButton.Size = new System.Drawing.Size(125, 31);
+			this.ReloadShadersButton.TabIndex = 3;
+			this.ReloadShadersButton.Text = "Reload shaders";
+			this.ReloadShadersButton.UseVisualStyleBackColor = true;
+			this.ReloadShadersButton.Click += new System.EventHandler(this.ReloadShadersButtonClick);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(796, 488);
+			this.Controls.Add(this.ReloadShadersButton);
 			this.Controls.Add(this.GLControl);
+			this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.Name = "MainForm";
 			this.Text = "LevelEditor";
 			this.Load += new System.EventHandler(this.MainFormLoad);
 			this.ResumeLayout(false);
 		}
+		private System.Windows.Forms.Button ReloadShadersButton;
 		private System.Windows.Forms.Timer RenderTimer;
 		public OpenTK.GLControl GLControl;
 		private bool Loaded = false;
@@ -80,6 +95,10 @@ namespace LevelEditor
 		{
 			if(Loaded)
 				return;
+			Il.ilInit();
+			Ilut.ilutInit();
+			Ilut.ilutRenderer(Ilut.ILUT_OPENGL);			
+			
 			GL.Viewport(0, 0, GLControl.Width, GLControl.Height);
 			GL.MatrixMode(MatrixMode.Projection);
 			GL.LoadIdentity();
@@ -89,7 +108,10 @@ namespace LevelEditor
 			RenderTimer.Start();
 			MouseWheel += delegate(object mSender, MouseEventArgs me) { 
 				renderer.ZoomTarget += me.Delta / 40.0f;
+				
 			};
+			
+			renderer = new EditorRenderer(this);
 		}
 		
 		void GLControlPaint(object sender, System.Windows.Forms.PaintEventArgs e)
@@ -127,10 +149,10 @@ namespace LevelEditor
 			Vector3d near;
 			Vector3d far;
 			
-			Tao.OpenGl.Glu.gluUnProject(e.X, e.Y, 0.0, modelView, projection, viewport, out near.X, out near.Y, out near.Z);
-			Tao.OpenGl.Glu.gluUnProject(e.X, e.Y, 1.0, modelView, projection, viewport, out far.X, out far.Y, out far.Z);
+			Tao.OpenGl.Glu.gluUnProject(e.X, viewport[3] - e.Y, 0.0, modelView, projection, viewport, out near.X, out near.Y, out near.Z);
+			Tao.OpenGl.Glu.gluUnProject(e.X, viewport[3] - e.Y, 1.0, modelView, projection, viewport, out far.X, out far.Y, out far.Z);
 			Vector3 ray = (Vector3)(far - near);
-			renderer.Pick((Vector3)near, ray);
+			renderer.Pick(renderer.Camera.Eye, ray);
 			
 			Debug.Write("Click");
 		}
@@ -139,6 +161,11 @@ namespace LevelEditor
 		void MainFormLoad(object sender, System.EventArgs e)
 		{
 				
+		}
+		
+		void ReloadShadersButtonClick(object sender, System.EventArgs e)
+		{
+			renderer.Program.Reload();
 		}
 	}
 }

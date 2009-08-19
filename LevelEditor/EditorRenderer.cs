@@ -7,6 +7,8 @@ using Core.Util;
 using Core.Graphics;
 using OpenTK.Math;
 using OpenTK.Graphics;
+using OpenTK;
+using LevelEditor.Tools;
 
 namespace LevelEditor
 {
@@ -15,7 +17,11 @@ namespace LevelEditor
 	/// </summary>
 	public class EditorRenderer
 	{
-		MainForm Form;
+		public MainForm Form;
+		public GLControl GLControl;
+		public ITool ActiveTool = new NullTool();
+		public Texture TextureRock;
+		public Texture TextureBump;
 		
 		// Data
 		public List<ITweener> Tweeners;	
@@ -31,9 +37,14 @@ namespace LevelEditor
 		public Box SelectedBox;
 		public Point LastMousePosition;
 		
+		// Graphics
+		public ShaderProgram Program;
+		Light Light;
+		
 		public EditorRenderer(MainForm form)
 		{
 			Form = form;
+			GLControl = form.GLControl;
 			Tweeners = new List<ITweener>();
 			Boxes = new List<Box>();
 			
@@ -48,35 +59,30 @@ namespace LevelEditor
 			Boxes.Add(new Box(new Vector3(0, 0, 0), new Vector3(10.0f, 2.0f, 10.0f)));
 			Boxes.Add(new Box(new Vector3(15.0f, 5.0f, 0), new Vector3(5.0f, 7.0f, 10.0f)));
 			
-			// Set up event handlers
-			Form.GLControl.MouseMove += delegate(object sender, MouseEventArgs e) {  
-				Point pos = new Point(e.X, e.Y);
-				Point delta = new Point(pos.X - LastMousePosition.X, pos.Y - LastMousePosition.Y);
-				//System.Diagnostics.Debug.WriteLine("" + delta.X + ", " + delta.Y);
-				if(SelectedBox != null) {
-					SelectedBox.Center.X += delta.X / 10.0f;
-					SelectedBox.Center.Y += delta.Y / 10.0f;
-				}
-				LastMousePosition = pos;
-			};
+			// Load textures
+			TextureRock = Texture.Load("../Data/Textures/wall.jpg");
+			TextureBump = Texture.Load("../Data/Textures/wall_n.jpg");
+		
+			// Load shaders
+			Program = new ShaderProgram();
+			Shader VertexShader = new Shader(ShaderType.VertexShader, "Shaders/bump.vert");
+			Shader FragmentShader = new Shader(ShaderType.FragmentShader, "Shaders/bump.frag");
+			Program.Attach(VertexShader);
+			Program.Attach(FragmentShader);
+			Program.Link();
+			
+			// Create a light
+			Light = new Light(0);
+			
 		}
 		
 		public void Render() {
 			// Calculate scene
-			Tweeners.RemoveAll(delegate (ITweener t) { return t.Finished; });
-			foreach(ITweener tweener in Tweeners) {
-				tweener.Update(0.100f);
-			}
-			if(Tweeners.Count == 0) {
-				 /*Delegate<Object, Vector3, Vector3, float> del = delegate(Object target, Vector3 a, Vector3 b, float m) {
-					
-				};
-				Tweeners.Add(new Tweener<float>(Camera, new Vector3(0, 0, 0), new Vector3(0, 0, 50), del, 2.0f));*/
-			}
+
 			if(Math.Abs(ZoomTarget) >= 1.0f) {
 				float d = ZoomTarget / 3.0f;
 				Camera.Eye += new Vector3(0, 0, d);
-				Camera.LookAt += new Vector3(0, 0, d);
+				//Camera.LookAt += new Vector3(0, 0, d);
 				ZoomTarget -= d;
 				System.Diagnostics.Debug.WriteLine(ZoomTarget);
 			} else {
@@ -96,10 +102,25 @@ namespace LevelEditor
 			GL.LoadIdentity();
 			Camera.Push();	
 			
+			// Set up light
+			Light.Position = new float[]{ 1.0f, 40.0f, 40.0f, 1.0f };
+			Light.Enable();
+			
 			// Draw elements
+			Program.Apply();
+			String[] names = new String[]{ "Texture", "BumpTexture" };
+			Texture[] textures = new Texture[] { TextureRock, TextureBump };
+			for(int i = 0; i < names.Length; ++i) {
+				int loc = Program.GetUniformLocation(names[i]);
+				GL.ActiveTexture((TextureUnit)TextureUnit.Parse(typeof(TextureUnit), "Texture" + i));
+				textures[i].Bind();
+				OpenTK.Graphics.GL.Uniform1(loc, i);
+			}
+			GL.ActiveTexture(TextureUnit.Texture0);
 			foreach(Box b in Boxes) {
 				b.Render();
 			}
+			Program.Remove();
 			
 			// Draw picking ray
 			GL.Begin(BeginMode.Lines);
@@ -139,6 +160,8 @@ namespace LevelEditor
 							SelectedBox.Selected = false;
 						b.Selected = true;
 						SelectedBox = b;
+						ActiveTool = new MoveBoxTool(this);
+						ActiveTool.Enable();
 						return;
 					}
 				}
