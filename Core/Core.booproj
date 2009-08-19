@@ -190,9 +190,12 @@
     <Compile Include="src\Core\Sound\Listener.boo" />
     <Compile Include="src\Core\Sound\Sound.boo" />
     <Compile Include="src\Core\Sound\Source.boo" />
+    <Compile Include="src\Core\Util\Matrices.boo" />
     <Compile Include="src\Core\Util\Structs.boo">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="src\Core\Util\Tweener.boo" />
+    <Compile Include="src\Core\Util\Vector.boo" />
     <Compile Include="src\Game\AI\GenericAI.boo" />
     <Compile Include="src\Game\AI\IdleState.boo" />
     <Compile Include="src\Game\Controller.boo" />

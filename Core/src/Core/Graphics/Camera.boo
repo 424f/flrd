@@ -12,7 +12,7 @@ class Camera:
 	# TODO: store view matrix
 	
 
-	def constructor(eye as Vector3, lookAt as Vector3, up as Vector3):
+	public def constructor(eye as Vector3, lookAt as Vector3, up as Vector3):
 		_eye = eye
 		_lookAt = lookAt
 		_up = up
@@ -29,6 +29,3 @@ class Camera:
 	
 	virtual def Pop():
 		glPopMatrix()
-	
-	virtual def Tick():
-		pass

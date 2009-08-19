@@ -181,7 +181,6 @@ Inherit from FlooredApplication for your own application
 
 			# Perform game logic (to be implemented in subclass)
 			Tick()
-			Camera.Tick()
 
 			BeginScene()
 			

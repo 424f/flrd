@@ -81,7 +81,7 @@ class TextureManager:
 class Game(OpenTK.GameWindow):
 	printer as TextPrinter
 
-	sans_serif = System.Drawing.Font(FontFamily.GenericSansSerif, 15.0f);
+	sans_serif as System.Drawing.Font = System.Drawing.Font(FontFamily.GenericSansSerif, 15.0f);
 
 	MouseDown = false
 	texTree as int	
@@ -445,7 +445,7 @@ class Game(OpenTK.GameWindow):
 		
 
 		// Create charactesr
-		model = Core.Graphics.Md3.CharacterModel("Data/Models/Players/attorney/")
+		model = Core.Graphics.Md3.CharacterModel("Data/Models/sarge/")
 		i = 0
 		r = Random()
 		for key as string in model.Skins.Keys:
@@ -480,12 +480,7 @@ class Game(OpenTK.GameWindow):
 		textureManager.Dispose()
 	
 	public def RenderLandscape():
-		m = array(single, 16)
-		glGetFloatv(GL_MODELVIEW_MATRIX, m)
-		modelView = Matrix4(Vector4(m[0], m[1], m[2], m[3]),
-		                    Vector4(m[4], m[5], m[6], m[7]),
-		                    Vector4(m[8], m[9], m[10], m[11]),
-		                    Vector4(m[12], m[13], m[14], m[15]))
+		modelView = Core.Util.Matrices.ModelView
 		v = Vector3.Transform(camera.Position, modelView)
 		
 		terrain.Render()
