@@ -14,6 +14,8 @@ class CharacterInstance(IRenderable):
 	[Property(LowerFrame)] _lowerFrame as single
 	[Property(UpperFrame)] _upperFrame as single
 	
+	public Scale = 1.0f
+	
 	LookDirection: 
 		get:
 			return _lookDirection
@@ -53,6 +55,7 @@ class CharacterInstance(IRenderable):
 	
 	LowerAnimation as AnimationDescriptor:
 		set:
+			return if _lowerAnimation == value
 			_lowerAnimation = value
 			_lowerFrame = value.FirstFrame
 		get:
@@ -61,6 +64,7 @@ class CharacterInstance(IRenderable):
 
 	UpperAnimation as AnimationDescriptor:
 		set:
+			return if _upperAnimation == value
 			_upperAnimation = value
 			_upperFrame = value.FirstFrame
 		get:
@@ -78,6 +82,8 @@ class CharacterInstance(IRenderable):
 	def Render():
 		glPushMatrix()
 		glTranslatef(_Position.X, _Position.Y, _Position.Z)
+		glScalef(Scale, Scale, Scale)
+		glTranslatef(0, 25.0f, 0)
 		_skin.Render(self)
 		glPopMatrix()
 		

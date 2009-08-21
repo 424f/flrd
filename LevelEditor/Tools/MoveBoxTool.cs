@@ -33,8 +33,7 @@ namespace LevelEditor.Tools
 				Point delta = new Point(pos.X - LastMousePosition.X, pos.Y - LastMousePosition.Y);
 				//System.Diagnostics.Debug.WriteLine("" + delta.X + ", " + delta.Y);
 				if(SelectedBox != null) {
-					SelectedBox.Center.X += delta.X / 10.0f;
-					SelectedBox.Center.Y -= delta.Y / 10.0f;
+					SelectedBox.Center = SelectedBox.Center + new OpenTK.Math.Vector3(delta.X / 10.0f, -delta.Y / 10.0f, 0.0f);
 				}
 			}
 			LastMousePosition = pos;			

@@ -19,7 +19,7 @@ class Light:
 	def constructor(id as int):
 		self.id = GL_LIGHT0
 		Specular = (1.0f, 1.0f, 1.0f, 1.0f)
-		Ambient = (0.4f, 0.4f, 0.4f, 1.0f)
+		Ambient = (0.3f, 0.3f, 0.3f, 1.0f)
 		Diffuse = (1.0f, 1.0f, 1.0f, 1.0f)
 		Position = (5.0f, 10.0f, -10.0f, 0.0f)
 		

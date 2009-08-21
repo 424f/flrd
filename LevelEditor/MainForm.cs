@@ -31,5 +31,10 @@ namespace LevelEditor
 			
 			
 		}
+		
+		void GLControlResize(object sender, EventArgs e)
+		{
+			
+		}
 	}
 }

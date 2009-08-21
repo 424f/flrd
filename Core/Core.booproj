@@ -121,8 +121,10 @@
     <Compile Include="src\Core\Graphics\Light.boo" />
     <Compile Include="src\Core\Graphics\Md3\AnimationSet.boo" />
     <Compile Include="src\Core\Graphics\Md3\Util.boo" />
+    <Compile Include="src\Core\Graphics\NullRenderable.boo" />
     <Compile Include="src\Core\Graphics\Shader.boo" />
     <Compile Include="src\Core\Graphics\ShaderProgram.boo" />
+    <Compile Include="src\Core\Graphics\Skydome.boo" />
     <Compile Include="src\Core\Graphics\Wavefront\ModelReader.boo" />
     <Compile Include="src\Core\Graphics\Wavefront\Material.boo" />
     <Compile Include="src\Core\Graphics\Wavefront\Mesh.boo" />
@@ -183,6 +185,8 @@
     <Compile Include="src\Core\Math\Sphere.boo">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="src\Core\Physics\Class1.boo" />
+    <Compile Include="src\Core\Physics\World.boo" />
     <Compile Include="src\Core\Script\ScriptEnvironment.boo">
       <SubType>Code</SubType>
     </Compile>
@@ -230,6 +234,7 @@
     <Folder Include="src\Core\Math" />
     <Folder Include="src\Core\Common" />
     <Folder Include="src\Core\Gui" />
+    <Folder Include="src\Core\Physics" />
     <Folder Include="src\Core\Sound" />
     <Folder Include="src\Core\Util" />
     <Folder Include="src\Core\Script" />

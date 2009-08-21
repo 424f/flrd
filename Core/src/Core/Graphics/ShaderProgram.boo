@@ -19,6 +19,11 @@ public class ShaderProgram:
 	public def constructor():
 		_Handle = CreateProgram()
 		
+	public def constructor(vertexShaderPath as string, fragmentShaderPath as string):
+		Attach(Shader(ShaderType.VertexShader, vertexShaderPath))
+		Attach(Shader(ShaderType.FragmentShader, fragmentShaderPath))
+		Link()
+		
 	public def Attach(shader as Shader):
 		if shader.ShaderType == ShaderType.FragmentShader:
 			raise Exception("There is already a fragment shader attached to this program.") if _FragmentShader != null
@@ -50,3 +55,9 @@ public class ShaderProgram:
 			v.Reload() if v != null
 			AttachShader(Handle, v.Handle)
 		Link()
+		
+	public def BindUniformTexture(name as string, texture as Texture, textureUnit as int):
+		loc = GetUniformLocation(name)
+		GL.ActiveTexture(TextureUnit.Parse(TextureUnit, "Texture${textureUnit}"))
+		texture.Bind()		
+		OpenTK.Graphics.GL.Uniform1(loc, textureUnit)
