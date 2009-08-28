@@ -19,7 +19,7 @@ class Skydome:
 		phi = -PI * 0.5
 		dphi = PI / n * 0.5
 		dtheta = 2 * PI / n
-		radius = 1000.0
+		radius = 600.0
 		GL.Enable(EnableCap.Texture2D)
 		
 		if skyList == -1:	

@@ -10,7 +10,7 @@ void main()
 {
 	vec3 normal = 2.0 * texture2D(NormalTexture, gl_TexCoord[0].st).rgb - 1.0;
 	//normal = vec3(0, 0, 1);
-	vec4 color = vec4(0, 0, 0, 1); //ambient;
+	vec4 color = ambient; //ambient;
 	
 	vec3 n = normalize(normal);
 	
@@ -19,7 +19,7 @@ void main()
 	float NdotL = max(dot(n, lightVec), 0.0);
 	
 	float ld = length(distance);
-	float f = 1.0 - ld * ld / 2500.0;
+	float f = 1.0; // - ld * ld / 2500.0;
 	
 	if(NdotL > 0.0) {
 		vec3 halfV = normalize(halfVec);

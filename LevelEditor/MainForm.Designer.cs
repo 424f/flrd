@@ -236,6 +236,7 @@ namespace LevelEditor
 			OpenTK.Graphics.Glu.Perspective(45.0, GLControl.Width / (double)(GLControl.Height), 1.0, 5000.0);			
 			
 			Loaded = true;
+			RenderTimer.Interval = 25;
 			RenderTimer.Start();
 			MouseWheel += delegate(object mSender, MouseEventArgs me) { 
 				renderer.ZoomTarget += me.Delta / 40.0f;
@@ -278,6 +279,7 @@ namespace LevelEditor
 		void ReloadShadersButtonClick(object sender, System.EventArgs e)
 		{
 			renderer.Program.Reload();
+			renderer.Md3Program.Reload();
 		}
 		
 		void GLControlMouseMove(object sender, MouseEventArgs e)

@@ -56,7 +56,7 @@ namespace LevelEditor
 		
 		public Vector3 Center { 
 			get { return _Center; }
-			set { _Center = value; IsDirty = true; }
+			set { _Center = value; }
 		}
 		private Vector3 _Center;
 
@@ -68,9 +68,10 @@ namespace LevelEditor
 		
 		public Vector3 Dim { get; set; }
 		public bool Selected = false;
+		public float Rotation = 0.0f;
 
 		public int displayList = 0;
-		protected bool IsDirty = true;			
+		protected bool IsDirty = true;	
 		
 		public Triangle[] GetTriangles() {
 			return Triangles;
@@ -87,16 +88,16 @@ namespace LevelEditor
 			                              new Vector2(0.0f, tv));
 		}
 		
-		void CreateMesh(Vector3 center, Vector3 dim) {
+		void CreateMesh(Vector3 dim) {
 			Triangles = new Triangle[12];
 			Vertices = new Vertex[24];
 			
 			// Create all vertices
 			int i = 0;
 			for(int j = 0; j < 3; ++j) {
-				foreach(float x in new float[]{ center.X + dim.X, center.X - dim.X }) {
-					foreach(float y in new float[]{ center.Y + dim.Y, center.Y - dim.Y }) {
-						foreach(float z in new float[]{ center.Z + dim.Z, center.Z - dim.Z }) {
+				foreach(float x in new float[]{ dim.X, -dim.X }) {
+					foreach(float y in new float[]{ dim.Y, -dim.Y }) {
+						foreach(float z in new float[]{ dim.Z, -dim.Z }) {
 							Vertex v = new Vertex();
 							v.Position = new Vector3(x, y, z);
 							Vertices[i++] = v;
@@ -115,8 +116,8 @@ namespace LevelEditor
 			CreateQuad(ref i, 7+16, 3+16, 2+16, 6+16, Dim.X / TextureSpan, Dim.Z / TextureSpan);			
 		}
 		
-		void RenderBox(Vector3 center, Vector3 dim, bool selected) {
-			CreateMesh(center, dim);
+		void RenderBox(Vector3 dim, bool selected) {
+			CreateMesh(dim);
 
 			// Calculate all normals and tangents
 			foreach(Triangle triangle in Triangles) {
@@ -193,11 +194,15 @@ namespace LevelEditor
 				GL.Color4(Color.White);			
 			if(IsDirty) {
 				GL.NewList(displayList, ListMode.Compile);
-				RenderBox(Center, Dim, Selected);
+				RenderBox(Dim, Selected);
 				IsDirty = false;
 				GL.EndList();
 			}
+			GL.PushMatrix();
+			GL.Translate(Center.X, Center.Y, Center.Z);
+			GL.Rotate(Rotation, 0, 0, 1.0);
 			GL.CallList(displayList);
+			GL.PopMatrix();
 		}
 	}
 }

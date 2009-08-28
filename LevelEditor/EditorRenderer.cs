@@ -20,7 +20,7 @@ namespace LevelEditor
 	/// <summary>
 	/// Description of EditorRenderer.
 	/// </summary>
-	public class EditorRenderer
+	public class EditorRenderer : ContactListener
 	{
 		public MainForm Form;
 		public GLControl GLControl;
@@ -51,7 +51,7 @@ namespace LevelEditor
 		Skydome Skydome;
 		CharacterModel Model;
 		CharacterInstance Character;
-		ShaderProgram Md3Program;
+		public ShaderProgram Md3Program;
 		Box Door;
 		Box Crate2;
 		Model Weapon;
@@ -60,8 +60,19 @@ namespace LevelEditor
 		// Physics
 		World World;
 		Body PlayerBody;
+		bool CreateExplosion = false;
 		
+		RocketObject rocket;
+		Model rocketModel;
 		
+		// Spring
+		GameObject base1, base2, platform;
+		
+		// Particles
+		ParticleEngine particles;
+		
+		Core.Input.Joystick Joystick;
+			
 		Dictionary<string, Texture> Textures = new Dictionary<string, Texture>();
 		
 		public Texture GetTexture(string fileName) {
@@ -107,7 +118,7 @@ namespace LevelEditor
 
 			Material crate = new Material("Crate");
 			crate.DiffuseTexture = GetTexture("../Data/Textures/crate.png");
-			crate.NormalTexture = GetTexture("../Data/Textures/wood2_n.jpg");
+			crate.NormalTexture = GetTexture("../Data/Textures/wood_n.jpg");
 			
 			
 			//
@@ -236,12 +247,12 @@ namespace LevelEditor
 			Skydome = new Skydome(GetTexture("../Data/Textures/SkyBlue.jpg"));
 			
 			// Load a character with weapon
-			Model = new CharacterModel("../Data/Models/Players/bunker/");
+			Model = new CharacterModel("../Data/Models/Players/sergei/");
 			CharacterSkin skin = Model.Skins["default"];
 			Character = skin.GetInstance();
 			Character.Position = new Vector3(0, 4.5f, 0);
 			Character.LowerAnimation = Character.Model.GetAnimation(AnimationId.LEGS_WALK);
-			Weapon = new Model("../Data/Models/Weapons/machinegun/machinegun.md3");
+			Weapon = new Model("../Data/Models/Weapons/grenadel/grenadel.md3");
 			Character.WeaponModel = Weapon;
 			Enemy = Model.Skins["red"].GetInstance();
 			Enemy.LowerAnimation = Character.Model.GetAnimation(AnimationId.LEGS_IDLE_CR);
@@ -257,6 +268,7 @@ namespace LevelEditor
 			Vec2 gravity = new Vec2(0.0f, -10.0f);
 			bool doSleep = true;
 			World = new World(worldAAB, gravity, doSleep);
+			World.Gravity = new Vec2(0, -20.0f);
 			
 			// Ground body
 			BodyDef groundBodyDef = new BodyDef();
@@ -294,7 +306,9 @@ namespace LevelEditor
 					Body1 = body;
 				if(b == Crate2)
 					Body2 = body;
-				GameObjects.Add(new BoxObject(b, body));
+				BoxObject bo = new BoxObject(b, body);
+				//body.SetUserData(bo);
+				GameObjects.Add(bo);
 			}
 			
 			// Attach two crates
@@ -319,6 +333,53 @@ namespace LevelEditor
 				PlayerBody.SetMassFromShapes();
 			}
 			
+			// Add a rope
+			base1 = new GameObject(new NullRenderable(), CreateBoxBody(new Vec2(-2.0f, 15.0f), new Vec2(0.2f, 0.2f), 0.0f));
+			GameObjects.Add(base1);
+			base2 = new GameObject(new NullRenderable(), CreateBoxBody(new Vec2(2.0f, 15.0f), new Vec2(0.2f, 0.2f), 0.0f));
+			GameObjects.Add(base2);
+			platform = new BoxObject(new Box(crate, Vector3.Zero, new Vector3(1.0f, 0.1f, 0.5f)), CreateBoxBody(new Vec2(1.0f, 5.0f), new Vec2(1.0f, 0.1f), 0.1f));
+			GameObjects.Add(platform);
+			
+			float length = 4.0f;
+			int sections = 10;
+			float r = length / (1 + sections);
+			Body lastSection = null;
+			if(true) {
+				foreach(GameObject go in new GameObject[]{ base1, base2 }) {
+					Vec2 pos = go.Body.GetPosition();
+					Vec2 dpos = platform.Body.GetPosition() - pos;
+					dpos.Normalize();
+					dpos *= 1.0f / (sections + 1);
+					for(int i = 0; i <= sections; ++i) {
+						pos += dpos;
+						DistanceJointDef jointD = new DistanceJointDef();
+						if(i == 0)
+							jointD.Body1 = go.Body;
+						else 
+							jointD.Body1 = lastSection;
+						if(i == sections) {
+							jointD.Body2 = platform.Body;
+							if(go == base1) {
+								jointD.LocalAnchor2.Set(-1.0f, 0.0f);
+							} else {
+								jointD.LocalAnchor2.Set(1.0f, 0.0f);
+							}							
+						} else {
+							lastSection = CreateSphereBody(pos, r, 0.1f);
+							jointD.Body2 = lastSection;
+						}
+						jointD.CollideConnected = false;
+						jointD.Length = r;
+						if(i == sections) {
+
+						}
+						World.CreateJoint(jointD);
+					}
+				}
+			}
+
+			
 			// Add ground plane
 			if(true) {
 				//Body body = new Body(World);
@@ -327,13 +388,53 @@ namespace LevelEditor
 				//GameObjects.Add(new GameObject(new NullRenderable(), body));
 			}
 			
+			// Set up particles
+			particles = new ParticleEngine(null);
+			
+			rocketModel = new Model("../Data/Models/Ammo/rocket/rocket.md3");
+			rocketModel.Scale = 0.025f;
+			
+			World.SetContactListener(this);
 		}
+		
+		Body CreateBoxBody(Vec2 position, Vec2 dim, float density) {
+			BodyDef bodyDef = new BodyDef();
+			bodyDef.Position = position;
+			Body body = World.CreateBody(bodyDef);
+			PolygonDef shapeDef = new PolygonDef();
+			shapeDef.SetAsBox(dim.X, dim.Y);
+			shapeDef.Density = density;
+			shapeDef.Friction = 5.1f;
+			shapeDef.Restitution = 0.0f;
+			body.CreateShape(shapeDef);
+			body.SetMassFromShapes();			
+			return body;
+		}
+
+		Body CreateSphereBody(Vec2 position, float r, float density) {
+			BodyDef bodyDef = new BodyDef();
+			bodyDef.Position = position;
+			Body body = World.CreateBody(bodyDef);
+			CircleDef shapeDef = new CircleDef();
+			shapeDef.Radius = r;
+			shapeDef.Density = density;
+			shapeDef.Friction = 0.0f;
+			shapeDef.Restitution = 0.0f;
+			shapeDef.Filter.MaskBits = 0;
+			body.CreateShape(shapeDef);
+			body.SetMassFromShapes();			
+			return body;
+		}
+		
+		
 		public CharacterInstance Enemy;
 		
+		public int FramesRendered = 0;
 		public float TimeElapsed = 0.0f;
 		public void Render() {
 			// Calculate scene
-			TimeElapsed += 0.100f;
+			TimeElapsed += 0.025f;
+			FramesRendered += 1;
 
 			Camera.Eye = new Vector3(Character.Position.X, Character.Position.Y + 1.0f, Camera.Eye.Z);
 			Camera.LookAt = Character.Position;
@@ -385,10 +486,10 @@ namespace LevelEditor
 			
 			if(Character.LowerAnimation == Character.Model.GetAnimation(AnimationId.BOTH_DEATH_2)) {
 			   	
-			} else if(Dir.Y <= -10.0f) {
+			} /*else if(Dir.Y <= -10.0f) {
 			   	Character.LowerAnimation = Character.Model.GetAnimation(AnimationId.BOTH_DEATH_2);
 			   	Character.UpperAnimation = Character.Model.GetAnimation(AnimationId.BOTH_DEATH_2);
-			} else if(Dir.Y > 0.1f) {
+			} */ else if(Dir.Y > 0.1f) {
 				Character.LowerAnimation = Character.Model.GetAnimation(AnimationId.LEGS_JUMP);
 			} else if(Dir.Y < -0.1f) {
 				Character.LowerAnimation = Character.Model.GetAnimation(AnimationId.LEGS_LAND);
@@ -405,9 +506,16 @@ namespace LevelEditor
 
 			
 			
-			if(Dir.Length >= 0.1f) {
+			if(Dir.Length >= 0.2f) {
 				Character.WalkDirection = Dir;
-				Character.LookDirection = Dir;
+				
+				float ydir = 0.0f;
+				if(KeyStates.ContainsKey(Keys.I))
+					ydir += 1.0f;
+				if(KeyStates.ContainsKey(Keys.K))
+					ydir -= 1.0f;
+				Character.LookDirection = new Vector3(System.Math.Sign(Dir.X)*1.0f, ydir, 0.0f);
+				
 			}
 			
 			// Move between layers
@@ -416,8 +524,55 @@ namespace LevelEditor
 				Character.Position = new Vector3(Character.Position.X, Character.Position.Y, z);
 			}
 			
+			// Spring
+			float k = 30.0f;
+			float friction = 1.0f;
+			float desiredDist = 3.0f;
+			
+			/*Vec2 localA = new Vec2(0.0f, 0.0f);
+			Vec2 localB = new Vec2(-1.0f, 0.0f);
+			foreach(GameObject bs in new GameObject[]{ base1, base2 }) {
+				Body bA = bs.Body;
+				Body bB = platform.Body;
+				
+				Vec2 pA = bA.GetPosition();
+		        Vec2 pB = bB.GetPosition();
+		        Vec2 diff = pB - pA;
+		        
+		        Vec2 vA = bA.GetLinearVelocity() - Vec2.Cross(bA.GetWorldVector(localA), bA.GetAngularVelocity());
+		        Vec2 vB = bB.GetLinearVelocity() - Vec2.Cross(bB.GetWorldVector(localB), bB.GetAngularVelocity());
+		        Vec2 vdiff = vB - vA;
+		        
+		        float dx = diff.Normalize(); //normalizes diff and puts length into dx
+		        float vrel = vdiff.X*diff.X + vdiff.Y*diff.Y;
+		        float forceMag = -k*(dx-desiredDist) - friction*vrel;
+		        diff *= forceMag; // diff *= forceMag
+		        bB.ApplyForce(diff, bA.GetWorldPoint(localA));
+		        //bA.ApplyForce(diff * -1f, bB.GetPosition());
+		        bA.WakeUp();
+		        bB.WakeUp();
+		        
+		        localB = new Vec2(1.0f, 0.0f);
+			}
+			
+			//if(platform.Body.GetAngle() != 0.0f)
+				platform.Body.SetXForm(platform.Body.GetPosition(), 0.0f);*/
+			
+			// Create explosion
+			if(KeyStates.ContainsKey(Keys.E)) {
+				Vec2 center = PlayerBody.GetPosition();
+				// Set off rocket
+				Vec2 dir = new Vec2(Character.LookDirection.X, Character.LookDirection.Y);
+				dir.Normalize();
+				rocket = new RocketObject(rocketModel, CreateBoxBody(center + dir*2.0f, new Vec2(0.4f, 0.2f), 0.2f));
+				rocket.Body.ApplyImpulse(dir * 2.0f, Vec2.Zero);
+				//rocket.AutoTransform = true;
+				//GameObjects.Add(rocket);
+				KeyStates.Remove(Keys.E);
+			}
+			
 			// Physics
-			float dt = 0.1f;
+			float dt = 0.025f;
 			int velocityIterations = 10;
 			int positionIterations = 1;
 			World.Step(dt, velocityIterations, positionIterations);
@@ -428,7 +583,8 @@ namespace LevelEditor
 			Vec2 pos = PlayerBody.GetPosition();
 			Vec2 vel = PlayerBody.GetLinearVelocity();
 			Character.Position = new Vector3(pos.X, pos.Y - 1.0f, 0.0f);
-			System.Diagnostics.Debug.WriteLine("pos " + pos.X + " "+  pos.Y + ", vel " + vel.X + ", " + vel.Y);
+			//System.Diagnostics.Debug.WriteLine("pos " + pos.X + " "+  pos.Y + ", vel " + vel.X + ", " + vel.Y);
+			System.Diagnostics.Debug.WriteLine("FPS " + FramesRendered / TimeElapsed);
 			
 			// Render scene
 			GL.ClearColor(System.Drawing.Color.SkyBlue);
@@ -471,21 +627,26 @@ namespace LevelEditor
 	
 			GL.Enable(EnableCap.Texture2D);
 			Character.UpperAnimation = Character.Model.GetAnimation(AnimationId.TORSO_STAND);
-			Character.Tick(0.1f);
+			Character.Tick(0.025f);
 			Character.Scale = 0.03f;
-			Enemy.Tick(0.1f);
+			Enemy.Tick(0.025f);
 			Enemy.Scale = 0.03f;
 			
 			Md3Program.Apply();
 			Character.Render();
 			Enemy.Render();
+			GL.Enable(EnableCap.Blend);
+			GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+			if(rocket != null) 
+				rocket.Render();
+			GL.Disable(EnableCap.Blend);
 			Md3Program.Remove();
 			
 			Program.Apply();
 			//Light.Enable();
 			
 			// Draw a ground plane
-			/*Program.BindUniformTexture("DiffuseTexture", GetTexture("../Data/Textures/grass.jpg"), 0);
+			Program.BindUniformTexture("DiffuseTexture", GetTexture("../Data/Textures/grass.jpg"), 0);
 			Program.BindUniformTexture("NormalTexture", GetTexture("../Data/Textures/grass_n.jpg"), 1);
 			GL.Color4(System.Drawing.Color.White);
 			GL.Begin(BeginMode.Triangles);
@@ -501,7 +662,7 @@ namespace LevelEditor
 			GL.TexCoord2(tt, 0); GL.Vertex3(100, 0, -100);
 			GL.TexCoord2(0, 0); GL.Vertex3(-100, 0, -100);			
 			
-			GL.End();*/
+			GL.End();
 			
 			// Obtain a list of objects that disturb view
 			List<Box> ignore = PickAll(Camera.Eye, Camera.LookAt - Camera.Eye);
@@ -587,6 +748,8 @@ namespace LevelEditor
 			}
 			
 			
+			particles.Render();
+			
 			Camera.Pop();
 			
 			// Create physics stuff
@@ -615,7 +778,9 @@ namespace LevelEditor
 			return float.PositiveInfinity;
 		}		
 
-		protected void MouseMove(object Sender, MouseEventArgs e) {
+		protected void MouseMove(object Sender, MouseEventArgs e) {			
+			// Selecting boxes
+			return;
 			Box b = Pick(e);
 			if(b != null) {
 				if(SelectedBox != null)
@@ -688,5 +853,47 @@ namespace LevelEditor
 			}
 			return result;
 		}
+		
+		public override void Result(ContactResult point)
+		{
+			if(rocket == null)
+				return;
+			if(point.Shape1.GetBody() == rocket.Body ||
+			   point.Shape2.GetBody() == rocket.Body)
+			{
+				if(point.NormalImpulse < 1.0f)
+					return;
+				Shape[] shapes = new Shape[64];
+				Vec2 center = point.Position;
+				float damageRadius = 3.0f;
+				float forceRadius = 5.0f;
+				AABB aabb;
+				aabb.LowerBound = center - new Vec2(forceRadius, forceRadius);
+				aabb.UpperBound = center + new Vec2(forceRadius, forceRadius);
+				int count = World.Query(aabb, shapes, shapes.Length);
+				
+				for(int i = 0; i < count; ++i) {
+					Body body = shapes[i].GetBody();
+					Vec2 v = body.GetPosition() - center;
+					if(forceRadius < v.Length())
+						continue;
+					if(v.Length() == 0.0f)
+						continue;
+					Vec2 force = 20.0f * v * (1.0f / v.Length());
+					body.ApplyImpulse(force, body.GetPosition());
+					
+				}
+				
+				// Add a few particles
+				Random r = new Random();
+				for(int i = 0; i < 10; ++i) {
+					Vector3 randomDir = new Vector3((float)r.NextDouble() - 0.5f, (float)r.NextDouble() - 0.5f, (float)r.NextDouble() - 0.5f) * 10.0f;
+					particles.Add(new Vector3(center.X, center.Y, 0.0f), randomDir, new Vector4(1.0f, 0.0f, 0.0f, 1.0f));
+				}
+				rocket = null;
+			}
+			
+		}
 	}
+	
 }

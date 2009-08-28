@@ -34,6 +34,9 @@
     <Reference Include="Boo.Lang.Compiler">
       <HintPath>C:\dev\boo\bin\Boo.Lang.Compiler.dll</HintPath>
     </Reference>
+    <Reference Include="Box2DX">
+      <HintPath>..\Libs\Box2DX\Box2DX.dll</HintPath>
+    </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="OpenTK">
       <HintPath>..\Libs\Debug\OpenTK.dll</HintPath>
@@ -139,7 +142,8 @@
     <Compile Include="src\Core\Graphics\Md3\Model.boo">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\Core\Graphics\Md3\Structs.boo" />
+    <Compile Include="src\Core\Graphics\Md3\Structs.boo">
+    </Compile>
     <Compile Include="src\Core\Graphics\IRenderable.boo">
       <SubType>Code</SubType>
     </Compile>
@@ -186,6 +190,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\Core\Physics\Class1.boo" />
+    <Compile Include="src\Core\Physics\Utils.boo" />
     <Compile Include="src\Core\Physics\World.boo" />
     <Compile Include="src\Core\Script\ScriptEnvironment.boo">
       <SubType>Code</SubType>
@@ -194,6 +199,7 @@
     <Compile Include="src\Core\Sound\Listener.boo" />
     <Compile Include="src\Core\Sound\Sound.boo" />
     <Compile Include="src\Core\Sound\Source.boo" />
+    <Compile Include="src\Core\Util\Ext.boo" />
     <Compile Include="src\Core\Util\Matrices.boo" />
     <Compile Include="src\Core\Util\Structs.boo">
       <SubType>Code</SubType>

@@ -42,7 +42,7 @@ class Source(System.IDisposable):
 		alSourcei(_id, AL_BUFFER, buffer.Id)
 		Sound.HandleErrors()
 		
-		alSourcef(_id, AL_REFERENCE_DISTANCE, 30.0f)
+		//alSourcef(_id, AL_REFERENCE_DISTANCE, 30.0f)
 		
 		self.Position = Vector3(0.0f, 0.0f, 0.0f)
 		self.Velocity = Vector3(0.0f, 0.0f, 0.0f)

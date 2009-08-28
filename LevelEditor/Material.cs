@@ -22,7 +22,7 @@ namespace LevelEditor
 		/// variables 'NormalTexture' and 'DiffuseTexture' and load the according textures using
 		/// texture units 0 and 1
 		/// </summary>
-		/// <param name="program"></param>
+		/// <param name="program"></param>d
 		public void Apply(ShaderProgram program) {
 			program.BindUniformTexture("DiffuseTexture", DiffuseTexture, 0);
 			program.BindUniformTexture("NormalTexture", NormalTexture, 1);					

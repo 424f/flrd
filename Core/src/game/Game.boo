@@ -234,7 +234,7 @@ class Game(Application):
 		
 		# Same for the listener
 		_listener.Position = _player.Position
-		_listener.orientation = _player.LookDirection
+		_listener.Orientation = _player.LookDirection
 		_skybox.Position = _player.Position
 	
 		# From time to time, create a new enemy

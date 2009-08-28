@@ -1,0 +1,89 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{C58F6FE5-AE46-4613-AEAD-3CF2272AA757}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Floored</RootNamespace>
+    <AssemblyName>Floored</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <SourceAnalysisOverrideSettingsFile>G:\Users\Bo\AppData\Roaming\ICSharpCode/SharpDevelop3.0\Settings.SourceAnalysis</SourceAnalysisOverrideSettingsFile>
+    <StartWorkingDirectory>../Floored</StartWorkingDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>Full</DebugType>
+    <Optimize>False</Optimize>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <StartAction>Project</StartAction>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DebugSymbols>False</DebugSymbols>
+    <DebugType>None</DebugType>
+    <Optimize>True</Optimize>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Boo.Lang.Useful" />
+    <Reference Include="Box2DX">
+      <HintPath>..\Libs\Box2DX\Box2DX.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK">
+      <HintPath>..\Libs\Debug\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK.Utilities">
+      <HintPath>..\Libs\Debug\OpenTK.Utilities.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="Tao.DevIl">
+      <HintPath>..\Libs\Tao.DevIl.dll</HintPath>
+    </Reference>
+    <Reference Include="Tao.OpenGl">
+      <HintPath>..\Libs\Tao.OpenGl.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.boo" />
+    <Compile Include="ContactListener.boo" />
+    <Compile Include="Controller.boo" />
+    <Compile Include="GameObject.boo" />
+    <Compile Include="Levels\Level.boo" />
+    <Compile Include="Material.boo" />
+    <Compile Include="Objects\Bullet.boo" />
+    <Compile Include="Objects\Grenade.boo" />
+    <Compile Include="Objects\IDamageable.boo" />
+    <Compile Include="Objects\Player.boo" />
+    <Compile Include="Program.boo" />
+    <Compile Include="RenderState.boo" />
+    <Compile Include="Shapes\Box.boo" />
+    <Compile Include="Shapes\IShape.boo" />
+    <Compile Include="Shapes\Triangle.boo" />
+    <Compile Include="Shapes\TriangleMesh.boo" />
+    <Compile Include="Shapes\Vertex.boo" />
+    <Compile Include="World.boo" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Levels" />
+    <Folder Include="Objects" />
+    <Folder Include="Shapes" />
+    <ProjectReference Include="..\Core\Core.booproj">
+      <Project>{f61c27c0-2ec7-4095-8443-e928af32dcd2}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(BooBinPath)\Boo.Microsoft.Build.targets" />
+</Project>

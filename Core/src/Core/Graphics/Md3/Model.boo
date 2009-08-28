@@ -21,6 +21,8 @@ class Model(IRenderable):
 
 	private final MAGIC = 0x33504449
 	private final VERSION = 15
+	
+	[Property(Scale)] _Scale = 1.0f
 
 	def constructor(filename as string):
 		if not File.Exists(filename):
@@ -85,8 +87,11 @@ class Model(IRenderable):
 		Render(0)
 		
 	def Render(frame as int):
+		glPushMatrix()
+		glScalef(Scale, Scale, Scale)
 		for mesh in _meshes:
 			mesh.Render(frame % mesh.Header.NumFrames)
+		glPopMatrix()
 
 	def RenderBoundingSphere(frame as int):
 		# Draw sphere

@@ -23,7 +23,7 @@ class Listener:
 	private _velocity as Vector3
 	"""The listener's velocity"""
 
-	orientation as Vector3:
+	Orientation as Vector3:
 		get:
 			return _orientation
 		set:
@@ -37,7 +37,7 @@ class Listener:
 			return _up
 		set:
 			_up = value
-			alListenerfv(AL_ORIENTATION, (orientation.X, orientation.Y, orientation.Z, value.X, value.Y, value.Z))
+			alListenerfv(AL_ORIENTATION, (Orientation.X, Orientation.Y, Orientation.Z, value.X, value.Y, value.Z))
 	private _up as Vector3
 	"""The listener's up-vector"""
 	

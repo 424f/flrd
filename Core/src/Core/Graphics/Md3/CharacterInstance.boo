@@ -22,6 +22,8 @@ class CharacterInstance(IRenderable):
 		set:
 			_lookDirection = value
 			_lookAngle = Math.Atan2(value.X, -value.Z) / Math.PI * 180
+			tmp = Vector3(_lookDirection.X, 0.0, _lookDirection.Z)
+			_VerticalLookAngle = Math.Sign(_lookDirection.Y) * OpenTK.Math.Vector3.CalculateAngle(_lookDirection, tmp) / Math.PI * 180
 	_lookDirection as Vector3
 	
 	LookAngle:
@@ -71,6 +73,8 @@ class CharacterInstance(IRenderable):
 			return _upperAnimation
 	_upperAnimation = AnimationDescriptor()
 	
+	[Property(VerticalLookAngle)] _VerticalLookAngle = 0.0f
+	
 	def constructor(skin as CharacterSkin):
 		_Position = Vector3(0, 0, 0)
 		_skin = skin
@@ -83,7 +87,7 @@ class CharacterInstance(IRenderable):
 		glPushMatrix()
 		glTranslatef(_Position.X, _Position.Y, _Position.Z)
 		glScalef(Scale, Scale, Scale)
-		glTranslatef(0, 25.0f, 0)
+		glTranslatef(0, 25.5f, 0)
 		_skin.Render(self)
 		glPopMatrix()
 		
