@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LevelEditor", "..\LevelEdit
 EndProject
 Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "Floored", "..\Floored\Floored.booproj", "{C58F6FE5-AE46-4613-AEAD-3CF2272AA757}"
 EndProject
+Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "AwesomiumIntegration", "..\AwesomiumIntegration\AwesomiumIntegration.booproj", "{900F4710-791F-48B7-9FA3-793CEC8EE76F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,5 +40,9 @@ Global
 		{C58F6FE5-AE46-4613-AEAD-3CF2272AA757}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C58F6FE5-AE46-4613-AEAD-3CF2272AA757}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C58F6FE5-AE46-4613-AEAD-3CF2272AA757}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{900F4710-791F-48B7-9FA3-793CEC8EE76F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{900F4710-791F-48B7-9FA3-793CEC8EE76F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{900F4710-791F-48B7-9FA3-793CEC8EE76F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{900F4710-791F-48B7-9FA3-793CEC8EE76F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 EndGlobal

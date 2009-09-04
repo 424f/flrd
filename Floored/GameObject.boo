@@ -14,8 +14,10 @@ public class GameObject(IRenderable):
 	[Property(Body)] _Body as Body
 	[Property(Renderable)] _Renderable as IRenderable
 	[Property(AutoTransform)] _AutoTransform = true
+	[Property(EnableRendering)] _EnableRendering = true
 	
 	public Position as Vector3:
+	"""The object's position in the game world. This usually relates to the center of the object."""
 		set:
 			_Position = value
 			Body.SetXForm(value.AsVec2(), Body.GetAngle())
@@ -23,6 +25,9 @@ public class GameObject(IRenderable):
 	protected _Position as Vector3
 	
 	[Property(Material)] _Material as Material
+	"""The material that is used to render this object
+	TODO: handle objects with multiple materials or different shaders"""
+	
 	virtual ReportCollisions as bool:
 		get: return true
 	

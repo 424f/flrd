@@ -21,7 +21,7 @@ class Character(GameObject):
 	Skin:
 		set:
 			_skin = value
-			_instance = Skin.GetInstance()
+			_instance = Skin.CreateInstance()
 			_instance.LowerAnimation = Skin.Model.GetAnimation(Md3.AnimationId.LEGS_IDLE)
 			_instance.UpperAnimation = Skin.Model.GetAnimation(Md3.AnimationId.TORSO_GESTURE)
 		get:

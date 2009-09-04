@@ -10,18 +10,20 @@ import Tao.OpenGl.Gl
 class Skydome:
 	private skyList as int = -1
 	private Texture as Texture
+	[Getter(Radius)] _Radius as single
 	
-	public def constructor(texture as Texture):
+	public def constructor(texture as Texture, radius as single):
 		Texture = texture
+		_Radius = radius
 	
 	public def Render():
 		n = 10
 		phi = -PI * 0.5
 		dphi = PI / n * 0.5
 		dtheta = 2 * PI / n
-		radius = 600.0
+		GL.DepthMask(false)
 		GL.Enable(EnableCap.Texture2D)
-		
+		radius = _Radius
 		if skyList == -1:	
 			skyList = glGenLists(1)
 			glNewList(skyList, GL_COMPILE)
@@ -73,6 +75,7 @@ class Skydome:
 			glEndList()			
 		
 		glCallList(skyList)
+		GL.DepthMask(true)
 
 	static private def SkydomeTex(v as Vector3):
 		v.Normalize()

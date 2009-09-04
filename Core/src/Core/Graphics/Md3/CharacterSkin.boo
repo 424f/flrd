@@ -99,5 +99,5 @@ class CharacterSkin:
 				tex.Bind()
 			mesh.Render(frame)
 			
-	def GetInstance():
+	def CreateInstance():
 		return CharacterInstance(self)

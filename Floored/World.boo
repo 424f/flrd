@@ -53,7 +53,7 @@ class World:
 			
 	public def CreateBodyFromShape(bodyDef as BodyDef, shapeDef as ShapeDef, density as single, friction as single, restitution as single) as Body:
 		body = CreateBodyWithoutMassFromShape(bodyDef, shapeDef, density, friction, restitution)
-		body.SetMassFromShapes()		
+		body.SetMassFromShapes()
 		return body
 
 	public def CreateBodyWithoutMassFromShape(bodyDef as BodyDef, shapeDef as ShapeDef, density as single, friction as single, restitution as single) as Body:

@@ -5,6 +5,7 @@ import OpenTK
 import OpenTK.Graphics
 import OpenTK.Platform
 import OpenTK.Math
+import OpenTK.Input
 import Tao.DevIl
 
 import Core
@@ -12,9 +13,14 @@ import Core.Graphics
 import Core.Sound
 import Core.Util.Ext
 
+import AwesomiumDotNet
+
 import Box2DX.Collision
 import Box2DX.Common
 import Box2DX.Dynamics
+
+import System.Drawing
+import System.Drawing.Imaging
 
 def LoadShader(vertexPath as string, fragmentPath as string) as ShaderProgram:
 	result = ShaderProgram()
@@ -26,6 +32,10 @@ def LoadShader(vertexPath as string, fragmentPath as string) as ShaderProgram:
 	return result
 
 abstract class AbstractGame(OpenTK.GameWindow):
+	public WebCore as WebCore
+	public webView as WebView
+	browserTexture as int
+	
 	public def constructor():
 		super(1280, 720, OpenTK.Graphics.GraphicsMode(ColorFormat(32), 32, 32, 0, ColorFormat(32)), "FLOORED")
 		VSync = VSyncMode.Off	
@@ -36,12 +46,77 @@ abstract class AbstractGame(OpenTK.GameWindow):
 		Ilut.ilutRenderer(Ilut.ILUT_OPENGL)		
 		
 		Core.Sound.Sound.Init()
+		
+		WebCore = AwesomiumDotNet.WebCore()
+		webView = WebCore.CreateWebView(400, 400)
+		webView.BeginLoading += { print "Loading!!" }
+		isRunning = true
+		webView.FinishLoading += def():
+			/*width = 400
+			height = 400
+			buffer = array(byte, width*height*4)
+			bytesPerRow = 4*width
+			//webView.Render(buffer, bytesPerRow, 4)
+			
+			bmp = System.Drawing.Bitmap(width, height)
+			data = bmp.LockBits(Rectangle(0, 0, width, height), System.Drawing.Imaging.ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb)
+			webView.Render(data.Scan0.ToInt32(), bytesPerRow, 4)
+			bmp.UnlockBits(data)
+			
+			bmp.Save("render.png", ImageFormat.Png)*/
+			
+			print "Finished loading"
+			isRunning = false
+		
+		//AwesomiumDotNet.WebView().
+		webView.BeginNavigation += { print "begin navigation" }
+		webView.Callback += { print "Callback" }
+		webView.ChangeCursor += { print "cursor" }
+		webView.ChangeKeyboardFocus += { print "keyboard focus" }
+		webView.ChangeTargetURL += { print "target url" }
+		webView.ChangeTooltip += { print "Tooltip" }
+		webView.ReceiveTitle += { print "Receive title" }
+		
+
+		def convert(mb as OpenTK.Input.MouseButton) as AwesomiumDotNet.MouseButton:
+			if mb == OpenTK.Input.MouseButton.Left:
+				return AwesomiumDotNet.MouseButton.Left
+			elif mb == OpenTK.Input.MouseButton.Middle:
+				return AwesomiumDotNet.MouseButton.Middle
+			elif mb == OpenTK.Input.MouseButton.Right:
+				return AwesomiumDotNet.MouseButton.Right
+			
+		
+		self.Mouse.Move += { sender as object, e as OpenTK.Input.MouseMoveEventArgs | webView.InjectMouseMove(e.X, e.Y) }
+		self.Mouse.ButtonDown += { sender as object, mbe as OpenTK.Input.MouseButtonEventArgs | webView.InjectMouseDown(convert(mbe.Button)) }
+		self.Mouse.ButtonUp += { sender as object, mbe as OpenTK.Input.MouseButtonEventArgs | webView.InjectMouseUp(convert(mbe.Button)) }
+		
+		browserTexture = GL.GenTexture()
+				
+		//GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, cast(int, TextureMinFilter.LinearMipmapLinear));
+		//GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, cast(int, TextureMagFilter.Linear));	
+
+		
+		//OpenTK.Graphics.Glu.Build2DMipmap(TextureTarget.Texture2D, cast(int, PixelInternalFormat.Rgba), data.Width, data.Height, OpenTK.Graphics.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0)
+		/*bmp = Bitmap(Width, Height)
+		data = bmp.LockBits(Rectangle(0, 0, Width, Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb)
+		GL.ReadPixels(0, 0, Width, Height, OpenTK.Graphics.PixelFormat.Bgr, PixelType.UnsignedByte, data.Scan0)
+		GL.Finish()
+		bmp.UnlockBits(data)
+		bmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
+		n = DateTime.Now
+		def fill(a as int, i as int):
+			return string.Format("{0:d${i}}", a)
+		bmp.Save("Screenshots/Screenshot ${n.Year}-${fill(n.Month, 2)}-${fill(n.Day, 2)} - ${fill(n.Hour, 2)}${fill(n.Minute, 2)}${fill(n.Second, 2)}.png", ImageFormat.Png);*/
+		
+		webView.LoadURL("http://gasi.ch")			
+		
 
 	protected override def OnResize(e as ResizeEventArgs):
 		GL.Viewport(0, 0, self.Width, self.Height)
 		GL.MatrixMode(MatrixMode.Projection)
 		GL.LoadIdentity()
-		Glu.Perspective(15.0, Width / cast(double, Height), 1.0, 10000.0)
+		Glu.Perspective(25.0, Width / cast(double, Height), 1.0, 10000.0)
 
 class Game(AbstractGame):
 	public static Instance as Game:
@@ -58,21 +133,24 @@ class Game(AbstractGame):
 	public DefaultShader as ShaderProgram
 	public Md3Shader as ShaderProgram
 	public Particles as ParticleEngine
+	public Terrain as Terrain
 	
 	// -- Gameplay --
-	public Character as Md3.CharacterInstance
 	public ReloadTime = 0f
 	public PrimaryReloadTime = 0f
 	public Level as Levels.Level
+	public Player as Objects.Player
 	
 	// -- Physics --
 	public World as Floored.World
 	public PhysicsTime = 0.0f
-	public PlayerBody as Body
+	
+	// -- Settings --
+	public ShowPhysics = false
 	
 	Box as Shapes.Box
 	wall as Material
-	
+	Tank as IRenderable	
 	
 	// -- Sound --
 	Listener as Core.Sound.Listener
@@ -83,14 +161,18 @@ class Game(AbstractGame):
 	
 	public override def OnLoad(e as EventArgs):
 		super.OnLoad(e)
+
+		Tank = NullRenderable()
+
+		self.Keyboard.KeyDown += KeyDown
+		self.Keyboard.KeyUp += KeyUp
 		
 		// Set up a camera and a light
 		Camera = Camera(Vector3(0, 3, 10), Vector3(0, 0, 0), Vector3(0, 1, 0))
 		Light = Light(0)
-		Light.Position = Camera.Eye.AsArray()
 	
 		// Set up skydome
-		Skydome = Skydome(Texture.Load("../Data/Textures/Sky.jpg"))
+		Skydome = Skydome(Texture.Load("../Data/Textures/Sky.jpg"), 150f)
 
 		// Load shader
 		//DefaultShader = LoadShader("../Data/Shaders/bump.vert", "../Data/Shaders/bump.frag")
@@ -123,15 +205,9 @@ class Game(AbstractGame):
 		// Load a character with weapon
 		Model = Md3.CharacterModel("../Data/Models/Players/police/")
 		skin = Model.Skins["default"]
-		Character = skin.GetInstance()
-		Character.Position = Vector3(0, 0, 0)
-		Character.UpperAnimation = Character.Model.GetAnimation(Md3.AnimationId.TORSO_ATTACK)
-		Character.LowerAnimation = Character.Model.GetAnimation(Md3.AnimationId.LEGS_WALK)
-		Weapon = Md3.Model("../Data/Models/Weapons/machinegun/machinegun.md3")
-		Character.WeaponModel = Weapon
-		Character.Scale = 0.03f
-		Character.LookDirection = Vector3(-1.0f, 0.0f, 0.0f)
-		Character.WalkDirection = Character.LookDirection
+
+/*		Weapon = Md3.Model("../Data/Models/Weapons/machinegun/machinegun.md3")
+		Character.WeaponModel = Weapon*/
 
 		// Create world
 		worldAABB = AABB()
@@ -139,36 +215,21 @@ class Game(AbstractGame):
 		worldAABB.UpperBound.Set(200f, 200f)
 		World = Floored.World(worldAABB, Vec2(0, -25f), 0.0f)
 	
+		// Create player
+		Player = Objects.Player(skin)
+		Player.Weapon = Objects.Weapons.MachineGun()
+		World.Objects.Add(Player)		
+	
 		// Create NPCs
+		npcModel = Md3.CharacterModel("../Data/Models/Players/sergei/")
+		//skin = Model.Skins["default"]
 		for i in range(3):
-			npc = Objects.Player(Model.Skins["red"])
+			skin = npcModel.Skins["default"]
+			npc = Objects.Player(skin)
 			npc.Position = Vector3(i * 2.0f, 30.0f, 0.0f)
 			World.Objects.Add(npc)
 	
-		// Create body for player
-		bodyDef = BodyDef();
-		bodyDef.Position.Set(Character.Position.X, Character.Position.Y + 2.0f);
-		PlayerBody = World.Physics.CreateBody(bodyDef);
-		
-		shapeDef = PolygonDef();
-		shapeDef.SetAsBox(0.5f, 1.0f, Vec2(0, 0.05f), 0f);
-		shapeDef.Density = 50.0f;
-		shapeDef.Friction = 0.0f;
-		shapeDef.Restitution = 0.0f;
-		shape = PlayerBody.CreateShape(shapeDef);
-		shape.FilterData.MaskBits = ~cast(ushort, CollisionGroups.Player)
-		shape.FilterData.CategoryBits = cast(ushort, CollisionGroups.Player)
 
-		/*feetDef = PolygonDef()
-		feetDef.SetAsBox(0.3f, 0.1f, Vec2(0f, -0.90f), 0f)
-		feetDef.Density = 0.05f;
-		feetDef.Friction= 0.0f
-		feetDef.IsSensor = true
-		shapeDef.Restitution = 0.0f
-		PlayerBody.CreateShape(feetDef)*/
-		
-		
-		PlayerBody.SetMassFromShapes();		
 		
 		// Create level
 		Level = Levels.Level(World)
@@ -181,11 +242,34 @@ class Game(AbstractGame):
 			GSound = Core.Sound.Buffer("../Data/Sound/Weapons/grenlf1a.wav")
 			GSource = Core.Sound.Source(GSound)	
 		
-	
+		// Terrain
+		Terrain = Core.Graphics.Terrain({ file as string | Texture.Load(file) })
+		
 	public override def OnRenderFrame(e as RenderFrameEventArgs):
+		self.WebCore.Update()
+		if webView.IsDirty():
+			width = 400
+			height = 400
+			buffer = array(byte, width*height*4)
+			bytesPerRow = 4*width
+			
+			webView.Render(buffer, bytesPerRow, 4)
+			GL.ActiveTexture(TextureUnit.Texture0)
+			GL.BindTexture(TextureTarget.Texture2D, browserTexture)
+			OpenTK.Graphics.GL.TexImage2D[of byte](TextureTarget.Texture2D, 0, OpenTK.Graphics.PixelInternalFormat.Rgba, width, height, 0, OpenTK.Graphics.PixelFormat.Rgba, OpenTK.Graphics.PixelType.UnsignedByte, buffer)			
+			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, cast(int, TextureMinFilter.Linear));
+			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, cast(int, TextureMagFilter.Linear));				
+
+			/*bmp = System.Drawing.Bitmap(width, height)
+			data = bmp.LockBits(Rectangle(0, 0, width, height), System.Drawing.Imaging.ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb)
+			webView.Render(data.Scan0.ToInt32(), bytesPerRow, 4)
+			bmp.UnlockBits(data)
+			
+			bmp.Save("render.png", ImageFormat.Png)*/
+		
 		// Center camera
-		Camera.Eye = Character.Position + Vector3(0f, 2f, 40f)
-		Camera.LookAt = Character.Position + Vector3(0f, 1f, 0f)
+		Camera.Eye = Player.Position + Vector3(0f, 2f, 20f)
+		Camera.LookAt = Player.Position + Vector3(0f, 1f, 0f)
 
 		// Set up scene
 		GL.ClearColor(System.Drawing.Color.SkyBlue)
@@ -201,11 +285,12 @@ class Game(AbstractGame):
 		
 		Camera.Push()
 		
+		Light.Position = (Camera.Eye.X, Camera.Eye.Y, -Camera.Eye.Z, 0)
 		Light.Enable()
 		
 		// Render skydome
 		GL.PushMatrix()
-		GL.Translate(0, -250f, 0)
+		GL.Translate(0, -60f, 0)
 		GL.Translate(Camera.Eye)
 		GL.Rotate(45.0, 0, 1, 0)
 		Skydome.Render()
@@ -215,22 +300,18 @@ class Game(AbstractGame):
 		RenderState.Instance.ApplyProgram(null)
 		RenderState.Instance.ApplyProgram(DefaultShader)
 		RenderState.Instance.ApplyMaterial(wall)
-		Box.Render()
+		// Floor
+		//Box.Render()
 		
 		for o in World.Objects:
-			o.Render()
-		
-		
-		RenderState.Instance.ApplyProgram(Md3Shader)
-		Character.Render()
+			o.Render() if o.EnableRendering
 		
 		RenderState.Instance.ApplyProgram(null)
 		
 		// Visualize physics
 		// Render AABBs
 		GL.Disable(EnableCap.Texture2D)
-		renderPhysics = Keyboard[OpenTK.Input.Key.F1]
-		if renderPhysics:
+		if ShowPhysics:
 			GL.Disable(EnableCap.DepthTest)
 			aabb as AABB
 			GL.Disable(EnableCap.Texture2D);
@@ -261,23 +342,70 @@ class Game(AbstractGame):
 			GL.Color4(System.Drawing.Color.Blue);
 			joint = World.Physics.GetJointList()
 			while joint != null:
-				GL.Vertex3(joint.Anchor1.X, joint.Anchor1.Y, 0.0f);
-				GL.Vertex3(joint.Anchor2.X, joint.Anchor2.Y, 0.0f);
-				GL.Vertex3(joint.GetBody1().GetPosition().X, joint.GetBody1().GetPosition().Y, 0.0f);
-				GL.Vertex3(joint.GetBody2().GetPosition().X, joint.GetBody2().GetPosition().Y, 0.0f);				
+				GL.Vertex3(joint.Anchor1.X, joint.Anchor1.Y, 0.0f)
+				GL.Vertex3(joint.Anchor2.X, joint.Anchor2.Y, 0.0f)
+				GL.Vertex3(joint.GetBody1().GetPosition().X, joint.GetBody1().GetPosition().Y, 0.0f)
+				GL.Vertex3(joint.GetBody2().GetPosition().X, joint.GetBody2().GetPosition().Y, 0.0f)
 				joint = joint.GetNext()
 			
-			GL.End();		
-			GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+			GL.End()
+			GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill)
 		
 			GL.Enable(EnableCap.DepthTest)
+
+		Terrain.Render()
+		
 		Particles.Render()
+		
+		// Render GUI
+		GL.MatrixMode(MatrixMode.Projection)
+		GL.PushMatrix()
+		GL.LoadIdentity()
+		
+		GL.MatrixMode(MatrixMode.Modelview)
+		GL.PushMatrix()
+		GL.LoadIdentity()
+		Glu.Ortho2D(0, Width, Height, 0)
+		
+		GL.Enable(EnableCap.Texture2D)
+		GL.BindTexture(TextureTarget.Texture2D, browserTexture)
+		GL.Begin(BeginMode.Triangles)
+		GL.TexCoord2(0, 0)
+		GL.Vertex3(0, 0, 0)
+		GL.TexCoord2(1, 0)
+		GL.Vertex3(400, 0, 0)
+		GL.TexCoord2(1, 1)
+		GL.Vertex3(400, 400, 0)
+
+		GL.TexCoord2(1, 1)
+		GL.Vertex3(400, 400, 0)
+		GL.TexCoord2(0, 1)
+		GL.Vertex3(0, 400, 0)
+		GL.TexCoord2(0, 0)
+		GL.Vertex3(0, 0, 0)
+		
+
+		GL.End()		
+
+		GL.MatrixMode(MatrixMode.Projection)
+		GL.PopMatrix()
+		
+		GL.MatrixMode(MatrixMode.Modelview)
+		GL.PopMatrix()	
 		
 		Camera.Pop()
 		
 		SwapBuffers()
 		
-	public override def OnUpdateFrame(e as UpdateFrameEventArgs):
+	public def KeyDown(sender as KeyboardDevice, key as Key):
+		pass
+		
+	public def KeyUp(sender as KeyboardDevice, key as Key):
+		if key == Key.F1:
+			ShowPhysics = not ShowPhysics
+		
+	public override def OnUpdateFrame(e as UpdateFrameEventArgs):		
+		// Gameplay
 		dt as single = e.Time
 		
 		PhysicsTime += dt
@@ -287,44 +415,16 @@ class Game(AbstractGame):
 			# ???
 			
 			# Update character
-			Character.Tick(StepSize)
 			ReloadTime -= StepSize
 			PrimaryReloadTime -= StepSize
 			joystick = Joysticks[0]
+			Player.WalkDirection = Vector2(joystick.Axis[0], joystick.Axis[1])
+			Player.LookDirection = Vector2(-joystick.Axis[2], -joystick.Axis[3])
+			Player.DoJump = joystick.Button[0]
 			
-			# Looking
-			xlook = -joystick.Axis[2]
-			ylook = -joystick.Axis[3]
-			if xlook*xlook + ylook*ylook >= 0.2f:
-				Character.LookDirection = Vector3(xlook, ylook, 0f)
-			else:
-				Character.LookDirection = Character.WalkDirection
-				
 			# Walking
-			dir2 = PlayerBody.GetLinearVelocity();		
-			PlayerBody.WakeUp()		
-			x = joystick.Axis[0]
-			y = joystick.Axis[1]
-			if x*x + y*y >= 0.2f:
-				Character.WalkDirection = Vector3(x, y, 0f)
-			maxWalkVelocity = 7.0f
-			onFloor = true
-			if onFloor:
-				if System.Math.Abs(x) > 0.2f:
-					pass
-				else:
-					maxWalkVelocity = 0.0f
-				
-				maxWalkVelocity *= System.Math.Sign(x)
-				impulse = PlayerBody.GetMass()*(maxWalkVelocity - dir2.X)*5.0f
-				PlayerBody.ApplyForce(Vec2(impulse, 0.0f), Vec2.Zero)
+			/*
 			
-			
-			// Jumping
-			maxJumpVelocity = 100f
-			if joystick.Button[0]:
-				impulse = PlayerBody.GetMass()*(maxJumpVelocity)
-				PlayerBody.ApplyForce(Vec2(0, impulse), Vec2.Zero)
 				
 				
 			
@@ -338,9 +438,6 @@ class Game(AbstractGame):
 			walking = Dir.Length >= walkingThreshold;
 			running = Dir.Length >= runningThreshold;
 		
-			if PlayerBody.GetAngle() != 0f:
-				PlayerBody.SetXForm(PlayerBody.GetPosition(), 0.0f)
-				PlayerBody.SetAngularVelocity(0.0f)
 			
 			if Dir.Y > 0.1f:
 				Character.LowerAnimation = Character.Model.GetAnimation(Md3.AnimationId.LEGS_JUMP)
@@ -357,19 +454,7 @@ class Game(AbstractGame):
 			for i in range(joystick.Button.Count):
 				if joystick.Button[i]:
 					pass
-			if joystick.Button[6] and PrimaryReloadTime <= 0f:
-				PrimaryReloadTime = 0.1f				
-				o as GameObject = Objects.Bullet(World)
-				look = Vector3.Normalize(Character.LookDirection)
-				o.Body.SetXForm((PlayerBody.GetPosition()) + (look * 0.7f).AsVec2(), 0.0f)
-				o.Body.ApplyImpulse(o.Body.GetMass() * look.AsVec2() * 100.0f, Vec2.Zero)
-				World.Objects.Add(o)
-				
-				Source.Position = Character.Position
-				//Source.Direction = Character.LookDirection
-				Source.Velocity = Character.LookDirection * 100.0f
-				Source.Play()
-	
+		
 					
 			if joystick.Button[5] and ReloadTime <= 0f:
 				o = Objects.Grenade(World)
@@ -381,7 +466,7 @@ class Game(AbstractGame):
 				GSource.Position = Character.Position
 				//Source.Direction = Character.LookDirection
 				GSource.Velocity = Character.LookDirection * 100.0f
-				GSource.Play()
+				GSource.Play()*/
 				
 			Particles.Tick(dt)
 
@@ -389,11 +474,11 @@ class Game(AbstractGame):
 			PhysicsTime -= StepSize
 		
 		# Update
-		pos = PlayerBody.GetPosition()
-		Character.Position = Vector3(pos.X, pos.Y - 1.0f, Character.Position.Z)		
+		/*pos = PlayerBody.GetPosition()
+		Character.Position = Vector3(pos.X, pos.Y - 1.0f, Character.Position.Z)		*/
 		
 		# Listener
-		Listener.Position = Character.Position + Vector3(0, 0, 2.0f)
+		Listener.Position = Player.Position + Vector3(0, 0, 2.0f)
 		Listener.Orientation = Vector3(0, 0, -1)
 		
 game = Game.Instance

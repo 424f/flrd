@@ -26,6 +26,9 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AwesomiumDotNet">
+      <HintPath>..\Libs\AwesomiumDotNet.dll</HintPath>
+    </Reference>
     <Reference Include="Boo.Lang.Useful" />
     <Reference Include="Box2DX">
       <HintPath>..\Libs\Box2DX\Box2DX.dll</HintPath>
@@ -64,9 +67,11 @@
     <Compile Include="Levels\Level.boo" />
     <Compile Include="Material.boo" />
     <Compile Include="Objects\Bullet.boo" />
+    <Compile Include="Objects\Environment\Elevator.boo" />
     <Compile Include="Objects\Grenade.boo" />
     <Compile Include="Objects\IDamageable.boo" />
     <Compile Include="Objects\Player.boo" />
+    <Compile Include="Objects\Weapons\IWeapon.boo" />
     <Compile Include="Program.boo" />
     <Compile Include="RenderState.boo" />
     <Compile Include="Shapes\Box.boo" />
@@ -79,6 +84,8 @@
   <ItemGroup>
     <Folder Include="Levels" />
     <Folder Include="Objects" />
+    <Folder Include="Objects\Environment" />
+    <Folder Include="Objects\Weapons" />
     <Folder Include="Shapes" />
     <ProjectReference Include="..\Core\Core.booproj">
       <Project>{f61c27c0-2ec7-4095-8443-e928af32dcd2}</Project>

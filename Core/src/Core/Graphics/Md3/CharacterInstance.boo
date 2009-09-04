@@ -23,7 +23,11 @@ class CharacterInstance(IRenderable):
 			_lookDirection = value
 			_lookAngle = Math.Atan2(value.X, -value.Z) / Math.PI * 180
 			tmp = Vector3(_lookDirection.X, 0.0, _lookDirection.Z)
-			_VerticalLookAngle = Math.Sign(_lookDirection.Y) * OpenTK.Math.Vector3.CalculateAngle(_lookDirection, tmp) / Math.PI * 180
+			angle = OpenTK.Math.Vector3.CalculateAngle(_lookDirection, tmp) / Math.PI * 180
+			// TODO: real fix
+			if single.IsNaN(angle):
+				angle = 90f
+			_VerticalLookAngle = Math.Sign(_lookDirection.Y) * angle
 	_lookDirection as Vector3
 	
 	LookAngle:
