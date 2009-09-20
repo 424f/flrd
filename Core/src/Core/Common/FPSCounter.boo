@@ -2,9 +2,9 @@ namespace Core.Common
 
 class FPSCounter:
 """
-FPSCounter is a simple utility class that can be used to calculate the frames per second of a program. All you
-need to do is instantiate a FPSCounter object and call the method frame() on it every frame. You can then access
-the framesPerSecond property which is always updated with the most recently calculated value.
+FPSCounter is a simple utility class that can be used to calculate the frames per second of a program. After creating an
+FPSCounter instance, call Frame() after every rendered frame. You can then access
+the FramesPerSecond property which is always updated with the most recently calculated value.
 """
 	[Getter(FramesPerSecond)]
 	_framesPerSecond as int

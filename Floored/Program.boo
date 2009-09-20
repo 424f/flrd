@@ -8,20 +8,12 @@ import OpenTK.Math
 import OpenTK.Input
 import Tao.DevIl
 
-import Core
 import Core.Graphics
-import Core.Sound
-import Core.Util.Ext
 
 import AwesomiumDotNet
 
 import Box2DX.Collision
 import Box2DX.Common
-import Box2DX.Dynamics
-
-import System.Drawing
-import System.Drawing.Imaging
-
 def LoadShader(vertexPath as string, fragmentPath as string) as ShaderProgram:
 	result = ShaderProgram()
 	vertexShader = Shader(ShaderType.VertexShader, vertexPath)
@@ -130,6 +122,7 @@ class Game(AbstractGame):
 	public PrimaryReloadTime = 0f
 	public Level as Levels.Level
 	public Player as Objects.Player
+	[Getter(Dt)] _Dt = 0.0f
 	
 	// -- Physics --
 	public World as Floored.World
@@ -399,9 +392,9 @@ class Game(AbstractGame):
 		
 	public override def OnUpdateFrame(e as UpdateFrameEventArgs):		
 		// Gameplay
-		dt as single = e.Time
-		TimePassed += dt
-		PhysicsTime += dt
+		_Dt = e.Time
+		TimePassed += Dt
+		PhysicsTime += Dt
 		StepSize = 0.015f
 		while PhysicsTime >= StepSize:					
 			# Is player touching the ground?
@@ -441,7 +434,7 @@ class Game(AbstractGame):
 				GSource.Velocity = Character.LookDirection * 100.0f
 				GSource.Play()*/
 				
-			Particles.Tick(dt)
+			Particles.Tick(Dt)
 
 			World.Step(StepSize)
 			PhysicsTime -= StepSize

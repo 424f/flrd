@@ -53,14 +53,12 @@ namespace LevelEditor
 		CharacterInstance Character;
 		public ShaderProgram Md3Program;
 		Box Door;
-		Box Crate2;
 		Model Weapon;
 		float GotoLevel = 0.0f;
 		
 		// Physics
 		World World;
 		Body PlayerBody;
-		bool CreateExplosion = false;
 		
 		RocketObject rocket;
 		Model rocketModel;
@@ -70,8 +68,6 @@ namespace LevelEditor
 		
 		// Particles
 		ParticleEngine particles;
-		
-		Core.Input.Joystick Joystick;
 			
 		Dictionary<string, Texture> Textures = new Dictionary<string, Texture>();
 		
@@ -524,40 +520,6 @@ namespace LevelEditor
 				Character.Position = new Vector3(Character.Position.X, Character.Position.Y, z);
 			}
 			
-			// Spring
-			float k = 30.0f;
-			float friction = 1.0f;
-			float desiredDist = 3.0f;
-			
-			/*Vec2 localA = new Vec2(0.0f, 0.0f);
-			Vec2 localB = new Vec2(-1.0f, 0.0f);
-			foreach(GameObject bs in new GameObject[]{ base1, base2 }) {
-				Body bA = bs.Body;
-				Body bB = platform.Body;
-				
-				Vec2 pA = bA.GetPosition();
-		        Vec2 pB = bB.GetPosition();
-		        Vec2 diff = pB - pA;
-		        
-		        Vec2 vA = bA.GetLinearVelocity() - Vec2.Cross(bA.GetWorldVector(localA), bA.GetAngularVelocity());
-		        Vec2 vB = bB.GetLinearVelocity() - Vec2.Cross(bB.GetWorldVector(localB), bB.GetAngularVelocity());
-		        Vec2 vdiff = vB - vA;
-		        
-		        float dx = diff.Normalize(); //normalizes diff and puts length into dx
-		        float vrel = vdiff.X*diff.X + vdiff.Y*diff.Y;
-		        float forceMag = -k*(dx-desiredDist) - friction*vrel;
-		        diff *= forceMag; // diff *= forceMag
-		        bB.ApplyForce(diff, bA.GetWorldPoint(localA));
-		        //bA.ApplyForce(diff * -1f, bB.GetPosition());
-		        bA.WakeUp();
-		        bB.WakeUp();
-		        
-		        localB = new Vec2(1.0f, 0.0f);
-			}
-			
-			//if(platform.Body.GetAngle() != 0.0f)
-				platform.Body.SetXForm(platform.Body.GetPosition(), 0.0f);*/
-			
 			// Create explosion
 			if(KeyStates.ContainsKey(Keys.E)) {
 				Vec2 center = PlayerBody.GetPosition();
@@ -583,7 +545,6 @@ namespace LevelEditor
 			Vec2 pos = PlayerBody.GetPosition();
 			Vec2 vel = PlayerBody.GetLinearVelocity();
 			Character.Position = new Vector3(pos.X, pos.Y - 1.0f, 0.0f);
-			//System.Diagnostics.Debug.WriteLine("pos " + pos.X + " "+  pos.Y + ", vel " + vel.X + ", " + vel.Y);
 			System.Diagnostics.Debug.WriteLine("FPS " + FramesRendered / TimeElapsed);
 			
 			// Render scene
@@ -767,7 +728,7 @@ namespace LevelEditor
 			                        new Vector4(0, 0, 0, 1));
 			try {
 				A.Invert();
-			} catch(Exception e) {
+			} catch(Exception) {
 				return float.PositiveInfinity;
 			}
 			
@@ -780,7 +741,6 @@ namespace LevelEditor
 
 		protected void MouseMove(object Sender, MouseEventArgs e) {			
 			// Selecting boxes
-			return;
 			Box b = Pick(e);
 			if(b != null) {
 				if(SelectedBox != null)
@@ -865,7 +825,6 @@ namespace LevelEditor
 					return;
 				Shape[] shapes = new Shape[64];
 				Vec2 center = point.Position;
-				float damageRadius = 3.0f;
 				float forceRadius = 5.0f;
 				AABB aabb;
 				aabb.LowerBound = center - new Vec2(forceRadius, forceRadius);

@@ -3,7 +3,6 @@
 import Floored
 import Core.Graphics
 import OpenTK.Math
-import OpenTK.Graphics
 import Box2DX.Common
 import Box2DX.Collision
 import Box2DX.Dynamics
@@ -117,10 +116,10 @@ class Player(GameObject, IDamageable):
 		Dir = Body.GetLinearVelocity()
 		walkingThreshold = 2f
 		runningThreshold = 4f
-		maxSpeed = 10.5f
+		/*maxSpeed = 10.5f
 		accel = 2.0f
 		walking = Dir.Length() >= walkingThreshold
-		running = Dir.Length() >= runningThreshold
+		running = Dir.Length() >= runningThreshold*/
 		
 		if not OnGround:
 			if Dir.Y > 0.1f:

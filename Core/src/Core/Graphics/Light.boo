@@ -1,9 +1,7 @@
 namespace Core.Graphics
 
 import System
-import System.ComponentModel
 import Tao.OpenGl.Gl
-import OpenTK.Math
 
 class Light:
 """Description of Light"""

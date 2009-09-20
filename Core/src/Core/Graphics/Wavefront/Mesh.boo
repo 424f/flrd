@@ -1,6 +1,7 @@
 namespace Core.Graphics.Wavefront
 
 import System
+import Core.Graphics
 import OpenTK.Math
 import Tao.OpenGl.Gl
 
@@ -83,8 +84,8 @@ class Mesh:
 		# Create the display list for later rendering
 		CreateDisplayList(faceList)
 		
-		newOffset = offset + vertexList.Count
-		newNormaloffset = normalOffset + normalsList.Count
+		NewOffset = offset + vertexList.Count
+		NewNormaloffset = normalOffset + normalsList.Count
 		
 	def Render():
 		glCallList(DisplayList)

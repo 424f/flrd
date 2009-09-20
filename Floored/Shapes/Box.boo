@@ -1,7 +1,6 @@
 ﻿namespace Floored.Shapes
 
 import System
-import System.Drawing
 import OpenTK.Graphics
 import OpenTK.Math
 import Box2DX.Collision
@@ -83,10 +82,8 @@ public class Box(TriangleMesh):
 			v.Tangent.Normalize()
 		
 		// Render all triangles			
-		i = 0
 		GL.FrontFace(FrontFaceDirection.Ccw)
 		GL.CullFace(CullFaceMode.Back)
-		//GL.Enable(EnableCap.CullFace);
 		GL.Begin(BeginMode.Triangles)
 		for triangle as Triangle in Triangles:
 			triangle.Render()

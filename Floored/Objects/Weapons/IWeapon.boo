@@ -34,7 +34,7 @@ class MachineGun(AbstractWeapon):
 		EnableRendering = false
 		
 	public def PrimaryFire():
-		world = Game.Instance.World
+		pass
 		
 	public def SecondaryFire():
 		pass

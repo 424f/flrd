@@ -3,12 +3,10 @@
 import System
 import Core.Graphics
 import Core.Util.Ext
-import Box2DX.Collision
 import Box2DX.Common
 import Box2DX.Dynamics
 import OpenTK.Graphics
 import OpenTK.Math
-import Floored.Shapes
 
 public class GameObject(IRenderable):
 	[Property(Body)] _Body as Body

@@ -3,7 +3,6 @@ namespace BooLandscape
 import System
 
 import Tao.OpenGl.Gl
-import Tao.OpenGl.Glu
 
 import OpenTK.Graphics
 import OpenTK.Math

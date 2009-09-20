@@ -134,58 +134,13 @@ class Game(OpenTK.GameWindow):
 			Exit()
 		
 		TimePassed += RenderTime
-		/*if Keyboard[Key.W]:
-			camera.Move(camera.LookDirection*500*RenderTime)
-		if Keyboard[Key.S]:
-			camera.Move(-camera.LookDirection*500*RenderTime)
-		perp = Vector3.Cross(camera.LookDirection, camera.UpDirection)
-		if Keyboard[Key.A]:
-			camera.Move(-perp*500*RenderTime)
-		if Keyboard[Key.D]:
-			camera.Move(perp*500*RenderTime)
-		if Keyboard[Key.Q]:
-			camera.Turn(-4*RenderTime)
-		if Keyboard[Key.E]:
-			camera.Turn(4*RenderTime)		*/
-		
-		
+		character = characters[0]
 		
 		if Keyboard[Key.P]:
 			TakeScreenshot = true
 		if Keyboard[Key.R]:
 			terrain.program.Reload()
 			md3program.Reload()
-
-		character = characters[0]			
-		m as OpenTK.Input.MouseDevice = Mouse
-		
-		
-		dx, dY = Mouse.XDelta, Mouse.YDelta
-		//dx -= Joysticks[0].Axis[2] * 2.0
-		//dY += Joysticks[0].Axis[3] * 2.0
-		
-		mouseDist = Sqrt(dx*dx + dY*dY)
-		//pos = System.Windows.Forms.Cursor.Position
-		//dx, dY = pos.X - Center.X, pos.Y - Center.Y
-		//System.Windows.Forms.Cursor.Position = Center
-		
-		
-		if Abs(dx) >= 1 and Abs(dx) <= 100:
-			print "MOVED! ${dx} ${dY} ${character.LookAngle}"
-			character.LookAngle += RenderTime * 360.0 / 5.0 * dx * MouseAccel / 4.0
-			print "--> ${character.LookAngle}"
-		
-		if Abs(dY) >= 1 and Abs(dY) <= 100:
-			LookY -= dY / 50.0 * MouseAccel / 4.0
-			
-		/*if mouseDist > 0.0:
-			print MouseAccel
-			if MouseAccel < 5.0:
-				MouseAccel *= 1.8
-			else:
-				MouseAccel = 5.0
-		else:
-			MouseAccel = 1.0*/
 		
 		perp = Vector3.Cross(character.LookDirection, Vector3(0, 1, 0))
 		walkDir = Vector3(0, 0, 0)
@@ -459,10 +414,6 @@ class Game(OpenTK.GameWindow):
 			i += 1
 			characters.Add(character)
 		
-		def loader(s as string) as Core.Graphics.Texture:
-			Core.Graphics.Texture.Load("Data/Textures/${s}")
-		//tankModel = Core.Graphics.wavefront.Model.load("Data/Models/Tank.obj")
-		
 		weapon = Core.Graphics.Md3.Model("Data/Models/Weapons/Machinegun/machinegun.Md3")
 		
 		// Set up a light
@@ -481,7 +432,6 @@ class Game(OpenTK.GameWindow):
 	
 	public def RenderLandscape():
 		modelView = Core.Util.Matrices.ModelView
-		v = Vector3.Transform(camera.Position, modelView)
 		
 		terrain.Render()
 		
@@ -713,12 +663,6 @@ class Game(OpenTK.GameWindow):
 			glMatrixMode(GL_MODELVIEW)
 			
 			printer.Begin();
-			text = "Player ${i}" //FPS ~= ${(RenderFrequency / 100) * 100}"
-			/*printer.Print(text, sans_serif, Color.Black, RectangleF(11, 10, 1000, 100));
-			printer.Print(text, sans_serif, Color.Black, RectangleF(10, 11, 1000, 100));
-			printer.Print(text, sans_serif, Color.Black, RectangleF(9, 10, 1000, 100));
-			printer.Print(text, sans_serif, Color.Black, RectangleF(10, 9, 1000, 100));*/
-			//printer.Print(text, sans_serif, Color.Black, RectangleF(9, 9, 1000, 100));
 			names = ("ox424f", "Duderinho", "!!IMTEHBEST!!1337!!", "Don Knuth")
 			printer.Print(names[i], sans_serif, Color.Black, RectangleF(9, 9, 1000, 100), TextPrinterOptions.NoCache);
 			printer.Print(names[i], sans_serif, Color.White, RectangleF(10, 10, 1000, 100), TextPrinterOptions.NoCache);

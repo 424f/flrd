@@ -62,7 +62,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.boo" />
-    <Compile Include="Collectable.boo" />
     <Compile Include="ContactListener.boo" />
     <Compile Include="Controller.boo" />
     <Compile Include="Faction.boo" />
@@ -70,6 +69,7 @@
     <Compile Include="Levels\Level.boo" />
     <Compile Include="Material.boo" />
     <Compile Include="Objects\Bullet.boo" />
+    <Compile Include="Objects\Collectable.boo" />
     <Compile Include="Objects\Environment\Elevator.boo" />
     <Compile Include="Objects\Grenade.boo" />
     <Compile Include="Objects\IDamageable.boo" />

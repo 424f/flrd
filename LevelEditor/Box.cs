@@ -148,7 +148,6 @@ namespace LevelEditor
 			}
 			
 			// Render all triangles			
-			int i = 0;
 			GL.FrontFace(FrontFaceDirection.Ccw);
 			GL.CullFace(CullFaceMode.Back);
 			//GL.Enable(EnableCap.CullFace);

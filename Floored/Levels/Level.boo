@@ -6,9 +6,8 @@ import Core.Graphics
 import Core.Util.Ext
 import Floored
 import Floored.Shapes
-import Box2DX.Collision;
-import Box2DX.Common;
-import Box2DX.Dynamics;
+import Box2DX.Common
+import Box2DX.Dynamics
 
 class Level:
 	World as World
@@ -36,7 +35,6 @@ class Level:
 		body = World.CreateBodyWithoutMassFromShape(bodyDef, box.CreatePhysicalRepresentation(), 50.0f, 0.1f, 0.0f)
 		if hasMass:
 			body.SetMassFromShapes()
-		shape = body.GetShapeList()
 		result = GameObject(box, body)		
 		result.Material = material
 		result.Position = center * scale

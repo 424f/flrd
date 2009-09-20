@@ -2,7 +2,6 @@
 
 import System
 import Box2DX.Collision
-import Box2DX.Common
 import Box2DX.Dynamics
 
 class ContactInfo:

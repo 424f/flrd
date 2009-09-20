@@ -2,7 +2,6 @@
 
 import System
 import System.Drawing
-import OpenTK
 import OpenTK.Graphics
 import Tao.OpenGl.Gl
 import System.Math
@@ -69,9 +68,6 @@ class Terrain:
 				//	grasses.Add(vertex.v)
 				if vertex.v.Y > 10 and r.Next(0, 90) == 0:
 					maples.Add(vertex.v)
-		# Calculate normal
-		ambient = 0.3
-		print "Sun = ${sun}"
 		
 		// Loop through every triangle and add its normal to the three vertices
 		for i in range(GridLength-1):
@@ -108,14 +104,10 @@ class Terrain:
 					p = PositionToIndex(pos)
 					ii = p.X
 					jj = p.Y
-					
-					if false: // and i != ii or j != jj:
-						print "ERROR is ${ii}, ${jj} should be ${i}, ${j}"
 					if ii < 0 or ii >= GridLength or jj < 0 or jj >= GridLength:
 						break
 					v = heightMap[ii, jj].v
 					if v.Y > pos.Y:
-						//print "Got hit at ${v.Y} VS ${pos.Y}"
 						visible = false
 						break
 					pos += sun

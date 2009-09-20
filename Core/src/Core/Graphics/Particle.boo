@@ -28,9 +28,6 @@ Features to implement:
 		_texture = Texture.Load("../Data/Textures/Particles/particle.tga")
 		//_bump = Texture.Load("data/textures/dirtwastes01_n.dds")
 	
-	private def GlVertex(v as Vector3):
-		glVertex3f(v.X, v.Y, v.Z)
-	
 	def Tick(dt as single):
 		for p in particles:
 			p.Velocity.Y -= 2.0f * dt

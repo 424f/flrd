@@ -2,7 +2,7 @@
 
 import System
 
-class TriangleMesh(IShape):
+abstract class TriangleMesh(IShape):
 """Description of TriangleMesh"""
 	protected Triangles as (Triangle)
 	protected Vertices as (Vertex)
@@ -10,3 +10,4 @@ class TriangleMesh(IShape):
 	public def constructor():
 		pass
 
+	

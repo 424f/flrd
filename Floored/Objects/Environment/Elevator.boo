@@ -3,7 +3,6 @@
 import Floored
 import Core.Util.Ext
 import OpenTK.Math
-import Box2DX.Collision
 import Box2DX.Common
 import Box2DX.Dynamics
 

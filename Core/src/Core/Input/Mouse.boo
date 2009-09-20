@@ -1,7 +1,5 @@
 namespace Core.Input
 import Tao.Sdl.Sdl
-
-import OpenTK.Math
 import Core.Graphics
 
 class Mouse(AbstractController):  

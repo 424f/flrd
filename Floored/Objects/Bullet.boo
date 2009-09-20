@@ -1,7 +1,6 @@
 ﻿namespace Floored.Objects
 
 import Floored
-import OpenTK.Graphics
 import OpenTK.Math
 import Box2DX.Common
 import Box2DX.Dynamics
@@ -50,7 +49,6 @@ class Bullet(GameObject):
 			BulletMissSource.Position = Position
 			BulletMissSource.Play()
 		
-		r = System.Random()
 		particles = Game.Instance.Particles
 		for i in range(1):
 			//randomDir = Vector3(r.NextDouble() - 0.5f, r.NextDouble() - 0.5f, r.NextDouble() - 0.5f) * 10.0f

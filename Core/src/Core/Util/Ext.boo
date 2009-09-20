@@ -3,7 +3,6 @@
 import System
 import OpenTK.Math
 import Box2DX.Common
-import Boo.Lang.Useful.Attributes
 
 class Ext:
 """Extension methods for different types to improve interoperability between utilized libraries"""

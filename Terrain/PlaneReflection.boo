@@ -1,8 +1,6 @@
 ﻿namespace BooLandscape
 
 import System
-import OpenTK
-import OpenTK.Graphics
 import OpenTK.Graphics
 import Tao.OpenGl.Gl
 
