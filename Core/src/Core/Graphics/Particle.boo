@@ -20,13 +20,11 @@ Features to implement:
 """
 	textures as (Texture)
 	_texture as Texture
-	//_bump as Texture
 	particles = List[of Particle]()
 	static counter = 0
 
 	def constructor(textures as (Texture)):
 		_texture = Texture.Load("../Data/Textures/Particles/particle.tga")
-		//_bump = Texture.Load("data/textures/dirtwastes01_n.dds")
 	
 	def Tick(dt as single):
 		for p in particles:

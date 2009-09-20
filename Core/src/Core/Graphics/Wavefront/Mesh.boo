@@ -1,7 +1,6 @@
 namespace Core.Graphics.Wavefront
 
 import System
-import Core.Graphics
 import OpenTK.Math
 import Tao.OpenGl.Gl
 
@@ -21,11 +20,6 @@ class Face:
 class Vertex:
 	public Vector as Vector3
 	public UV as Vector2
-
-class Material:
-"""Description of Material"""
-	public texture as Texture
-
 
 class Mesh:
 """Description of Mesh"""

@@ -4,8 +4,6 @@ import System
 import Tao.OpenGl.Gl
 
 class Light:
-"""Description of Light"""
-
 	id as int
 	"""Which OpenGL light does this source correspond to?"""
 	
@@ -15,7 +13,7 @@ class Light:
 	[Property(Position)] _Position as (single)
 	
 	def constructor(id as int):
-		self.id = GL_LIGHT0
+		self.id = id
 		Specular = (1.0f, 1.0f, 1.0f, 1.0f)
 		Ambient = (0.3f, 0.3f, 0.3f, 1.0f)
 		Diffuse = (1.0f, 1.0f, 1.0f, 1.0f)
@@ -27,9 +25,6 @@ class Light:
 		glLightfv(id, GL_AMBIENT, Ambient)		
 		glLightfv(id, GL_DIFFUSE, Diffuse)
 		glLightfv(id, GL_POSITION, Position)
-		//glLightModelf(GL_LIGHT_MODEL_LOCAL_VIEWER, 1.0f)
-		//glShadeModel(GL_SMOOTH)
-		//glFrontFace(GL_CCW)
 
 		mcolor = (1.0f, 1.0f, 1.0f, 1.0f)
 		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mcolor)

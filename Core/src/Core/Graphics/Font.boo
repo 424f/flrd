@@ -25,16 +25,3 @@ class Font:
 		glTranslatef(x, -y, 0)
 		_font.Render(text)
 		glPopMatrix()
-		
-	def BoundingBox(text as string) as Core.Math.Rect:
-		return Core.Math.Rect(0, 0, 200, 200)
-		/*lX as single
-		lY as single
-		lZ as single
-		uX as single
-		uY as single
-		uZ as single
-		_font.BBox(text, lX, lY, lZ, uX, uY, uZ)
-		print "${lX}, ${lY}, ${lZ} -- ${uX}, ${uY}, ${uZ}"
-		return Core.Math.Rect(lX, lY, uX - lX, uY - lY)*/
-		
