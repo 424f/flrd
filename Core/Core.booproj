@@ -150,25 +150,6 @@
     </Compile>
     <Compile Include="src\Core\Graphics\Skybox.boo" />
     <Compile Include="src\Core\Graphics\Texture.boo" />
-    <Compile Include="src\Core\Gui\AbstractButton.boo" />
-    <Compile Include="src\Core\Gui\Console.boo">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="src\Core\Gui\Decorator\AbstractDecorator.boo" />
-    <Compile Include="src\Core\Gui\Decorator\BackgroundColor.boo" />
-    <Compile Include="src\Core\Gui\Decorator\WindowBorder.boo" />
-    <Compile Include="src\Core\Gui\Dialog.boo" />
-    <Compile Include="src\Core\Gui\Image.boo" />
-    <Compile Include="src\Core\Gui\Label.boo" />
-    <Compile Include="src\Core\Gui\Layout\BoxLayout.boo" />
-    <Compile Include="src\Core\Gui\Screen.boo" />
-    <Compile Include="src\Core\Gui\SlicedButton.boo" />
-    <Compile Include="src\Core\Gui\TextField.boo">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="src\Core\Gui\Widget.boo">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="src\Core\Input\Input.boo">
       <SubType>Code</SubType>
     </Compile>
@@ -228,12 +209,9 @@
     <Folder Include="src\Core\Graphics" />
     <Folder Include="src\Core\Graphics\Md3" />
     <Folder Include="src\Core\Graphics\Wavefront" />
-    <Folder Include="src\Core\Gui\Layout" />
-    <Folder Include="src\Core\Gui\Decorator" />
     <Folder Include="src\Core\Input" />
     <Folder Include="src\Core\Math" />
     <Folder Include="src\Core\Common" />
-    <Folder Include="src\Core\Gui" />
     <Folder Include="src\Core\Physics" />
     <Folder Include="src\Core\Sound" />
     <Folder Include="src\Core\Util" />
