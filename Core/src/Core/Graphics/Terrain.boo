@@ -40,13 +40,13 @@ class Terrain:
 	
 
 	public def constructor(textureLoader as callable(string) as Texture):
-		/*texRock = textureLoader("""Data/Textures/Terrain/SnowDirt.jpg""")
-		texGrass = textureLoader("""Data/Textures/Terrain/Snow.jpg""")
-		texSand = textureLoader("""Data/Textures/Terrain/Ice.jpg""")*/
-		texRock = textureLoader("""../Data/Textures/Terrain/Rock.jpg""")
+		texRock = textureLoader("""../Data/Textures/Terrain/SnowDirt.jpg""")
+		texGrass = textureLoader("""../Data/Textures/Terrain/Snow.jpg""")
+		texSand = textureLoader("""../Data/Textures/Terrain/Ice.jpg""")
+		/*texRock = textureLoader("""../Data/Textures/Terrain/Rock.jpg""")
 		texGrass = textureLoader("""../Data/Textures/Terrain/Grass.jpg""")
-		texSand = textureLoader("""../Data/Textures/Terrain/Sand.jpg""")		
-		texMaple = textureLoader("""../Data/Textures/Billboards/Tree2.png""")
+		texSand = textureLoader("""../Data/Textures/Terrain/Sand.jpg""")		*/
+		texMaple = textureLoader("""../Data/Textures/Billboards/Pine.png""")
 		
 		// Upper-most point
 		ceiling = -10000.0
@@ -71,7 +71,7 @@ class Terrain:
 				heightMap[i, j] = vertex
 				//if vertex.v.Y > 0 and r.Next(0, 15) == 0:
 				//	grasses.Add(vertex.v)
-				if vertex.v.Y > 10 and r.Next(0, 90) == 0:
+				if vertex.v.Y > 2 and r.Next(0, 10) == 0:
 					maples.Add(vertex.v)
 		# Calculate normal
 		ambient = 0.3
@@ -293,22 +293,22 @@ class Terrain:
 		glDisable(GL_LIGHTING)
 		GL.Begin(BeginMode.Triangles)
 		GL.Color4(Color.White)
-		ex = 1.5
+		ex = 3
 		right = Vector3(model[0], model[4], model[8]) * ex
 		up = Vector3(model[1], model[5], model[9]) * 2 * ex		
 		for grass as Vector3 in maples:
-			GL.TexCoord2(0, 1.0)
+			GL.TexCoord2(0, 0)
 			GL.Vertex3(grass - right)
-			GL.TexCoord2(1, 1.0)
-			GL.Vertex3(grass + right)
 			GL.TexCoord2(1, 0)
+			GL.Vertex3(grass + right)
+			GL.TexCoord2(1, 1)
 			GL.Vertex3(grass + right + up)
 
-			GL.TexCoord2(0, 1.0)
-			GL.Vertex3(grass - right)
 			GL.TexCoord2(0, 0)
+			GL.Vertex3(grass - right)
+			GL.TexCoord2(0, 1)
 			GL.Vertex3(grass - right + up)
-			GL.TexCoord2(1, 0)
+			GL.TexCoord2(1, 1)
 			GL.Vertex3(grass + right + up)
 		GL.End()
 		

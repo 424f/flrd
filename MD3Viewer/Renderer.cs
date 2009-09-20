@@ -143,7 +143,7 @@ namespace MD3Viewer
 		public void LoadModel(CharacterModel model)
 		{
 			Model = model;
-			Character = Model.Skins["default"].GetInstance();
+			Character = Model.Skins["default"].CreateInstance();
 		}
 		
 		public void PlayLowerAnimation(AnimationId animation)
@@ -160,7 +160,7 @@ namespace MD3Viewer
 		
 		public void SelectSkin(string skin) {
 			if(Model != null)
-				Character = Model.Skins[skin].GetInstance();
+				Character = Model.Skins[skin].CreateInstance();
 		}
 		
 		public void SetWeapon(Model weapon) {

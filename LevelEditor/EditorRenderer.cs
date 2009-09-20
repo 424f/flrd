@@ -244,17 +244,17 @@ namespace LevelEditor
 			};
 			
 			// Skydome
-			Skydome = new Skydome(GetTexture("../Data/Textures/SkyBlue.jpg"));
+			Skydome = new Skydome(GetTexture("../Data/Textures/SkyBlue.jpg"), 500f);
 			
 			// Load a character with weapon
 			Model = new CharacterModel("../Data/Models/Players/sergei/");
 			CharacterSkin skin = Model.Skins["default"];
-			Character = skin.GetInstance();
+			Character = skin.CreateInstance();
 			Character.Position = new Vector3(0, 4.5f, 0);
 			Character.LowerAnimation = Character.Model.GetAnimation(AnimationId.LEGS_WALK);
 			Weapon = new Model("../Data/Models/Weapons/grenadel/grenadel.md3");
 			Character.WeaponModel = Weapon;
-			Enemy = Model.Skins["red"].GetInstance();
+			Enemy = Model.Skins["red"].CreateInstance();
 			Enemy.LowerAnimation = Character.Model.GetAnimation(AnimationId.LEGS_IDLE_CR);
 			Enemy.UpperAnimation = Character.Model.GetAnimation(AnimationId.TORSO_GESTURE);
 			Enemy.Position = new Vector3(1.5f, 1.5f, 8.0f / 3.0f);

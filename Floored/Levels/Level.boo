@@ -16,14 +16,11 @@ class Level:
 	protected def BackgroundBox(material as Material, center as Vector3, dim as Vector3) as GameObject:
 		scale = 1f / 3f
 		box = Box(dim * scale)
-		//result.IsStatic = true
-		//result.OnGameLayer = false
 		bodyDef = BodyDef()
 		bodyDef.Position = center.AsVec2() * scale
 		body = World.CreateBodyWithoutMassFromShape(bodyDef, box.CreatePhysicalRepresentation(), 0.0f, 0.1f, 0.0f)
 		shape = body.GetShapeList()
 		if center.Z != 0f:
-			//body.SetXForm(Vec2(-1000f, -1000f), 0f)
 			shape.FilterData.CategoryBits = 0
 			shape.FilterData.MaskBits = 0
 		result = GameObject(box, body)	
@@ -40,8 +37,6 @@ class Level:
 		if hasMass:
 			body.SetMassFromShapes()
 		shape = body.GetShapeList()
-		//shape.FilterData.CategoryBits = 0
-		//shape.FilterData.MaskBits = 0
 		result = GameObject(box, body)		
 		result.Material = material
 		result.Position = center * scale
@@ -99,3 +94,4 @@ class Level:
 		// Create an elevator
 		World.Objects.Add(Objects.Environment.Elevator(World, Vec2(-10, 7), Vec2(-10, 0)))
 		World.Objects.Add(Objects.Environment.Elevator(World, Vec2(-5, 7), Vec2(-5, 20)))
+		World.Objects.Add(Objects.Environment.Elevator(World, Vec2(-2, 7), Vec2(10, 7)))

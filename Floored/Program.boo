@@ -48,27 +48,13 @@ abstract class AbstractGame(OpenTK.GameWindow):
 		Core.Sound.Sound.Init()
 		
 		WebCore = AwesomiumDotNet.WebCore()
-		webView = WebCore.CreateWebView(400, 400)
+		webView = WebCore.CreateWebView(Width, Height, true)
 		webView.BeginLoading += { print "Loading!!" }
 		isRunning = true
 		webView.FinishLoading += def():
-			/*width = 400
-			height = 400
-			buffer = array(byte, width*height*4)
-			bytesPerRow = 4*width
-			//webView.Render(buffer, bytesPerRow, 4)
-			
-			bmp = System.Drawing.Bitmap(width, height)
-			data = bmp.LockBits(Rectangle(0, 0, width, height), System.Drawing.Imaging.ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb)
-			webView.Render(data.Scan0.ToInt32(), bytesPerRow, 4)
-			bmp.UnlockBits(data)
-			
-			bmp.Save("render.png", ImageFormat.Png)*/
-			
 			print "Finished loading"
 			isRunning = false
 		
-		//AwesomiumDotNet.WebView().
 		webView.BeginNavigation += { print "begin navigation" }
 		webView.Callback += { print "Callback" }
 		webView.ChangeCursor += { print "cursor" }
@@ -85,11 +71,15 @@ abstract class AbstractGame(OpenTK.GameWindow):
 				return AwesomiumDotNet.MouseButton.Middle
 			elif mb == OpenTK.Input.MouseButton.Right:
 				return AwesomiumDotNet.MouseButton.Right
-			
 		
+				
 		self.Mouse.Move += { sender as object, e as OpenTK.Input.MouseMoveEventArgs | webView.InjectMouseMove(e.X, e.Y) }
 		self.Mouse.ButtonDown += { sender as object, mbe as OpenTK.Input.MouseButtonEventArgs | webView.InjectMouseDown(convert(mbe.Button)) }
 		self.Mouse.ButtonUp += { sender as object, mbe as OpenTK.Input.MouseButtonEventArgs | webView.InjectMouseUp(convert(mbe.Button)) }
+		
+		//System.Windows.Forms.7
+		self.Keyboard.KeyDown += { sender as object, key as Key | webView.InjectKeyboardEvent(IntPtr.Zero, AwesomiumDotNet.WM.KeyDown, cast(int, char.Parse('a')), 0) }
+		self.Keyboard.KeyUp += { sender as object, key as Key | webView.InjectKeyboardEvent(IntPtr.Zero, AwesomiumDotNet.WM.KeyUp, cast(int, char.Parse('a')), 0) }
 		
 		browserTexture = GL.GenTexture()
 				
@@ -109,7 +99,7 @@ abstract class AbstractGame(OpenTK.GameWindow):
 			return string.Format("{0:d${i}}", a)
 		bmp.Save("Screenshots/Screenshot ${n.Year}-${fill(n.Month, 2)}-${fill(n.Day, 2)} - ${fill(n.Hour, 2)}${fill(n.Minute, 2)}${fill(n.Second, 2)}.png", ImageFormat.Png);*/
 		
-		webView.LoadURL("http://gasi.ch")			
+		webView.LoadURL("""L:\Floored\Data\UI\index.htm""")			
 		
 
 	protected override def OnResize(e as ResizeEventArgs):
@@ -144,6 +134,7 @@ class Game(AbstractGame):
 	// -- Physics --
 	public World as Floored.World
 	public PhysicsTime = 0.0f
+	public TimePassed = 0.0f
 	
 	// -- Settings --
 	public ShowPhysics = false
@@ -151,6 +142,7 @@ class Game(AbstractGame):
 	Box as Shapes.Box
 	wall as Material
 	Tank as IRenderable	
+	FpsCounter as Core.Common.FPSCounter
 	
 	// -- Sound --
 	Listener as Core.Sound.Listener
@@ -245,28 +237,27 @@ class Game(AbstractGame):
 		// Terrain
 		Terrain = Core.Graphics.Terrain({ file as string | Texture.Load(file) })
 		
+		FpsCounter = Core.Common.FPSCounter()
+		
 	public override def OnRenderFrame(e as RenderFrameEventArgs):
+		FpsCounter.Frame()
+		if FpsCounter.Updated:		
+			webView.ExecuteJavaScript("updateFPS(${RenderFrequency})")			
+		
 		self.WebCore.Update()
 		if webView.IsDirty():
-			width = 400
-			height = 400
+			width = Width
+			height = Height
 			buffer = array(byte, width*height*4)
 			bytesPerRow = 4*width
 			
 			webView.Render(buffer, bytesPerRow, 4)
 			GL.ActiveTexture(TextureUnit.Texture0)
 			GL.BindTexture(TextureTarget.Texture2D, browserTexture)
-			OpenTK.Graphics.GL.TexImage2D[of byte](TextureTarget.Texture2D, 0, OpenTK.Graphics.PixelInternalFormat.Rgba, width, height, 0, OpenTK.Graphics.PixelFormat.Rgba, OpenTK.Graphics.PixelType.UnsignedByte, buffer)			
+			OpenTK.Graphics.GL.TexImage2D[of byte](TextureTarget.Texture2D, 0, OpenTK.Graphics.PixelInternalFormat.Rgba, width, height, 0, OpenTK.Graphics.PixelFormat.Bgra, OpenTK.Graphics.PixelType.UnsignedByte, buffer)			
 			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, cast(int, TextureMinFilter.Linear));
 			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, cast(int, TextureMagFilter.Linear));				
-
-			/*bmp = System.Drawing.Bitmap(width, height)
-			data = bmp.LockBits(Rectangle(0, 0, width, height), System.Drawing.Imaging.ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb)
-			webView.Render(data.Scan0.ToInt32(), bytesPerRow, 4)
-			bmp.UnlockBits(data)
 			
-			bmp.Save("render.png", ImageFormat.Png)*/
-		
 		// Center camera
 		Camera.Eye = Player.Position + Vector3(0f, 2f, 20f)
 		Camera.LookAt = Player.Position + Vector3(0f, 1f, 0f)
@@ -367,20 +358,22 @@ class Game(AbstractGame):
 		GL.LoadIdentity()
 		Glu.Ortho2D(0, Width, Height, 0)
 		
+		GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha)
+		GL.Enable(EnableCap.Blend)
 		GL.Enable(EnableCap.Texture2D)
 		GL.BindTexture(TextureTarget.Texture2D, browserTexture)
 		GL.Begin(BeginMode.Triangles)
 		GL.TexCoord2(0, 0)
 		GL.Vertex3(0, 0, 0)
 		GL.TexCoord2(1, 0)
-		GL.Vertex3(400, 0, 0)
+		GL.Vertex3(Width, 0, 0)
 		GL.TexCoord2(1, 1)
-		GL.Vertex3(400, 400, 0)
+		GL.Vertex3(Width, Height, 0)
 
 		GL.TexCoord2(1, 1)
-		GL.Vertex3(400, 400, 0)
+		GL.Vertex3(Width, Height, 0)
 		GL.TexCoord2(0, 1)
-		GL.Vertex3(0, 400, 0)
+		GL.Vertex3(0, Height, 0)
 		GL.TexCoord2(0, 0)
 		GL.Vertex3(0, 0, 0)
 		
@@ -407,7 +400,7 @@ class Game(AbstractGame):
 	public override def OnUpdateFrame(e as UpdateFrameEventArgs):		
 		// Gameplay
 		dt as single = e.Time
-		
+		TimePassed += dt
 		PhysicsTime += dt
 		StepSize = 0.015f
 		while PhysicsTime >= StepSize:					
@@ -429,26 +422,6 @@ class Game(AbstractGame):
 				
 			
 			Dir = Vector3(dir2.X, dir2.Y, 0.0f);
-			/*if KeyStates.ContainsKey(Keys.Space):
-				Dir.Y = 7.0f;*/
-			walkingThreshold = 2.0f;
-			runningThreshold = 4.0f;
-			maxSpeed = 10.5f;
-			accel = 2.0f;
-			walking = Dir.Length >= walkingThreshold;
-			running = Dir.Length >= runningThreshold;
-		
-			
-			if Dir.Y > 0.1f:
-				Character.LowerAnimation = Character.Model.GetAnimation(Md3.AnimationId.LEGS_JUMP)
-			elif Dir.Y < -0.1f:
-				Character.LowerAnimation = Character.Model.GetAnimation(Md3.AnimationId.LEGS_LAND)
-			elif Dir.Length >= runningThreshold:
-				Character.LowerAnimation = Character.Model.GetAnimation(Md3.AnimationId.LEGS_RUN)
-			elif Dir.Length >= walkingThreshold:
-				Character.LowerAnimation = Character.Model.GetAnimation(Md3.AnimationId.LEGS_WALK)
-			else:
-				Character.LowerAnimation = Character.Model.GetAnimation(Md3.AnimationId.LEGS_IDLE)
 			
 			# Shooting
 			for i in range(joystick.Button.Count):
@@ -473,14 +446,10 @@ class Game(AbstractGame):
 			World.Step(StepSize)
 			PhysicsTime -= StepSize
 		
-		# Update
-		/*pos = PlayerBody.GetPosition()
-		Character.Position = Vector3(pos.X, pos.Y - 1.0f, Character.Position.Z)		*/
-		
 		# Listener
 		Listener.Position = Player.Position + Vector3(0, 0, 2.0f)
 		Listener.Orientation = Vector3(0, 0, -1)
-		
+
 game = Game.Instance
 game.Run()
 print "Floored"

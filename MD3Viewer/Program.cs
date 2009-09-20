@@ -8,6 +8,8 @@
  */
 using System;
 using System.Windows.Forms;
+using OpenTK;
+using OpenTK.Graphics;
 
 namespace MD3Viewer
 {

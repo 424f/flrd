@@ -436,7 +436,7 @@ class Game(OpenTK.GameWindow):
 
 		// Create NPC
 		npcModel = Core.Graphics.Md3.CharacterModel("Data/Models/mistress/")
-		npc = npcModel.Skins["default"].GetInstance()
+		npc = npcModel.Skins["default"].CreateInstance()
 		npc.LowerAnimation = npc.Model.GetAnimation(Core.Graphics.Md3.AnimationId.LEGS_IDLE)
 		npc.UpperAnimation = npc.Model.GetAnimation(Core.Graphics.Md3.AnimationId.TORSO_GESTURE)
 		npc.Position = Vector3(-100, 0, 100)
@@ -450,7 +450,7 @@ class Game(OpenTK.GameWindow):
 		r = Random()
 		for key as string in model.Skins.Keys:
 			skin as Core.Graphics.Md3.CharacterSkin = model.Skins[key]
-			character = skin.GetInstance()
+			character = skin.CreateInstance()
 			character.Position = Vector3(i * 50.0, 0.0, 200.0 - r.NextDouble()*100.0)
 			character.LookDirection = Vector3(0, 0, -1)
 			character.LowerAnimation = character.Model.GetAnimation(Core.Graphics.Md3.AnimationId.LEGS_CROUCH)

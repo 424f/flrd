@@ -113,6 +113,31 @@ class Player(GameObject, IDamageable):
 			print "Jump force"
 			print JumpEnergy
 
+		// Set correct animation
+		Dir = Body.GetLinearVelocity()
+		walkingThreshold = 2f
+		runningThreshold = 4f
+		maxSpeed = 10.5f
+		accel = 2.0f
+		walking = Dir.Length() >= walkingThreshold
+		running = Dir.Length() >= runningThreshold
+		
+		if not OnGround:
+			if Dir.Y > 0.1f:
+				Character.LowerAnimation = Character.Model.GetAnimation(Md3.AnimationId.LEGS_JUMP)
+			elif Dir.Y < -0.1f:
+				Character.LowerAnimation = Character.Model.GetAnimation(Md3.AnimationId.LEGS_LAND)
+		elif Math.Abs(Dir.X) >= walkingThreshold:
+			if (Dir.X > 0f) ^ (LookDirection.X > 0f):
+				Character.LowerAnimation = Character.Model.GetAnimation(Md3.AnimationId.LEGS_BACK)
+				Character.WalkDirection = -Character.WalkDirection
+			elif Math.Abs(Dir.X) >= runningThreshold:
+				Character.LowerAnimation = Character.Model.GetAnimation(Md3.AnimationId.LEGS_RUN)
+			elif Math.Abs(Dir.X) >= walkingThreshold:
+				Character.LowerAnimation = Character.Model.GetAnimation(Md3.AnimationId.LEGS_WALK)
+		else:
+			Character.LowerAnimation = Character.Model.GetAnimation(Md3.AnimationId.LEGS_IDLE)		
+
 		// Weapon controls
 
 		// Reset sensor
