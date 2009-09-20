@@ -22,7 +22,9 @@ class Vertex:
 	public UV as Vector2
 
 class Material:
-	pass
+"""Description of Material"""
+	public texture as Texture
+
 
 class Mesh:
 """Description of Mesh"""
