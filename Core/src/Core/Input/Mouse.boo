@@ -1,7 +1,6 @@
 namespace Core.Input
 import Tao.Sdl.Sdl
 
-import Core.Gui
 import OpenTK.Math
 import Core.Graphics
 
@@ -16,9 +15,6 @@ class Mouse(AbstractController):
 	
 	[Getter(RightButton)]
 	_rightButton as AbstractValue
-	
-	[Property(Widget)] _widget as Widget
-	"""The top-level widget (normally Screen)"""
 	
 	[Property(Camera)] _Camera as Camera
 	"""Just some hack so i can scroll around with the mouse"""

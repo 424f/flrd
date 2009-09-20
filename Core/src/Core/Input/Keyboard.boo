@@ -1,15 +1,11 @@
 namespace Core.Input
 
 import Tao.Sdl.Sdl
-import Core.Gui
 
 class Keyboard(AbstractController):
 	static BUTTON_COUNT = 320
   
 	_name = "Keyboard"
-
-	[Property(Widget)] _widget as Widget
-	"""The top-level widget (normally Screen)"""
 	
 	def constructor():
 		SDL_EnableUNICODE(1)
@@ -18,7 +14,7 @@ class Keyboard(AbstractController):
 	def HandleChar(c as char):
 		if c == '0':
 			return
-		Widget.OnChar(c)
+		//Widget.OnChar(c)
 
 	def HandleKey(key as int, value as double):
 		if key < 0 or key >= BUTTON_COUNT:

@@ -1,4 +1,4 @@
-namespace Game.Objects
+namespace Floored.Objects
 
 import System
 import Tao.OpenGl.Gl

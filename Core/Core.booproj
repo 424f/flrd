@@ -123,6 +123,7 @@
     <Compile Include="src\Core\Graphics\ITexture.boo" />
     <Compile Include="src\Core\Graphics\Light.boo" />
     <Compile Include="src\Core\Graphics\Md3\AnimationSet.boo" />
+    <Compile Include="src\Core\Graphics\Md3\SoundSet.boo" />
     <Compile Include="src\Core\Graphics\Md3\Util.boo" />
     <Compile Include="src\Core\Graphics\NullRenderable.boo" />
     <Compile Include="src\Core\Graphics\Shader.boo" />
@@ -183,20 +184,6 @@
     </Compile>
     <Compile Include="src\Core\Util\Tweener.boo" />
     <Compile Include="src\Core\Util\Vector.boo" />
-    <Compile Include="src\Game\Controller.boo" />
-    <Compile Include="src\Game\Faction.boo" />
-    <Compile Include="src\Game\Game.boo" />
-    <Compile Include="src\Game\Gui\PlayerImage.boo" />
-    <Compile Include="src\Game\HunterController.boo" />
-    <Compile Include="src\Game\Objects\AbstractGun.boo" />
-    <Compile Include="src\Game\Objects\Character.boo" />
-    <Compile Include="src\Game\Objects\AbstractWeapon.boo" />
-    <Compile Include="src\Game\Objects\Collectable.boo" />
-    <Compile Include="src\Game\Objects\Decoration.boo" />
-    <Compile Include="src\Game\Objects\MachineGun.boo" />
-    <Compile Include="src\Game\Objects\Sculpture.boo" />
-    <Compile Include="src\Game\Objects\Wall.boo" />
-    <Compile Include="src\Game\Sound\SoundSet.boo" />
     <Compile Include="src\AssemblyInfo.boo">
       <SubType>Code</SubType>
     </Compile>
@@ -216,10 +203,6 @@
     <Folder Include="src\Core\Sound" />
     <Folder Include="src\Core\Util" />
     <Folder Include="src\Core\Script" />
-    <Folder Include="src\Game" />
-    <Folder Include="src\Game\Gui" />
-    <Folder Include="src\Game\Sound" />
-    <Folder Include="src\Game\Objects" />
   </ItemGroup>
   <Import Project="$(BooBinPath)\Boo.Microsoft.Build.targets" />
 </Project>

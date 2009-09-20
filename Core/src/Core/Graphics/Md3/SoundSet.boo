@@ -1,4 +1,4 @@
-namespace Game.Sound
+namespace Core.Graphics.Md3
 
 import System.IO
 import System.Collections.Generic
