@@ -105,11 +105,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\Core\Common\Application.boo">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="src\Core\Common\FPSCounter.boo" />
-    <Compile Include="src\Core\Common\GameObject.boo" />
     <Compile Include="src\Core\Common\Logger.boo" />
     <Compile Include="src\Core\Common\ResourceManager.boo" />
     <Compile Include="src\Core\Common\World.boo">
@@ -131,7 +127,6 @@
     <Compile Include="src\Core\Graphics\Skydome.boo" />
     <Compile Include="src\Core\Graphics\Terrain.boo" />
     <Compile Include="src\Core\Graphics\Wavefront\ModelReader.boo" />
-    <Compile Include="src\Core\Graphics\Wavefront\Material.boo" />
     <Compile Include="src\Core\Graphics\Wavefront\Mesh.boo" />
     <Compile Include="src\Core\Graphics\Wavefront\Model.boo" />
     <Compile Include="src\Core\Graphics\Ortho.boo" />
@@ -169,7 +164,6 @@
     <Compile Include="src\Core\Math\Sphere.boo">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\Core\Physics\Utils.boo" />
     <Compile Include="src\Core\Script\ScriptEnvironment.boo">
       <SubType>Code</SubType>
     </Compile>
@@ -187,7 +181,6 @@
     <Compile Include="src\AssemblyInfo.boo">
       <SubType>Code</SubType>
     </Compile>
-    <None Include="src\Core\Common\Cutscene.boo" />
     <None Include="src\Core\Math\Extensions.boo" />
   </ItemGroup>
   <ItemGroup>
@@ -199,7 +192,6 @@
     <Folder Include="src\Core\Input" />
     <Folder Include="src\Core\Math" />
     <Folder Include="src\Core\Common" />
-    <Folder Include="src\Core\Physics" />
     <Folder Include="src\Core\Sound" />
     <Folder Include="src\Core\Util" />
     <Folder Include="src\Core\Script" />

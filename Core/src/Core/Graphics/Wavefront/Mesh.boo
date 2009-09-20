@@ -21,6 +21,9 @@ class Vertex:
 	public Vector as Vector3
 	public UV as Vector2
 
+class Material:
+	pass
+
 class Mesh:
 """Description of Mesh"""
 	DisplayList as int

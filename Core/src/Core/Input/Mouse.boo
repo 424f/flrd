@@ -53,8 +53,8 @@ class Mouse(AbstractController):
 	type: SDL_MOUSEBUTTONDOWN or SDL_MOUSEBUTTONUP
 	button in (SDL_BUTTON_LEFT, SDL_BUTTON_MIDDLE, SDL_BUTTON_RIGHT)
 	"""
-		if _widget is not null:
-			_widget.InternalOnClick(Vector2(x, y))
+		//if _widget is not null:
+		//	_widget.InternalOnClick(Vector2(x, y))
 		if button == SDL_BUTTON_LEFT:
 			_leftButton.Fired = true
 			_leftButton.Value = (1.0 if state == SDL_PRESSED else 0.0)

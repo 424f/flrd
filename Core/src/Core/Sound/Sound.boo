@@ -25,14 +25,4 @@ class Sound:
 	static def HandleErrors():
 		err = alGetError()
 		if err != AL_NO_ERROR and false: # TODO: fix
-			raise OpenALException("An OpenAL exception occured: #${err}")		
-
-
-/*
-macro OpenALTry:
-		try:
-			$(OpenALTry.Block)
-			if alGetError() != AL_NO_ERROR:
-				raise OpenALException("An OpenAL exception occured")
-	|]
-*/
+			raise OpenALException("An OpenAL exception occured: #${err}")
