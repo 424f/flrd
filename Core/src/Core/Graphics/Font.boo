@@ -6,7 +6,6 @@ import Tao.OpenGl.Gl
 import OpenTK.Math
 
 class Font:
-"""Description of Font"""
 	private _font as FTFont
 	
 	public static def Create(fontFile as string, faceSize as int) as Font:

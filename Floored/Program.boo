@@ -154,7 +154,7 @@ class Game(AbstractGame):
 		
 		// Set up a camera and a light
 		Camera = Camera(Vector3(0, 3, 10), Vector3(0, 0, 0), Vector3(0, 1, 0))
-		Light = Light(0)
+		Light = Light(Tao.OpenGl.Gl.GL_LIGHT0)
 	
 		// Set up skydome
 		Skydome = Skydome(Texture.Load("../Data/Textures/Sky.jpg"), 150f)
@@ -178,7 +178,7 @@ class Game(AbstractGame):
 		Md3Shader = Program
 		
 		// Particles
-		Particles = ParticleEngine(null)
+		Particles = ParticleEngine(Texture.Load("../Data/Textures/Particles/particle.tga"))
 
 		// Create materials
 		wall = Material("Wall");

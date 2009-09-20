@@ -109,7 +109,6 @@
     <Compile Include="src\Core\Common\World.boo">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\Core\Graphics\Bodies.boo" />
     <Compile Include="src\Core\Graphics\Camera.boo">
       <SubType>Code</SubType>
     </Compile>
@@ -173,7 +172,6 @@
     <Compile Include="src\Core\Util\Structs.boo">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\Core\Util\Tweener.boo" />
     <Compile Include="src\Core\Util\Vector.boo" />
     <Compile Include="src\AssemblyInfo.boo">
       <SubType>Code</SubType>

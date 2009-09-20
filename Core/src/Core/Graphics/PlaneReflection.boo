@@ -11,9 +11,9 @@ TODO: more generic version
 	def constructor():
 		pass
 		
-	def Render(callbackObjects as callable, callbackFloor as callable):	
+	def Render(callbackObjects as callable, callbackFloor as callable, y as single):	
 		# Set up clipping plane 
-		clipEqr = (0.0, -1.0, 0.0, -25.0)
+		clipEqr = (0.0, -1.0, 0.0, y)
 		
 		# Render stencil func floor
 		glDisable(GL_DEPTH_TEST)

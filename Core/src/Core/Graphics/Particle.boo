@@ -17,14 +17,15 @@ Features to implement:
 	- Define size
 	- Define gravity behaviour (smoke goes up, blood falls down)
 	- ARB_point_sprite 
+	
+TODO: completely rewrite
 """
-	textures as (Texture)
 	_texture as Texture
 	particles = List[of Particle]()
 	static counter = 0
 
-	def constructor(textures as (Texture)):
-		_texture = Texture.Load("../Data/Textures/Particles/particle.tga")
+	def constructor(texture as Texture):
+		_texture = texture
 	
 	def Tick(dt as single):
 		for p in particles:
@@ -41,9 +42,7 @@ Features to implement:
 		right = Vector3(model[0], model[4], model[8]) * 3.0f
 		up = Vector3(model[1], model[5], model[9]) * 3.0f
 		
-		/*right = Vector3(1, 0, 0) * 20
-		up = Vector3(0, 0, -1) * 20*/
-		
+
 		glEnable(GL_TEXTURE_2D)
 		glDisable(GL_LIGHTING)
 		glEnable(GL_BLEND)

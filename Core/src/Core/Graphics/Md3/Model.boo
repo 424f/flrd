@@ -108,13 +108,7 @@ class Model(IRenderable):
 	
 	def RenderBoundingBox(frame as int):
 		glDisable(GL_TEXTURE_2D)
-		glColor4f(0, 1, 0, 1)
-				
-		# Draw bounding box
-		frameinfo as Frame = _frames[frame % Header.NumFrames]
-		
-		Bodies.RenderCuboid(frameinfo.MinBounds.ToVector(), frameinfo.MaxBounds.ToVector())
-		
+		glColor4f(0, 1, 0, 1)		
 		glColor4f(1, 1, 1, 1)
 		glEnable(GL_TEXTURE_2D)
 	
