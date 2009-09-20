@@ -91,8 +91,6 @@ class CharacterSkin:
 			_Model.Lower.EndTag()
 		
 	private def RenderModel(model as Model, frame as int):
-		#Model.RenderBoundingBox(frame)
-		#Model.RenderBoundingSphere(frame)
 		for mesh as Mesh in model.Meshes:		
 			if mesh in _textures.Keys:
 				tex as Texture = _textures[mesh]

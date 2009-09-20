@@ -22,7 +22,6 @@ class Vertex:
 	public UV as Vector2
 
 class Mesh:
-"""Description of Mesh"""
 	DisplayList as int
 	public NewOffset as int
 	public NewNormaloffset as int
@@ -85,12 +84,10 @@ class Mesh:
 		glCallList(DisplayList)
 
 	private def CreateDisplayList(faces as Collections.Generic.List[of Face]):
-		print "Creating display list for ${faces.Count} faces"
 		displayList = glGenLists(1)
 		glNewList(displayList, GL_COMPILE)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
-		#glDisable(GL_TEXTURE_2D)
 		if Material is not null and Material.texture is not null:
 			Material.texture.Bind()
 		glBegin(GL_TRIANGLES)
@@ -101,13 +98,4 @@ class Mesh:
 				glTexCoord2f(v.UV.X, v.UV.Y)
 				glVertex3f(v.Vector.X, v.Vector.Y, v.Vector.Z)
 		glEnd()		
-
-		/*glBegin(GL_LINES)
-		for f as Face in faces:
-			for v as Vertex, n as Vector3 in ((f.V1, f.N1), (f.V2, f.N2), (f.V3, f.N3)):
-				glColor3f(0, 0, 1)
-				glVertex3f(v.Vector.X, v.Vector.Y, v.Vector.Z)		
-				glVertex3f(v.Vector.X + n.X*20, v.Vector.Y + n.Y*20, v.Vector.Z + n.Z*20)
-		glEnd()*/
-		
 		glEndList()

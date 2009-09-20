@@ -6,7 +6,6 @@ import Tao.OpenGl.Gl
 import OpenTK.Math
 
 class Bodies:
-"""Description of Bodies"""
 	private static _displayLists = Generic.Dictionary[of callable, int]()
 	"""Caches the display lists created for the different bodies"""
 
@@ -21,7 +20,6 @@ class Bodies:
 		glPopMatrix()
 
 	static def RenderCuboid():
-		
 		# TODO: improve (static instead of rotating, add normals)
 		if RenderCuboid not in _displayLists.Keys:
 			index = glGenLists(1)

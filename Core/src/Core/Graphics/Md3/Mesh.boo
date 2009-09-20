@@ -8,7 +8,7 @@ import Core.Graphics
 
 class Mesh:
 """
-Is a simple mesh (triangle soup) that is part of a Model. To improve performance, frames are automatically 
+Is a simple meshthat is part of a Model. To improve performance, frames are automatically 
 cached as display lists.
 """
 	[Getter(Header)] _header as MeshHeader

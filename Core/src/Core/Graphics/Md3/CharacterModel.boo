@@ -5,7 +5,6 @@ import System.IO
 import System.Collections.Generic
 
 class CharacterModel:
-"""Description of CharacterModel"""
 	[Getter(Lower)] _lower as Model
 	[Getter(Upper)] _upper as Model
 	[Getter(Head)] _head as Model

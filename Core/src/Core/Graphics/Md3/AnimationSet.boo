@@ -5,12 +5,14 @@ import System.IO
 import System.Collections
 
 class AnimationDescriptor:
+"""Information needed to render an animation"""
 	public FirstFrame as Int32 = 0
 	public NumFrames as Int32 = 1
 	public LoopingFrames as Int32 = 1
 	public FramesPerSecond as Int32 = 0
 
 enum AnimationId:
+"""Enumeration containing all possible animations in an MD3 model"""
 	BOTH_DEATH_1 = 0
 	BOTH_DEAD_1  = 1
 	BOTH_DEATH_2 = 2
@@ -40,9 +42,8 @@ enum AnimationId:
 	LEGS_TURN      = 24
 
 class AnimationSet:
-"""Description of AnimationSet"""	
-	#[Getter(Animations)] _animations as Generic.List[of AnimationDescriptor]
-	[Getter(Animations)] _animations as (AnimationDescriptor)
+"""Contains AnimationDescriptors for all AnimationIds"""	
+	private _animations as (AnimationDescriptor)
 	
 	def constructor(path as string):
 		anims = Generic.List[of AnimationDescriptor]()

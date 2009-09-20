@@ -106,7 +106,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\Core\Common\FPSCounter.boo" />
-    <Compile Include="src\Core\Common\ResourceManager.boo" />
     <Compile Include="src\Core\Common\World.boo">
       <SubType>Code</SubType>
     </Compile>
@@ -118,7 +117,6 @@
     <Compile Include="src\Core\Graphics\ITexture.boo" />
     <Compile Include="src\Core\Graphics\Light.boo" />
     <Compile Include="src\Core\Graphics\Md3\AnimationSet.boo" />
-    <Compile Include="src\Core\Graphics\Md3\SoundSet.boo" />
     <Compile Include="src\Core\Graphics\Md3\Util.boo" />
     <Compile Include="src\Core\Graphics\NullRenderable.boo" />
     <Compile Include="src\Core\Graphics\Shader.boo" />
@@ -126,7 +124,6 @@
     <Compile Include="src\Core\Graphics\Skydome.boo" />
     <Compile Include="src\Core\Graphics\Terrain.boo" />
     <Compile Include="src\Core\Graphics\Wavefront\Material.boo" />
-    <Compile Include="src\Core\Graphics\Wavefront\ModelReader.boo" />
     <Compile Include="src\Core\Graphics\Wavefront\Mesh.boo" />
     <Compile Include="src\Core\Graphics\Wavefront\Model.boo" />
     <Compile Include="src\Core\Graphics\Ortho.boo" />

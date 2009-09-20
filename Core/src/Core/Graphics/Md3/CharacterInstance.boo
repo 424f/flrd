@@ -7,14 +7,19 @@ import Core.Math
 import Core.Graphics
 
 class CharacterInstance(IRenderable):
-"""Description of CharacterInstance"""
+"""An instance of a CharacterModel using a given CharacterSkin"""
 	[Property(Position)] _Position as Vector3
+	"""World position where instance will be rendered"""
 	[Getter(Skin)] _skin as CharacterSkin
+	"""Skin describing the textures to be used to render this character instance"""
 	
 	[Property(LowerFrame)] _lowerFrame as single
+	"""Current frame of legs animation"""
 	[Property(UpperFrame)] _upperFrame as single
+	"""Current frame of torso animation"""
 	
-	public Scale = 1.0f
+	[Property(Scale)] _Scale = 1.0f
+	"""The factor by which the character is scaled"""
 	
 	LookDirection: 
 		get:
