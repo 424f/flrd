@@ -33,6 +33,15 @@ class Source(System.IDisposable):
 	private _direction as Vector3
 	"""The source's direction"""	
 
+	Buffer as Buffer:
+	"""The buffer this source is playing"""
+		get:
+			return _Buffer
+		set: 
+			_Buffer = value
+			alSourcei(_id, AL_BUFFER, value.Id)
+	private _Buffer as Buffer
+	
 	def constructor(buffer as Buffer):
 		ids = array(int, 1)
 		alGenSources(1, ids)
@@ -47,6 +56,8 @@ class Source(System.IDisposable):
 		self.Position = Vector3(0.0f, 0.0f, 0.0f)
 		self.Velocity = Vector3(0.0f, 0.0f, 0.0f)
 		self.Direction = Vector3(0.0f, 0.0f, 0.0f)
+		
+		Buffer = buffer
 		
 	def Play():
 		alSourcePlay(_id)
