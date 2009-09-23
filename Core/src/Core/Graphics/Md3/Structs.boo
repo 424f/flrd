@@ -2,7 +2,7 @@ namespace Core.Graphics.Md3
 
 import System
 import System.Runtime.InteropServices
-import OpenTK.Math
+import OpenTK
 
 struct ModelHeader:
 	Magic as Int32

@@ -2,7 +2,7 @@ namespace Core.Graphics
 
 import System
 import Tao.OpenGl.Gl
-import OpenTK.Math
+import OpenTK
 import Core.Math
 
 class Ortho:

@@ -3,7 +3,7 @@ namespace Core.Graphics
 import System
 import Tao.FtGl.FtGl
 import Tao.OpenGl.Gl
-import OpenTK.Math
+import OpenTK
 
 class Font:
 	private _font as FTFont

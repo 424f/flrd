@@ -1,7 +1,7 @@
 ﻿namespace Core.Util
 
 import System
-import OpenTK.Math
+import OpenTK
 import Tao.OpenGl.Gl
 
 class Matrices:

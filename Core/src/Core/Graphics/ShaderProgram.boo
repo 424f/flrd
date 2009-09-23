@@ -1,8 +1,7 @@
 ﻿namespace Core.Graphics
 
 import System
-import OpenTK.Graphics
-import OpenTK.Graphics.GL
+import OpenTK.Graphics.OpenGL
 
 public class ShaderProgram:
 """A shader program, consisting of a vertex and a fragment shader"""
@@ -17,7 +16,7 @@ public class ShaderProgram:
 	[Getter(FragmentShader)] _FragmentShader as Shader
 
 	public def constructor():
-		_Handle = CreateProgram()
+		_Handle = GL.CreateProgram()
 		
 	public def constructor(vertexShaderPath as string, fragmentShaderPath as string):
 		Attach(Shader(ShaderType.VertexShader, vertexShaderPath))
@@ -31,19 +30,19 @@ public class ShaderProgram:
 		elif shader.ShaderType == ShaderType.VertexShader:
 			raise Exception("There is already a vertex shader attached to this program.") if _VertexShader != null
 			_VertexShader = shader
-		AttachShader(Handle, shader.Handle)
+		GL.AttachShader(Handle, shader.Handle)
 		
 	public def Link():
-		LinkProgram(Handle)
+		GL.LinkProgram(Handle)
 		_IsLinked = true
 		
 	public def Apply():
 		raise Exception("Program has to be linked first") if not IsLinked
-		UseProgram(Handle)
+		GL.UseProgram(Handle)
 		
 	public def Remove():
 		raise Exception("Program has to be linked first") if not IsLinked
-		UseProgram(0)
+		GL.UseProgram(0)
 		
 	public def GetUniformLocation(location as string) as int:
 		return GL.GetUniformLocation(Handle, location)
@@ -51,13 +50,13 @@ public class ShaderProgram:
 	public def Reload():
 	"""Reloads all the shaders attached to this program"""
 		for v in (_VertexShader, _FragmentShader):
-			DetachShader(Handle, v.Handle)
+			GL.DetachShader(Handle, v.Handle)
 			v.Reload() if v != null
-			AttachShader(Handle, v.Handle)
+			GL.AttachShader(Handle, v.Handle)
 		Link()
 		
 	public def BindUniformTexture(name as string, texture as Texture, textureUnit as int):
 		loc = GetUniformLocation(name)
 		GL.ActiveTexture(TextureUnit.Parse(TextureUnit, "Texture${textureUnit}"))
 		texture.Bind()		
-		OpenTK.Graphics.GL.Uniform1(loc, textureUnit)
+		GL.Uniform1(loc, textureUnit)

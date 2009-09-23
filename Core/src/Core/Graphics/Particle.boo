@@ -2,8 +2,8 @@ namespace Core.Graphics
 
 import System
 import System.Collections.Generic
-import OpenTK.Graphics
-import OpenTK.Math
+import OpenTK.Graphics.OpenGL
+import OpenTK
 import Tao.OpenGl.Gl
 
 class ParticleEngine(IRenderable):

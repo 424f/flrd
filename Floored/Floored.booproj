@@ -34,10 +34,7 @@
       <HintPath>..\Libs\Box2DX\Box2DX.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK">
-      <HintPath>..\Libs\Debug\OpenTK.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenTK.Utilities">
-      <HintPath>..\Libs\Debug\OpenTK.Utilities.dll</HintPath>
+      <HintPath>..\Libs\OpenTK\OpenTK.dll</HintPath>
     </Reference>
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -54,10 +51,10 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="Tao.DevIl">
-      <HintPath>..\Libs\Tao.DevIl.dll</HintPath>
+      <HintPath>..\Libs\Tao\Tao.DevIl.dll</HintPath>
     </Reference>
     <Reference Include="Tao.OpenGl">
-      <HintPath>..\Libs\Tao.OpenGl.dll</HintPath>
+      <HintPath>..\Libs\Tao\Tao.OpenGl.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -66,6 +63,7 @@
     <Compile Include="Controller.boo" />
     <Compile Include="Faction.boo" />
     <Compile Include="GameObject.boo" />
+    <Compile Include="GameState.boo" />
     <Compile Include="Levels\Level.boo" />
     <Compile Include="Material.boo" />
     <Compile Include="Objects\Bullet.boo" />
@@ -83,6 +81,7 @@
     <Compile Include="Shapes\TriangleMesh.boo" />
     <Compile Include="Shapes\Vertex.boo" />
     <Compile Include="World.boo" />
+    <Content Include="ProfilingSessions\Session20090923_010603.sdps" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Levels" />

@@ -56,8 +56,6 @@ cached as display lists.
 		# Load vertices
 		stream.Seek(offset + _header.OffsetVertices, IO.SeekOrigin.Begin)
 		_frames = matrix(Vertex, _header.NumFrames, _header.NumVertices)
-		smallest, biggest = 10000, -10000
-		s2, b2 = 10000, -1000
 		for j in range(_header.NumFrames):
 			for i in range(_header.NumVertices):
 				raw as EncodedVertex = Core.Util.Structs.Create(stream, EncodedVertex)
@@ -68,15 +66,7 @@ cached as display lists.
 					                            cast(single, raw.Y) * COORD_FACTOR,
 					                            cast(single, raw.Z) * COORD_FACTOR))
 				
-				# Decode normal vector
-				if raw.Normal0 > biggest:
-					biggest = raw.Normal0
-				if raw.Normal0 < smallest:
-					smallest = raw.Normal0
-				if raw.Normal1 > b2:
-					b2 = raw.Normal0
-				if raw.Normal1 < s2:
-					s2 = raw.Normal0				
+				# Decode normal vector			
 				lat as single = 2.0f * Math.PI * cast(single, raw.Normal0) / 255.0f
 				lng as single = 2.0f * Math.PI * cast(single, raw.Normal1) / 255.0f
 				v.Normal = Util.DecodeVector(Vec3f(cast(single, Math.Cos(lat) * Math.Sin(lng)),
@@ -88,9 +78,6 @@ cached as display lists.
 				v.Tv = _texCoords[i].V
 				
 				_frames[j, i] = v
-		System.Console.Out.WriteLine("${smallest} ${biggest}")
-		System.Console.Out.WriteLine("${s2} ${b2}")
-		System.Console.Out.WriteLine("----");
 		
 		# Allocate space for display lists
 		_displayLists = array(int, _header.NumFrames)

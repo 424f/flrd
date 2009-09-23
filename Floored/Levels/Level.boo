@@ -1,7 +1,7 @@
 ﻿namespace Floored.Levels
 
 import System
-import OpenTK.Math
+import OpenTK
 import Core.Graphics
 import Core.Util.Ext
 import Floored

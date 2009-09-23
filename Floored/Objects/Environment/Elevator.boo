@@ -2,7 +2,7 @@
 
 import Floored
 import Core.Util.Ext
-import OpenTK.Math
+import OpenTK
 import Box2DX.Common
 import Box2DX.Dynamics
 

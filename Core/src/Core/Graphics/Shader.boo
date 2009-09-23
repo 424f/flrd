@@ -2,8 +2,8 @@
 
 import System
 import System.IO
-import OpenTK.Graphics
-import OpenTK.Graphics.GL
+import OpenTK.Graphics.OpenGL
+import OpenTK.Graphics.OpenGL.GL
 
 public class Shader:
 """Provides around the function calls needed to set up a fragment or vertex shader"""

@@ -1,7 +1,7 @@
 namespace Core.Graphics.Wavefront
 
 import System
-import OpenTK.Math
+import OpenTK
 import Tao.OpenGl.Gl
 
 class Face:
@@ -41,39 +41,33 @@ class Mesh:
 			continue if line.StartsWith("#") or line.Trim().Length == 0
 			vals = line.Split((" ",), StringSplitOptions.RemoveEmptyEntries)
 			continue if vals.Length == 0
-			try:
-				print "'${vals[0]}'"
-				if vals[0] == "v":
-					# Vertex
-					vertex = Vector3(single.Parse(vals[1]), single.Parse(vals[2]), single.Parse(vals[3]))
-					vertex.Scale(0.3, 0.3, 0.3)
-					vertex = Vector3(vertex.X, vertex.Z, -vertex.Y)
-					v = Vertex()
-					v.Vector = vertex
-					vertexList.Add(v)
-				elif vals[0] == "f":
-					# Face
-					parsed = [(int.Parse(vals[x + 1].Split(char.Parse('/'))[0]) - 1 - offset) for x in range(3)]
-					face = Face(vertexList[parsed[0]], vertexList[parsed[1]], vertexList[parsed[2]])
-					try:
-						normal = [(int.Parse(vals[x + 1].Split(char.Parse('/'))[2]) - 1 - normalOffset) for x in range(3)]
-						face.N1 = normalsList[normal[0]]
-						face.N2 = normalsList[normal[1]]
-						face.N3 = normalsList[normal[2]]					
-					except e:
-						print e
-					faceList.Add(face)
-				elif vals[0] == "vt":
-					vertexList[texCoordsList.Count].UV = Vector2(single.Parse(vals[1]), single.Parse(vals[2]))
-					texCoordsList.Add(Vector2(single.Parse(vals[1]), 1.0-single.Parse(vals[2])))
-				elif vals[0] == "vn":
-					normalsList.Add(Vector3(single.Parse(vals[1]), single.Parse(vals[3]), -single.Parse(vals[2])))
-				elif vals[0] == "usemtl":
-					print "Use material ${vals[1]}"
-					materialName as string = vals[1]
-					material = model.GetMaterial(materialName)
-			except e:
-				print e		
+
+			if vals[0] == "v":
+				# Vertex
+				vertex = Vector3(single.Parse(vals[1]), single.Parse(vals[2]), single.Parse(vals[3]))
+				vertex.Scale(0.3, 0.3, 0.3)
+				vertex = Vector3(vertex.X, vertex.Z, -vertex.Y)
+				v = Vertex()
+				v.Vector = vertex
+				vertexList.Add(v)
+			elif vals[0] == "f":
+				# Face
+				parsed = [(int.Parse(vals[x + 1].Split(char.Parse('/'))[0]) - 1 - offset) for x in range(3)]
+				face = Face(vertexList[parsed[0]], vertexList[parsed[1]], vertexList[parsed[2]])
+				normal = [(int.Parse(vals[x + 1].Split(char.Parse('/'))[2]) - 1 - normalOffset) for x in range(3)]
+				face.N1 = normalsList[normal[0]]
+				face.N2 = normalsList[normal[1]]
+				face.N3 = normalsList[normal[2]]					
+				faceList.Add(face)
+			elif vals[0] == "vt":
+				//vertexList[texCoordsList.Count].UV = Vector2(single.Parse(vals[1]), single.Parse(vals[2]))
+				texCoordsList.Add(Vector2(single.Parse(vals[1]), 1.0-single.Parse(vals[2])))
+			elif vals[0] == "vn":
+				normalsList.Add(Vector3(single.Parse(vals[1]), single.Parse(vals[3]), -single.Parse(vals[2])))
+			elif vals[0] == "usemtl":
+				print "Use material ${vals[1]}"
+				materialName as string = vals[1]
+				material = model.GetMaterial(materialName)	
 		# Create the display list for later rendering
 		CreateDisplayList(faceList)
 		

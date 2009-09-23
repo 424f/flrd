@@ -2,7 +2,7 @@ namespace Floored.Objects
 
 import System
 import Floored
-import Tao.OpenGl.Gl
+import Tao.OpenGl
 
 class Collectable(GameObject):
 	
@@ -16,8 +16,8 @@ class Collectable(GameObject):
 		rotation += Game.Instance.Dt * 90.0f
 		
 	def Render():
-		glPushMatrix()
-		glTranslatef(Position.X, Position.Y, Position.Z)
-		glRotatef(rotation, 0, 1, 0)
+		Gl.glPushMatrix()
+		Gl.glTranslatef(Position.X, Position.Y, Position.Z)
+		Gl.glRotatef(rotation, 0, 1, 0)
 		_obj.Render()
-		glPopMatrix()
+		Gl.glPopMatrix()

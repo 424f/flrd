@@ -1,7 +1,7 @@
 ﻿namespace Core.Util
 
 import System
-import OpenTK.Math
+import OpenTK
 
 abstract class Vector:
 	static def ToSingle(v as Vector4) as (single):

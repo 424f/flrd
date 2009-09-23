@@ -1,6 +1,6 @@
 ﻿namespace Floored
 
-import OpenTK.Graphics
+import OpenTK.Graphics.OpenGL
 import Core.Graphics
 
 class RenderState:

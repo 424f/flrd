@@ -3,6 +3,7 @@ namespace Core.Graphics.Wavefront
 import System
 import System.IO
 import Core.Graphics
+import OpenTK.Graphics.OpenGL
 
 class Model(IRenderable):
 	static loadedModels = Collections.Generic.Dictionary[of string, Model]()
@@ -11,6 +12,9 @@ class Model(IRenderable):
 	_path as string
 	textureLoader as callable(string) as Texture
 	meshes = Collections.Generic.List[of Mesh]()
+	
+	Faces = List[of Face]()
+	Vertices = List[of Vertex]()
 	
 	static public def Load(filename as string):
 		file = Path.GetFullPath(filename)
@@ -42,38 +46,46 @@ class Model(IRenderable):
 			continue if line.StartsWith("#") or line.Trim().Length == 0
 			vals = line.Split(char.Parse(" "))
 			continue if vals.Length == 0
-
 			if vals[0] == "g":
-				# Already a mesh read?
-				if sw is not null:
-					sw.Flush()
-					ms.Seek(0, SeekOrigin.Begin)
-					m = Mesh(self, meshName, StreamReader(ms), offset, normalOffset)
-					if m.Name != "collision":
-						meshes.Add(m)
-					offset = m.NewOffset
-					normalOffset = m.NewNormaloffset
-				meshName = vals[1]
-				print "Loading mesh ${vals[1]}.."
-				ms = MemoryStream()
-				sw = StreamWriter(ms)
-			elif sw is not null:
-				sw.WriteLine(line)
-
-		if sw is not null:
-			sw.Flush()
-			ms.Seek(0, SeekOrigin.Begin)
-			m = Mesh(self, meshName, StreamReader(ms), offset, normalOffset)
-			if m.Name != "collision":
-				meshes.Add(m)
-			offset = m.NewOffset
+				OnGroup(vals)
+			elif vals[0] == "v":
+				OnVertex(vals)
+			elif vals[0] == "f":
+				OnFace(vals)
 
 		stream.Close()
 		
+	def OnGroup(params as (string)):
+		pass
 		
+	def OnVertex(params as (string)):
+		v = Vertex()
+		v.Vector.X = single.Parse(params[1])
+		v.Vector.Y = single.Parse(params[2])
+		v.Vector.Z = single.Parse(params[3])
+		v.Vector *= 0.01f
+		
+		Vertices.Add(v)
+		
+	def OnFace(params as (string)):
+		parsed = [(int.Parse(params[x + 1].Split(char.Parse('/'))[0]) - 1) for x in range(3)]
+		i1 = parsed[0]
+		i2 = parsed[1]
+		i3 = parsed[2]
+		v1 = Vertices[i1]
+		v2 = Vertices[i2]
+		v3 = Vertices[i3]
+		f = Face(v1, v2, v3)
+		Faces.Add(f)
+	
 	def Render():
-		for mesh in meshes:
-			mesh.Render()
+		GL.Color4(System.Drawing.Color.Red)
+		GL.Begin(BeginMode.Triangles)
+		GL.Disable(EnableCap.CullFace)
+		for face in Faces:
+			for v in (face.V1.Vector, face.V2.Vector, face.V3.Vector):
+				GL.Vertex3(v.X, v.Y, v.Z)
+		GL.End()
 		
 	def LoadMaterials():
 		path = Path.Combine(Path.GetDirectoryName(_path), Path.GetFileNameWithoutExtension(_path) + ".mtl")

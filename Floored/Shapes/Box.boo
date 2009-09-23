@@ -1,8 +1,8 @@
 ﻿namespace Floored.Shapes
 
 import System
-import OpenTK.Graphics
-import OpenTK.Math
+import OpenTK.Graphics.OpenGL
+import OpenTK
 import Box2DX.Collision
 
 public class Box(TriangleMesh):	

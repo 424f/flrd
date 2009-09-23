@@ -1,8 +1,8 @@
 ﻿namespace Floored.Shapes
 
 import System
-import OpenTK.Math
-import OpenTK.Graphics
+import OpenTK
+import OpenTK.Graphics.OpenGL
 
 public class Vertex:
 	public Position as Vector3

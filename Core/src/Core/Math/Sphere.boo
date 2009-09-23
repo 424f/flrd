@@ -1,6 +1,6 @@
 namespace Core.Math
 
-import OpenTK.Math
+import OpenTK
 
 struct Sphere:
 	Center as Vector3

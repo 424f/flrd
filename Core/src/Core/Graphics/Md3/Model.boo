@@ -5,7 +5,7 @@ import System.IO
 
 import Tao.OpenGl.Gl
 import Tao.OpenGl.Glu
-import OpenTK.Math
+import OpenTK
 import System.Collections.Generic
 
 import Core.Util

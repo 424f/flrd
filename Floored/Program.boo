@@ -3,12 +3,13 @@
 import System
 import OpenTK
 import OpenTK.Graphics
+import OpenTK.Graphics.OpenGL
 import OpenTK.Platform
-import OpenTK.Math
 import OpenTK.Input
 import Tao.DevIl
 
 import Core.Graphics
+import Core.Util.Ext
 
 import AwesomiumDotNet
 
@@ -32,7 +33,7 @@ abstract class AbstractGame(OpenTK.GameWindow):
 		super(1280, 720, OpenTK.Graphics.GraphicsMode(ColorFormat(32), 32, 32, 0, ColorFormat(32)), "FLOORED")
 		VSync = VSyncMode.Off	
 
-	public override def OnLoad(e as EventArgs):
+	public override def OnLoad(e as EventArgs):		
 		Il.ilInit()
 		Ilut.ilutInit()
 		Ilut.ilutRenderer(Ilut.ILUT_OPENGL)		
@@ -40,7 +41,7 @@ abstract class AbstractGame(OpenTK.GameWindow):
 		Core.Sound.Sound.Init()
 		
 		WebCore = AwesomiumDotNet.WebCore()
-		webView = WebCore.CreateWebView(Width, Height, true)
+		webView = WebCore.CreateWebView(Width, Height, true, true)
 		webView.BeginLoading += { print "Loading!!" }
 		isRunning = true
 		webView.FinishLoading += def():
@@ -54,6 +55,7 @@ abstract class AbstractGame(OpenTK.GameWindow):
 		webView.ChangeTargetURL += { print "target url" }
 		webView.ChangeTooltip += { print "Tooltip" }
 		webView.ReceiveTitle += { print "Receive title" }
+		webView.SetCallback("Eval")
 		
 
 		def convert(mb as OpenTK.Input.MouseButton) as AwesomiumDotNet.MouseButton:
@@ -69,9 +71,19 @@ abstract class AbstractGame(OpenTK.GameWindow):
 		self.Mouse.ButtonDown += { sender as object, mbe as OpenTK.Input.MouseButtonEventArgs | webView.InjectMouseDown(convert(mbe.Button)) }
 		self.Mouse.ButtonUp += { sender as object, mbe as OpenTK.Input.MouseButtonEventArgs | webView.InjectMouseUp(convert(mbe.Button)) }
 		
+		def MapKey(k as OpenTK.Input.Key):
+			i = 0
+			try:
+				i = cast(int, System.Windows.Forms.Keys.Parse(System.Windows.Forms.Keys, k.ToString()))
+			except:
+				pass
+			return i
+		
 		//System.Windows.Forms.7
-		self.Keyboard.KeyDown += { sender as object, key as Key | webView.InjectKeyboardEvent(IntPtr.Zero, AwesomiumDotNet.WM.KeyDown, cast(int, char.Parse('a')), 0) }
-		self.Keyboard.KeyUp += { sender as object, key as Key | webView.InjectKeyboardEvent(IntPtr.Zero, AwesomiumDotNet.WM.KeyUp, cast(int, char.Parse('a')), 0) }
+		self.Keyboard.KeyDown += { sender as object, e as KeyboardKeyEventArgs | webView.InjectKeyboardEvent(IntPtr.Zero, AwesomiumDotNet.WM.Char, MapKey(e.Key), 0); 
+		                                                                         webView.InjectKeyboardEvent(IntPtr.Zero, AwesomiumDotNet.WM.KeyDown, MapKey(e.Key), 0)}
+		self.Keyboard.KeyUp += { sender as object, e as KeyboardKeyEventArgs | webView.InjectKeyboardEvent(IntPtr.Zero, AwesomiumDotNet.WM.KeyUp, MapKey(e.Key), 0) }
+		self.KeyPress += { sender as object, e as OpenTK.KeyPressEventArgs | print "lawl" }
 		
 		browserTexture = GL.GenTexture()
 				
@@ -91,14 +103,66 @@ abstract class AbstractGame(OpenTK.GameWindow):
 			return string.Format("{0:d${i}}", a)
 		bmp.Save("Screenshots/Screenshot ${n.Year}-${fill(n.Month, 2)}-${fill(n.Day, 2)} - ${fill(n.Hour, 2)}${fill(n.Minute, 2)}${fill(n.Second, 2)}.png", ImageFormat.Png);*/
 		
-		webView.LoadURL("""L:\Floored\Data\UI\index.htm""")			
-		
+		webView.LoadURL("""L:\Floored\Data\UI\loading.htm""")			
 
-	protected override def OnResize(e as ResizeEventArgs):
+	protected override def OnResize(e as EventArgs):
 		GL.Viewport(0, 0, self.Width, self.Height)
 		GL.MatrixMode(MatrixMode.Projection)
 		GL.LoadIdentity()
-		Glu.Perspective(25.0, Width / cast(double, Height), 1.0, 10000.0)
+		Tao.OpenGl.Glu.gluPerspective(25.0, Width / cast(double, Height), 1.0, 10000.0)
+
+	protected def UpdateGui():
+		self.WebCore.Update()
+		if webView.IsDirty():
+			width = Width
+			height = Height
+			buffer = array(byte, width*height*4)
+			bytesPerRow = 4*width
+			
+			webView.Render(buffer, bytesPerRow, 4)
+			GL.ActiveTexture(TextureUnit.Texture0)
+			GL.BindTexture(TextureTarget.Texture2D, browserTexture)
+			GL.TexImage2D[of byte](TextureTarget.Texture2D, 0,PixelInternalFormat.Rgba, width, height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, buffer)			
+			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, cast(int, TextureMinFilter.Linear));
+			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, cast(int, TextureMagFilter.Linear));				
+
+	protected def RenderGui():
+		GL.MatrixMode(MatrixMode.Projection)
+		GL.PushMatrix()
+		GL.LoadIdentity()
+		
+		GL.MatrixMode(MatrixMode.Modelview)
+		GL.PushMatrix()
+		GL.LoadIdentity()
+		Tao.OpenGl.Glu.gluOrtho2D(0, Width, Height, 0)
+		
+		GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha)
+		GL.Enable(EnableCap.Blend)
+		GL.Enable(EnableCap.Texture2D)
+		GL.BindTexture(TextureTarget.Texture2D, browserTexture)
+		GL.Begin(BeginMode.Triangles)
+		GL.TexCoord2(0, 0)
+		GL.Vertex3(0, 0, 0)
+		GL.TexCoord2(1, 0)
+		GL.Vertex3(Width, 0, 0)
+		GL.TexCoord2(1, 1)
+		GL.Vertex3(Width, Height, 0)
+
+		GL.TexCoord2(1, 1)
+		GL.Vertex3(Width, Height, 0)
+		GL.TexCoord2(0, 1)
+		GL.Vertex3(0, Height, 0)
+		GL.TexCoord2(0, 0)
+		GL.Vertex3(0, 0, 0)
+		
+
+		GL.End()		
+
+		GL.MatrixMode(MatrixMode.Projection)
+		GL.PopMatrix()
+		
+		GL.MatrixMode(MatrixMode.Modelview)
+		GL.PopMatrix()			
 
 class Game(AbstractGame):
 	public static Instance as Game:
@@ -132,17 +196,21 @@ class Game(AbstractGame):
 	// -- Settings --
 	public ShowPhysics = false
 	
-	Box as Shapes.Box
-	wall as Material
-	Tank as IRenderable	
-	FpsCounter as Core.Common.FPSCounter
+	public Box as Shapes.Box
+	public wall as Material
+	public Tank as IRenderable	
+	public FpsCounter as Core.Common.FPSCounter
+	
+	public Skin as Md3.CharacterSkin
 	
 	// -- Sound --
-	Listener as Core.Sound.Listener
-	Sound as Core.Sound.Buffer
-	Source as Core.Sound.Source
-	GSound as Core.Sound.Buffer
-	GSource as Core.Sound.Source
+	public Listener as Core.Sound.Listener
+	public Sound as Core.Sound.Buffer
+	public Source as Core.Sound.Source
+	public GSound as Core.Sound.Buffer
+	public GSource as Core.Sound.Source
+	
+	public State as State
 	
 	public override def OnLoad(e as EventArgs):
 		super.OnLoad(e)
@@ -155,293 +223,43 @@ class Game(AbstractGame):
 		// Set up a camera and a light
 		Camera = Camera(Vector3(0, 3, 10), Vector3(0, 0, 0), Vector3(0, 1, 0))
 		Light = Light(Tao.OpenGl.Gl.GL_LIGHT0)
-	
-		// Set up skydome
-		Skydome = Skydome(Texture.Load("../Data/Textures/Sky.jpg"), 150f)
-
-		// Load shader
-		//DefaultShader = LoadShader("../Data/Shaders/bump.vert", "../Data/Shaders/bump.frag")
-		Program = ShaderProgram()
-		VertexShader = Shader(ShaderType.VertexShader, "../Data/Shaders/bump.vert")
-		FragmentShader = Shader(ShaderType.FragmentShader, "../Data/Shaders/bump.frag")
-		Program.Attach(VertexShader)
-		Program.Attach(FragmentShader)
-		Program.Link()
-		DefaultShader = Program
-
-		Program = ShaderProgram()
-		VertexShader = Shader(ShaderType.VertexShader, "../Data/Shaders/md3_vertex.glsl")
-		FragmentShader = Shader(ShaderType.FragmentShader, "../Data/Shaders/md3_fragment.glsl")
-		Program.Attach(VertexShader)
-		Program.Attach(FragmentShader)
-		Program.Link()
-		Md3Shader = Program
-		
-		// Particles
-		Particles = ParticleEngine(Texture.Load("../Data/Textures/Particles/particle.tga"))
-
-		// Create materials
-		wall = Material("Wall");
-		wall.DiffuseTexture = Texture.Load("../Data/Textures/wall.dds")
-		wall.NormalTexture = Texture.Load("../Data/Textures/wall_n.dds")
-		
-		Box = Shapes.Box(Vector3(6f, 0.01f, 6f))
-		
-		// Load a character with weapon
-		Model = Md3.CharacterModel("../Data/Models/Players/police/")
-		skin = Model.Skins["default"]
-
-/*		Weapon = Md3.Model("../Data/Models/Weapons/machinegun/machinegun.md3")
-		Character.WeaponModel = Weapon*/
-
-		// Create world
-		worldAABB = AABB()
-		worldAABB.LowerBound.Set(-200f, -200f)
-		worldAABB.UpperBound.Set(200f, 200f)
-		World = Floored.World(worldAABB, Vec2(0, -25f), 0.0f)
-	
-		// Create player
-		Player = Objects.Player(skin)
-		Player.Weapon = Objects.Weapons.MachineGun()
-		World.Objects.Add(Player)		
-	
-		// Create NPCs
-		npcModel = Md3.CharacterModel("../Data/Models/Players/sergei/")
-		//skin = Model.Skins["default"]
-		for i in range(3):
-			skin = npcModel.Skins["default"]
-			npc = Objects.Player(skin)
-			npc.Position = Vector3(i * 2.0f, 30.0f, 0.0f)
-			World.Objects.Add(npc)
-	
-
-		
-		// Create level
-		Level = Levels.Level(World)
-		
-		// Sound
-		Listener = Core.Sound.Sound.GetListener()
-		if Sound == null:
-			Sound = Core.Sound.Buffer("../Data/Sound/Weapons/silenced.wav")
-			Source = Core.Sound.Source(Sound)	
-			GSound = Core.Sound.Buffer("../Data/Sound/Weapons/grenlf1a.wav")
-			GSource = Core.Sound.Source(GSound)	
-		
-		// Terrain
-		Terrain = Core.Graphics.Terrain({ file as string | Texture.Load(file) })
 		
 		FpsCounter = Core.Common.FPSCounter()
 		
-	public override def OnRenderFrame(e as RenderFrameEventArgs):
+		State = LoadingState(self)
+		
+	public override def OnRenderFrame(e as FrameEventArgs):
 		FpsCounter.Frame()
 		if FpsCounter.Updated:		
 			webView.ExecuteJavaScript("updateFPS(${RenderFrequency})")			
-		
-		self.WebCore.Update()
-		if webView.IsDirty():
-			width = Width
-			height = Height
-			buffer = array(byte, width*height*4)
-			bytesPerRow = 4*width
-			
-			webView.Render(buffer, bytesPerRow, 4)
-			GL.ActiveTexture(TextureUnit.Texture0)
-			GL.BindTexture(TextureTarget.Texture2D, browserTexture)
-			OpenTK.Graphics.GL.TexImage2D[of byte](TextureTarget.Texture2D, 0, OpenTK.Graphics.PixelInternalFormat.Rgba, width, height, 0, OpenTK.Graphics.PixelFormat.Bgra, OpenTK.Graphics.PixelType.UnsignedByte, buffer)			
-			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, cast(int, TextureMinFilter.Linear));
-			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, cast(int, TextureMagFilter.Linear));				
-			
-		// Center camera
-		Camera.Eye = Player.Position + Vector3(0f, 2f, 20f)
-		Camera.LookAt = Player.Position + Vector3(0f, 1f, 0f)
-
-		// Set up scene
-		GL.ClearColor(System.Drawing.Color.SkyBlue)
-		GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit)
-		
-		GL.Disable(EnableCap.Texture2D)
-		GL.Enable(EnableCap.DepthTest)
-		GL.Enable(EnableCap.Blend)
-		GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha)
-		
-		GL.MatrixMode(MatrixMode.Modelview)
-		GL.LoadIdentity()
-		
-		Camera.Push()
-		
-		Light.Position = (Camera.Eye.X, Camera.Eye.Y, -Camera.Eye.Z, 0)
-		Light.Enable()
-		
-		// Render skydome
-		GL.PushMatrix()
-		GL.Translate(0, -60f, 0)
-		GL.Translate(Camera.Eye)
-		GL.Rotate(45.0, 0, 1, 0)
-		Skydome.Render()
-		GL.PopMatrix()
-		
-		// Boxes
-		RenderState.Instance.ApplyProgram(null)
-		RenderState.Instance.ApplyProgram(DefaultShader)
-		RenderState.Instance.ApplyMaterial(wall)
-		// Floor
-		//Box.Render()
-		
-		for o in World.Objects:
-			o.Render() if o.EnableRendering
-		
-		RenderState.Instance.ApplyProgram(null)
-		
-		// Visualize physics
-		// Render AABBs
-		GL.Disable(EnableCap.Texture2D)
-		if ShowPhysics:
-			GL.Disable(EnableCap.DepthTest)
-			aabb as AABB
-			GL.Disable(EnableCap.Texture2D);
-			GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
-			GL.Begin(BeginMode.Quads);
-			b = World.Physics.GetBodyList()
-			while b != null:
-				s = b.GetShapeList()
-				while s != null:
-					if not b.IsSleeping():
-						GL.Color4(System.Drawing.Color.Green)
-					else:
-						GL.Color4(System.Drawing.Color.Gray);									
-					if s.IsSensor:
-						si = s.UserData as SensorInformation
-						if si.__LastContact < 1.0f:
-							GL.Color4(System.Drawing.Color.Purple)
-							si.__LastContact += 0.01f
-					s.ComputeAABB(aabb, b.GetXForm());
-					GL.Vertex3(aabb.LowerBound.X, aabb.LowerBound.Y, 0.0f);
-					GL.Vertex3(aabb.UpperBound.X, aabb.LowerBound.Y, 0.0f);
-					GL.Vertex3(aabb.UpperBound.X, aabb.UpperBound.Y, 0.0f);
-					GL.Vertex3(aabb.LowerBound.X, aabb.UpperBound.Y, 0.0f);
-					s = s.GetNext()
-				b = b.GetNext()
-			
-			// Render Joints
-			GL.Color4(System.Drawing.Color.Blue);
-			joint = World.Physics.GetJointList()
-			while joint != null:
-				GL.Vertex3(joint.Anchor1.X, joint.Anchor1.Y, 0.0f)
-				GL.Vertex3(joint.Anchor2.X, joint.Anchor2.Y, 0.0f)
-				GL.Vertex3(joint.GetBody1().GetPosition().X, joint.GetBody1().GetPosition().Y, 0.0f)
-				GL.Vertex3(joint.GetBody2().GetPosition().X, joint.GetBody2().GetPosition().Y, 0.0f)
-				joint = joint.GetNext()
-			
-			GL.End()
-			GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill)
-		
-			GL.Enable(EnableCap.DepthTest)
-
-		Terrain.Render()
-		
-		Particles.Render()
-		
-		// Render GUI
-		GL.MatrixMode(MatrixMode.Projection)
-		GL.PushMatrix()
-		GL.LoadIdentity()
-		
-		GL.MatrixMode(MatrixMode.Modelview)
-		GL.PushMatrix()
-		GL.LoadIdentity()
-		Glu.Ortho2D(0, Width, Height, 0)
-		
-		GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha)
-		GL.Enable(EnableCap.Blend)
-		GL.Enable(EnableCap.Texture2D)
-		GL.BindTexture(TextureTarget.Texture2D, browserTexture)
-		GL.Begin(BeginMode.Triangles)
-		GL.TexCoord2(0, 0)
-		GL.Vertex3(0, 0, 0)
-		GL.TexCoord2(1, 0)
-		GL.Vertex3(Width, 0, 0)
-		GL.TexCoord2(1, 1)
-		GL.Vertex3(Width, Height, 0)
-
-		GL.TexCoord2(1, 1)
-		GL.Vertex3(Width, Height, 0)
-		GL.TexCoord2(0, 1)
-		GL.Vertex3(0, Height, 0)
-		GL.TexCoord2(0, 0)
-		GL.Vertex3(0, 0, 0)
-		
-
-		GL.End()		
-
-		GL.MatrixMode(MatrixMode.Projection)
-		GL.PopMatrix()
-		
-		GL.MatrixMode(MatrixMode.Modelview)
-		GL.PopMatrix()	
-		
-		Camera.Pop()
-		
+		UpdateGui()
+		State.Render()
+		RenderGui()
 		SwapBuffers()
 		
-	public def KeyDown(sender as KeyboardDevice, key as Key):
-		pass
+	public def KeyDown(sender as object, e as KeyboardKeyEventArgs):
+		key = e.Key
+		if key == Input.Key.A:
+			Player.WalkDirection.X += -1.0f
+		elif key == Input.Key.D:
+			Player.WalkDirection.X += 1.0f
+		elif key == Input.Key.W:
+			Player.DoJump = true
 		
-	public def KeyUp(sender as KeyboardDevice, key as Key):
+	public def KeyUp(sender as object, e as KeyboardKeyEventArgs):
+		key = e.Key
 		if key == Key.F1:
 			ShowPhysics = not ShowPhysics
+		elif key == Input.Key.A:
+			Player.WalkDirection.X -= -1.0f
+		elif key == Input.Key.D:
+			Player.WalkDirection.X -= 1.0f			
+		elif key == Key.W:
+			Player.DoJump = false
 		
-	public override def OnUpdateFrame(e as UpdateFrameEventArgs):		
-		// Gameplay
+	public override def OnUpdateFrame(e as FrameEventArgs):		
 		_Dt = e.Time
-		TimePassed += Dt
-		PhysicsTime += Dt
-		StepSize = 0.015f
-		while PhysicsTime >= StepSize:					
-			# Is player touching the ground?
-			# ???
-			
-			# Update character
-			ReloadTime -= StepSize
-			PrimaryReloadTime -= StepSize
-			joystick = Joysticks[0]
-			Player.WalkDirection = Vector2(joystick.Axis[0], joystick.Axis[1])
-			Player.LookDirection = Vector2(-joystick.Axis[2], -joystick.Axis[3])
-			Player.DoJump = joystick.Button[0]
-			
-			# Walking
-			/*
-			
-				
-				
-			
-			Dir = Vector3(dir2.X, dir2.Y, 0.0f);
-			
-			# Shooting
-			for i in range(joystick.Button.Count):
-				if joystick.Button[i]:
-					pass
-		
-					
-			if joystick.Button[5] and ReloadTime <= 0f:
-				o = Objects.Grenade(World)
-				look = Vector3.Normalize(Character.LookDirection)
-				o.Body.SetXForm((PlayerBody.GetPosition()) + (look * 0.7f).AsVec2(), 0.0f)
-				o.Body.ApplyImpulse(o.Body.GetMass() * look.AsVec2() * 30.0f, Vec2.Zero)
-				World.Objects.Add(o)
-				ReloadTime = 0.5f
-				GSource.Position = Character.Position
-				//Source.Direction = Character.LookDirection
-				GSource.Velocity = Character.LookDirection * 100.0f
-				GSource.Play()*/
-				
-			Particles.Tick(Dt)
-
-			World.Step(StepSize)
-			PhysicsTime -= StepSize
-		
-		# Listener
-		Listener.Position = Player.Position + Vector3(0, 0, 2.0f)
-		Listener.Orientation = Vector3(0, 0, -1)
+		State = State.Update(_Dt)
 
 game = Game.Instance
 game.Run()

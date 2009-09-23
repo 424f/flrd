@@ -2,7 +2,7 @@ namespace Core.Graphics.Md3
 
 import System
 import Tao.OpenGl.Gl
-import OpenTK.Math
+import OpenTK
 import Core.Math
 import Core.Graphics
 
@@ -28,7 +28,7 @@ class CharacterInstance(IRenderable):
 			_lookDirection = value
 			_lookAngle = Math.Atan2(value.X, -value.Z) / Math.PI * 180
 			tmp = Vector3(_lookDirection.X, 0.0, _lookDirection.Z)
-			angle = OpenTK.Math.Vector3.CalculateAngle(_lookDirection, tmp) / Math.PI * 180
+			angle = Vector3.CalculateAngle(_lookDirection, tmp) / Math.PI * 180
 			// TODO: real fix
 			if single.IsNaN(angle):
 				angle = 90f

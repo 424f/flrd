@@ -1,7 +1,7 @@
 ﻿namespace Floored.Objects
 
 import Floored
-import OpenTK.Math
+import OpenTK
 import Box2DX.Common
 import Box2DX.Dynamics
 

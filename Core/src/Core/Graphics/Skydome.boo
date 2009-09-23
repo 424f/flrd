@@ -3,8 +3,8 @@
 import System
 import System.Drawing
 import System.Math
-import OpenTK.Graphics
-import OpenTK.Math
+import OpenTK.Graphics.OpenGL
+import OpenTK
 import Tao.OpenGl.Gl
 
 class Skydome:

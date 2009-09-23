@@ -1,6 +1,6 @@
 namespace Core.Graphics
 
-import OpenTK.Math
+import OpenTK
 import Tao.OpenGl.Gl
 import Tao.OpenGl.Glu
 

@@ -5,7 +5,8 @@ import System.Drawing
 import OpenTK.Graphics
 import Tao.OpenGl.Gl
 import System.Math
-import OpenTK.Math
+import OpenTK
+import OpenTK.Graphics.OpenGL
 
 class TerrainChunk:
 	public ID as int
@@ -174,7 +175,7 @@ class Terrain:
 			alphaLoc = program.GetUniformLocation(s)
 			GL.ActiveTexture(TextureUnit.Parse(TextureUnit, "Texture${i}"))
 			GL.BindTexture(TextureTarget.Texture2D, tex.Id)
-			OpenTK.Graphics.GL.Uniform1(alphaLoc, i)	
+			GL.Uniform1(alphaLoc, i)	
 			i += 1
 		
 		if mapList == -1:

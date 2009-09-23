@@ -1,6 +1,6 @@
 namespace Core.Math
 
-import OpenTK.Math
+import OpenTK
 
 struct Rect:
 	Left as single

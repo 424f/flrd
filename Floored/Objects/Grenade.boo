@@ -2,8 +2,8 @@
 
 import Floored
 import Core.Util.Ext
-import OpenTK.Graphics
-import OpenTK.Math
+import OpenTK
+import OpenTK.Graphics.OpenGL
 import Box2DX.Common
 import Box2DX.Dynamics
 

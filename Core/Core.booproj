@@ -39,10 +39,7 @@
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="OpenTK">
-      <HintPath>..\Libs\Debug\OpenTK.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenTK.Utilities">
-      <HintPath>..\Libs\Debug\OpenTK.Utilities.dll</HintPath>
+      <HintPath>..\Libs\OpenTK\OpenTK.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -55,53 +52,20 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(BooBinPath)\Boo.Lang.Useful.dll</HintPath>
     </Reference>
-    <Reference Include="Tao.Cg">
-      <HintPath>..\Libs\Tao.Cg.dll</HintPath>
-    </Reference>
     <Reference Include="Tao.DevIl">
-      <HintPath>..\Libs\Tao.DevIl.dll</HintPath>
-    </Reference>
-    <Reference Include="Tao.FFmpeg">
-      <HintPath>..\Libs\Tao.FFmpeg.dll</HintPath>
-    </Reference>
-    <Reference Include="Tao.FreeGlut">
-      <HintPath>..\Libs\Tao.FreeGlut.dll</HintPath>
-    </Reference>
-    <Reference Include="Tao.FreeType">
-      <HintPath>..\Libs\Tao.FreeType.dll</HintPath>
+      <HintPath>..\Libs\Tao\Tao.DevIl.dll</HintPath>
     </Reference>
     <Reference Include="Tao.FtGl">
-      <HintPath>..\Libs\Tao.FtGl.dll</HintPath>
-    </Reference>
-    <Reference Include="Tao.FtGl">
-      <HintPath>..\Libs\Tao.FtGl.dll</HintPath>
-    </Reference>
-    <Reference Include="Tao.Glfw">
-      <HintPath>..\Libs\Tao.Glfw.dll</HintPath>
-    </Reference>
-    <Reference Include="Tao.Lua">
-      <HintPath>..\Libs\Tao.Lua.dll</HintPath>
-    </Reference>
-    <Reference Include="Tao.Ode">
-      <HintPath>..\Libs\Tao.Ode.dll</HintPath>
+      <HintPath>..\Libs\Tao\Tao.FtGl.dll</HintPath>
     </Reference>
     <Reference Include="Tao.OpenAl">
-      <HintPath>..\Libs\Tao.OpenAl.dll</HintPath>
+      <HintPath>..\Libs\Tao\Tao.OpenAl.dll</HintPath>
     </Reference>
     <Reference Include="Tao.OpenGl">
-      <HintPath>C:\Program Files\TaoFramework\bin\Tao.OpenGl.dll</HintPath>
-    </Reference>
-    <Reference Include="Tao.PhysFs">
-      <HintPath>..\Libs\Tao.PhysFs.dll</HintPath>
-    </Reference>
-    <Reference Include="Tao.Platform.Windows">
-      <HintPath>..\Libs\Tao.Platform.Windows.dll</HintPath>
-    </Reference>
-    <Reference Include="Tao.Platform.X11">
-      <HintPath>..\Libs\Tao.Platform.X11.dll</HintPath>
+      <HintPath>..\Libs\Tao\Tao.OpenGl.dll</HintPath>
     </Reference>
     <Reference Include="Tao.Sdl">
-      <HintPath>..\Libs\Tao.Sdl.dll</HintPath>
+      <HintPath>..\Libs\Tao\Tao.Sdl.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

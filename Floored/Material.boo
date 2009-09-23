@@ -3,6 +3,7 @@
 import System
 import Core.Graphics
 import OpenTK.Graphics
+import OpenTK.Graphics.OpenGL
 
 public class Material:
 """A material that can be assigned to an object and contains properties like

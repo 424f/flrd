@@ -2,7 +2,7 @@ namespace Core.Graphics
 
 import System
 import Tao.OpenGl.Gl
-import OpenTK.Math
+import OpenTK
 
 class Skybox:
 """A skybox consisting of 6 faces pointed inwards"""

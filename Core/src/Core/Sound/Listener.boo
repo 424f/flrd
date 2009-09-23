@@ -1,7 +1,7 @@
 namespace Core.Sound
 
 import Tao.OpenAl.Al
-import OpenTK.Math
+import OpenTK
 
 class Listener:
 	
