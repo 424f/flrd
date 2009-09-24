@@ -62,6 +62,7 @@
     <Compile Include="ContactListener.boo" />
     <Compile Include="Controller.boo" />
     <Compile Include="Faction.boo" />
+    <Compile Include="Frustum.boo" />
     <Compile Include="GameObject.boo" />
     <Compile Include="GameState.boo" />
     <Compile Include="Levels\Level.boo" />
@@ -82,6 +83,8 @@
     <Compile Include="Shapes\Vertex.boo" />
     <Compile Include="World.boo" />
     <Content Include="ProfilingSessions\Session20090923_010603.sdps" />
+    <Content Include="ProfilingSessions\Session20090923_230613.sdps" />
+    <Content Include="ProfilingSessions\Session20090924_195517.sdps" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Levels" />

@@ -25,6 +25,7 @@ abstract class State:
 
 class GameState(State):
 	Game as Game
+	Frustum = Frustum()
 	
 	def constructor(game as Game):
 		Game = game
@@ -96,8 +97,14 @@ class GameState(State):
 		
 		GL.MatrixMode(MatrixMode.Modelview)
 		GL.LoadIdentity()
-		
+
+		// Set up camera and build frustum		
 		Game.Camera.Push()
+		Core.Util.Matrices.BeginCache()
+		mv = Core.Util.Matrices.ModelView
+		pr = Core.Util.Matrices.Projection
+		Frustum.Update(mv, pr)
+		
 		
 		Game.Light.Position = Vector4.Normalize(Vector4(0.5f, 1.0f, -2.0f, 0f)).AsArray()
 		Game.Light.Enable()
@@ -118,7 +125,10 @@ class GameState(State):
 		//Box.Render()
 		
 		for o in Game.World.Objects:
-			o.Render() if o.EnableRendering
+			sphere = Core.Math.Sphere(o.Position, 0.2f)
+			if Frustum.ContainsSphere(sphere) != IntersectionResult.Out:
+				o.Render() if o.EnableRendering
+			
 		
 		RenderState.Instance.ApplyProgram(null)
 		
@@ -172,6 +182,8 @@ class GameState(State):
 		Game.Particles.Render()
 		
 		Game.Camera.Pop()
+		
+		Core.Util.Matrices.EndCache()
 
 class Task:
 	private Function as callable
@@ -275,11 +287,12 @@ class LoadingState(State):
 			// Terrain
 			Game.Terrain = Core.Graphics.Terrain({ file as string | Texture.Load(file) })
 		Tasks.Add(Task("Loading Level, Terrain, Sounds", t))	
-		
+	
+		Tasks.Add(Task("Waiting 1s", { Threading.Thread.Sleep(1000) }))
 	
 	override def Update(dt as single) as State:
 		if Tasks.Count == 0:
-			return self
+			return GameState(Game)
 		task = Tasks[0]
 		Tasks.RemoveAt(0)
 		before = DateTime.Now

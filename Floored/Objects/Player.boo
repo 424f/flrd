@@ -48,8 +48,9 @@ class Player(GameObject, IDamageable):
 		shapeDef.Friction = 0.0f
 		shapeDef.Restitution = 0.0f
 
-		shapeDef.Filter.MaskBits = ~cast(ushort, CollisionGroups.Player)
-		shapeDef.Filter.CategoryBits = cast(ushort, CollisionGroups.Player)
+		x as ushort = CollisionGroups.Player
+		shapeDef.Filter.MaskBits = ~x
+		shapeDef.Filter.CategoryBits = CollisionGroups.Player
 		
 		BodyShape = PlayerBody.CreateShape(shapeDef)
 

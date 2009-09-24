@@ -31,7 +31,7 @@ struct Vec3f:
 	def ToVector():
 		return Vector3(X, Y, Z)
 
-	def constructor(X, Y, Z):
+	def constructor(X as single, Y as single, Z as single):
 		self.X = X
 		self.Y = Y
 		self.Z = Z
@@ -63,7 +63,12 @@ struct MeshHeader:
 	OffsetEOF as Int32
 
 struct Triangle:
-	[MarshalAs(UnmanagedType.ByValArray, SizeConst:3)] Indices as (Int32)
+	I1 as Int32
+	I2 as Int32
+	I3 as Int32
+	
+	Indices as (Int32):
+		get: return (I1, I2, I3)
 
 struct TexCoords:
 	U as single

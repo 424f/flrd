@@ -20,6 +20,7 @@
     <Strict>False</Strict>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -29,6 +30,9 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <OutputPath>bin\Release\</OutputPath>
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Boo.Lang.Compiler">
@@ -141,6 +145,7 @@
       <SubType>Code</SubType>
     </Compile>
     <None Include="src\Core\Math\Extensions.boo" />
+    <Content Include="ProfilingSessions\Session20090924_194546.sdps" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />
@@ -154,6 +159,10 @@
     <Folder Include="src\Core\Sound" />
     <Folder Include="src\Core\Util" />
     <Folder Include="src\Core\Script" />
+    <ProjectReference Include="..\Core.Structs\Core.Structs.csproj">
+      <Project>{3635494B-34B8-47BE-9AB8-4214F315DCCE}</Project>
+      <Name>Core.Structs</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(BooBinPath)\Boo.Microsoft.Build.targets" />
 </Project>

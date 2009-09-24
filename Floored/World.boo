@@ -5,11 +5,10 @@ import Box2DX.Collision
 import Box2DX.Common
 import Box2DX.Dynamics
 
-enum CollisionGroups:
-	Background = 0x1
-	Player = 0x2
-	Projectiles = 0x4
-	
+class CollisionGroups:
+	public static final Background as ushort = 1
+	public static final Player as ushort = 2
+	public static final Projectiles as ushort = 4
 
 class World:
 	public Physics as Box2DX.Dynamics.World
