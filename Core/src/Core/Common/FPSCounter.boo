@@ -14,21 +14,21 @@ the FramesPerSecond property which is always updated with the most recently calc
 	_updated = false
 	"""Has the value just been updated?"""
 
-	private _frames as int = 0
-	private _lastSecond as System.DateTime
+	private _frames as int
+	private _passed as single
 
 	def constructor():
 		_framesPerSecond = 0
 		_frames = 0
-		_lastSecond = System.DateTime.Now
+		_passed = 0f
 		
-	def Frame():
+	def Frame(dt as single):
 	"""Call this method at the end of every frame"""
 		_frames++
-		now = System.DateTime.Now
-		if now.Second != _lastSecond.Second:
-			_framesPerSecond = _frames
-			_lastSecond = now
+		_passed += dt
+		if _passed >= 1f:
+			_framesPerSecond = _frames / _passed
+			_passed = 0f
 			_frames = 0
 			_updated = true
 		else:

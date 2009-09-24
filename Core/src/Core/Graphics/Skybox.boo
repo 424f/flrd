@@ -31,10 +31,10 @@ class Skybox:
 
 		glColor4f(1.0, 1.0, 1.0, 1.0f)
 		
-		glPushMatrix()
+		MatrixStacks.Push()
 
-		glTranslated(Position.X, Position.Y, Position.Z)
-		glScalef(_width, _width, _width)
+		MatrixStacks.Translate(Position.X, Position.Y, Position.Z)
+		MatrixStacks.Scale(_width, _width, _width)
 	 
 		
 		cz = -0.0f
@@ -94,7 +94,7 @@ class Skybox:
 		glTexCoord2f(cz, cx); glVertex3f(-r, r,-1.0f);
 		glEnd()
 		
-		glPopMatrix();
+		MatrixStacks.Pop()
 		glPopAttrib();
 		
 		glEnable(GL_LIGHTING)

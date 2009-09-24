@@ -18,9 +18,9 @@ class Font:
 	def Render(text as string, x as int, y as int, color as Vector4):
 		if text is null:
 			text = "<null>"
-		glPushMatrix()
+		MatrixStacks.Push()
 		glColor4f(color.X, color.Y, color.Z, color.W)
-		glScalef(1, -1, 1)
-		glTranslatef(x, -y, 0)
+		MatrixStacks.Scale(1, -1, 1)
+		MatrixStacks.Translate(x, -y, 0)
 		_font.Render(text)
-		glPopMatrix()
+		MatrixStacks.Pop()

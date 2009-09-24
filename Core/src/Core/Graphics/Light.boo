@@ -42,8 +42,8 @@ class Light:
 		pass
 
 	def PushLightView():
-		glPushMatrix() 
+		MatrixStacks.Push()
 		
 	def PopLightView():
-		glPopMatrix()
+		MatrixStacks.Pop()
 		

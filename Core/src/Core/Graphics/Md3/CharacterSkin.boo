@@ -72,14 +72,14 @@ class CharacterSkin:
 						print "***WARNING*** Couldn't load texture ${filename}." # TODO: Ok, this is getting really stupid :) identify textures only by name, not extension
 					
 	def Render(character as CharacterInstance):
-		glRotatef(-character.WalkAngle, 0, 1, 0)
+		MatrixStacks.Rotate(-character.WalkAngle, 0, 1, 0)
 		RenderModel(_Model.Lower, character.LowerFrame)
 		if _Model.Lower.BeginTag("tag_torso", character.LowerFrame):
-			glRotatef(-character.LookAngle + character.WalkAngle, 0, 1, 0)
-			glRotatef(character.VerticalLookAngle, 1, 0, 0) //TODO: looking up / down
+			MatrixStacks.Rotate(-character.LookAngle + character.WalkAngle, 0, 1, 0)
+			MatrixStacks.Rotate(character.VerticalLookAngle, 1, 0, 0) //TODO: looking up / down
 			RenderModel(_Model.Upper, character.UpperFrame)
 			if _Model.Upper.BeginTag("tag_head", character.UpperFrame):
-				//glRotatef(45.0, 0, 1, 0) TODO: head rotation
+				//MatrixStacks.Rotate(45.0, 0, 1, 0) TODO: head rotation
 				RenderModel(_Model.Head, character.UpperFrame)
 				_Model.Upper.EndTag()
 				

@@ -50,13 +50,13 @@ public class GameObject(IRenderable):
 		if Material != null:
 			RenderState.Instance.ApplyMaterial(Material)
 		if AutoTransform:
-			GL.PushMatrix()
-			GL.Translate(Position)
-			GL.Rotate(Body.GetAngle() * 180 / System.Math.PI, 0f, 0f, -1f)
-			//GL.Rotate(90.0F, 0.0F, 1.0F, 0.0F)
+			MatrixStacks.Push()
+			MatrixStacks.Translate(Position)
+			MatrixStacks.Rotate(Body.GetAngle() * 180 / System.Math.PI, 0f, 0f, -1f)
+			//MatrixStacks.Rotate(90.0F, 0.0F, 1.0F, 0.0F)
 		Renderable.Render()
 		if AutoTransform:
-			GL.PopMatrix()
+			MatrixStacks.Pop()
 	
 	public virtual def Tick(dt as single):
 		pass

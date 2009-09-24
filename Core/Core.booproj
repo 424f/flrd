@@ -43,7 +43,7 @@
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="OpenTK">
-      <HintPath>..\Libs\OpenTK\OpenTK.dll</HintPath>
+      <HintPath>..\Libs\OpenTK\Debug\OpenTK.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -83,6 +83,7 @@
     <Compile Include="src\Core\Graphics\Font.boo" />
     <Compile Include="src\Core\Graphics\ITexture.boo" />
     <Compile Include="src\Core\Graphics\Light.boo" />
+    <Compile Include="src\Core\Graphics\MatrixStack.boo" />
     <Compile Include="src\Core\Graphics\Md3\AnimationSet.boo" />
     <Compile Include="src\Core\Graphics\Md3\Util.boo" />
     <Compile Include="src\Core\Graphics\NullRenderable.boo" />
@@ -145,7 +146,9 @@
       <SubType>Code</SubType>
     </Compile>
     <None Include="src\Core\Math\Extensions.boo" />
-    <Content Include="ProfilingSessions\Session20090924_194546.sdps" />
+    <Content Include="ProfilingSessions\Session20090924_222248.sdps" />
+    <Content Include="ProfilingSessions\Session20090924_224515.sdps" />
+    <Content Include="ProfilingSessions\Session20090924_225011.sdps" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />

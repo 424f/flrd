@@ -15,12 +15,12 @@ class Camera:
 		_up = up
 
 	virtual def Push():
-		glMatrixMode(GL_MODELVIEW)
+		MatrixStacks.MatrixMode(Graphics.OpenGL.MatrixMode.Modelview)
+		MatrixStacks.LoadIdentity()
+		MatrixStacks.LookAt(Eye, LookAt, Up)
 		glLoadIdentity()
-		gluLookAt(Eye.X,    Eye.Y,    Eye.Z,
-				  LookAt.X, LookAt.Y, LookAt.Z,
-				  Up.X,     Up.Y,     Up.Z)
-		glPushMatrix()
+		gluLookAt(Eye.X, Eye.Y, Eye.Z, LookAt.X, LookAt.Y, LookAt.Z, Up.X, Up.Y, Up.Z)
+		MatrixStacks.Push()
 	
 	virtual def Pop():
-		glPopMatrix()
+		MatrixStacks.Pop()

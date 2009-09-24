@@ -93,12 +93,12 @@ class CharacterInstance(IRenderable):
 		_walkDirection = Vector3(0, 0, -1)
 		
 	def Render():
-		glPushMatrix()
-		glTranslatef(_Position.X, _Position.Y, _Position.Z)
-		glScalef(Scale, Scale, Scale)
-		glTranslatef(0, 25.5f, 0)
+		MatrixStacks.Push()
+		MatrixStacks.Translate(_Position.X, _Position.Y, _Position.Z)
+		MatrixStacks.Scale(Scale, Scale, Scale)
+		MatrixStacks.Translate(0, 25.5f, 0)
 		_skin.Render(self)
-		glPopMatrix()
+		MatrixStacks.Pop()
 		
 	def Tick(dt as single):			
 		# Lower animation

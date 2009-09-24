@@ -34,7 +34,7 @@
       <HintPath>..\Libs\Box2DX\Box2DX.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK">
-      <HintPath>..\Libs\OpenTK\OpenTK.dll</HintPath>
+      <HintPath>..\Libs\OpenTK\Debug\OpenTK.dll</HintPath>
     </Reference>
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -85,6 +85,8 @@
     <Content Include="ProfilingSessions\Session20090923_010603.sdps" />
     <Content Include="ProfilingSessions\Session20090923_230613.sdps" />
     <Content Include="ProfilingSessions\Session20090924_195517.sdps" />
+    <Content Include="ProfilingSessions\Session20090924_223052.sdps" />
+    <Content Include="ProfilingSessions\Session20090924_225418.sdps" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Levels" />

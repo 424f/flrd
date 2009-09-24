@@ -87,11 +87,11 @@ class Model(IRenderable):
 		Render(0)
 		
 	def Render(frame as int):
-		glPushMatrix()
-		glScalef(Scale, Scale, Scale)
+		MatrixStacks.Push()
+		MatrixStacks.Scale(Scale, Scale, Scale)
 		for mesh in _meshes:
 			mesh.Render(frame % mesh.Header.NumFrames)
-		glPopMatrix()
+		MatrixStacks.Pop()
 
 	def RenderBoundingSphere(frame as int):
 		# Draw sphere
@@ -130,16 +130,16 @@ class Model(IRenderable):
 			tag as Tag = _tags[frame, i]
 			continue if tag.Name != name
 
-			glPushMatrix()			
+			MatrixStacks.Push()			
 			a = tag.Axis			
 			rotationMatrix = ( a[0].X, a[0].Y, a[0].Z, 0,
 			                   a[1].X, a[1].Y, a[1].Z, 0,
 			                   a[2].X, a[2].Y, a[2].Z, 0,
 			                   0.0f,   0.0f,   0.0f,   1.0f )
-			glTranslatef(tag.Origin.X, tag.Origin.Y, tag.Origin.Z)
-			glMultMatrixf(rotationMatrix)
+			MatrixStacks.Translate(tag.Origin.X, tag.Origin.Y, tag.Origin.Z)
+			MatrixStacks.Multiply(Core.Util.Matrices.FromArray(rotationMatrix))
 			return true
 		return false
 		
 	def EndTag():
-		glPopMatrix()
+		MatrixStacks.Pop()

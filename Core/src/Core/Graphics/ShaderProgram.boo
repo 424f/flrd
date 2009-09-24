@@ -1,6 +1,7 @@
 ﻿namespace Core.Graphics
 
 import System
+import System.Collections.Generic
 import OpenTK.Graphics.OpenGL
 
 public class ShaderProgram:
@@ -14,6 +15,8 @@ public class ShaderProgram:
 	// TODO: multiple shaders are possible (see glAttachShader doc)
 	[Getter(VertexShader)] _VertexShader as Shader
 	[Getter(FragmentShader)] _FragmentShader as Shader
+	
+	protected UniformLocations = Dictionary[of string, int]()
 
 	public def constructor():
 		_Handle = GL.CreateProgram()
@@ -45,10 +48,13 @@ public class ShaderProgram:
 		GL.UseProgram(0)
 		
 	public def GetUniformLocation(location as string) as int:
-		return GL.GetUniformLocation(Handle, location)
+		if not UniformLocations.ContainsKey(location):
+			UniformLocations[location] = GL.GetUniformLocation(Handle, location)
+		return UniformLocations[location]
 		
 	public def Reload():
 	"""Reloads all the shaders attached to this program"""
+		UniformLocations.Clear()
 		for v in (_VertexShader, _FragmentShader):
 			GL.DetachShader(Handle, v.Handle)
 			v.Reload() if v != null

@@ -107,9 +107,9 @@ abstract class AbstractGame(OpenTK.GameWindow):
 
 	protected override def OnResize(e as EventArgs):
 		GL.Viewport(0, 0, self.Width, self.Height)
-		GL.MatrixMode(MatrixMode.Projection)
-		GL.LoadIdentity()
-		Tao.OpenGl.Glu.gluPerspective(25.0, Width / cast(double, Height), 1.0, 10000.0)
+		MatrixStacks.MatrixMode(MatrixMode.Projection)
+		Core.Graphics.MatrixStacks.LoadIdentity()
+		MatrixStacks.Perspective(25.0, Width / cast(double, Height), 1.0, 10000.0)
 
 	protected def UpdateGui():
 		self.WebCore.Update()
@@ -127,14 +127,15 @@ abstract class AbstractGame(OpenTK.GameWindow):
 			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, cast(int, TextureMagFilter.Linear));				
 
 	protected def RenderGui():
-		GL.MatrixMode(MatrixMode.Projection)
-		GL.PushMatrix()
-		GL.LoadIdentity()
-		
-		GL.MatrixMode(MatrixMode.Modelview)
-		GL.PushMatrix()
-		GL.LoadIdentity()
+		MatrixStacks.MatrixMode(MatrixMode.Projection)
+		MatrixStacks.Push()
+		Core.Graphics.MatrixStacks.LoadIdentity()
 		Tao.OpenGl.Glu.gluOrtho2D(0, Width, Height, 0)
+		
+		MatrixStacks.MatrixMode(MatrixMode.Modelview)
+		MatrixStacks.Push()
+		Core.Graphics.MatrixStacks.LoadIdentity()
+		GL.Color4(Drawing.Color.White)
 		
 		GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha)
 		GL.Enable(EnableCap.Blend)
@@ -158,11 +159,11 @@ abstract class AbstractGame(OpenTK.GameWindow):
 
 		GL.End()		
 
-		GL.MatrixMode(MatrixMode.Projection)
-		GL.PopMatrix()
+		MatrixStacks.MatrixMode(MatrixMode.Projection)
+		MatrixStacks.Pop()
 		
-		GL.MatrixMode(MatrixMode.Modelview)
-		GL.PopMatrix()			
+		MatrixStacks.MatrixMode(MatrixMode.Modelview)
+		MatrixStacks.Pop()		
 
 class Game(AbstractGame):
 	public static Instance as Game:
@@ -229,9 +230,6 @@ class Game(AbstractGame):
 		State = LoadingState(self)
 		
 	public override def OnRenderFrame(e as FrameEventArgs):
-		FpsCounter.Frame()
-		if FpsCounter.Updated:		
-			webView.ExecuteJavaScript("updateFPS(${RenderFrequency})")			
 		UpdateGui()
 		State.Render()
 		RenderGui()

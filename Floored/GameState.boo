@@ -32,14 +32,20 @@ class GameState(State):
 		Game.webView.LoadURL("""L:\Floored\Data\UI\index.htm""")			
 	
 	override def Update(dt as single) as State:
+		Game.FpsCounter.Frame(dt)
+		if Game.FpsCounter.Updated:		
+			Game.webView.ExecuteJavaScript("updateFPS(${Game.FpsCounter.FramesPerSecond})")			
+		
+		# We ignore big steps
+		dt = System.Math.Min(0.16f, dt)
 		Game.TimePassed += dt
 		Game.PhysicsTime += dt
-		StepSize = 0.015f
+		StepSize = 0.016f
 		while Game.PhysicsTime >= StepSize:								
 			# Update character
 			Game.ReloadTime -= StepSize
 			Game.PrimaryReloadTime -= StepSize
-			joystick = Game.Joysticks[0]
+			//joystick = Game.Joysticks[0]
 			#Player.WalkDirection = Vector2(joystick.Axis[0], joystick.Axis[1])
 			//Player.LookDirection = Vector2(-joystick.Axis[2], -joystick.Axis[3])
 			//Player.DoJump = joystick.Button[0]
@@ -75,14 +81,14 @@ class GameState(State):
 			Game.World.Step(StepSize)
 			Game.PhysicsTime -= StepSize
 		
-		# Listener
-		Game.Listener.Position = Game.Player.Position + Vector3(0, 0, 2.0f)
-		Game.Listener.Orientation = Vector3(0, 0, -1)
+			# Listener
+			Game.Listener.Position = Game.Player.Position + Vector3(0, 0, 2.0f)
+			Game.Listener.Orientation = Vector3(0, 0, -1)
 		return self
 		
 	override def Render():		
 		// Center camera
-		Game.Camera.Eye = Game.Player.Position + Vector3(0f, 2f, 20f)
+		Game.Camera.Eye = Game.Player.Position + Vector3(0f, 2f, 10f)
 		Game.Camera.LookAt = Game.Player.Position + Vector3(0f, 1f, 0f)
 	
 		// Set up scene
@@ -90,32 +96,27 @@ class GameState(State):
 		GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit)
 		GL.Fog(FogParameter.FogColor, (1f, 1f, 1f, 1f))
 		
+		
 		GL.Disable(EnableCap.Texture2D)
 		GL.Enable(EnableCap.DepthTest)
-		GL.Enable(EnableCap.Blend)
-		GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha)
-		
-		GL.MatrixMode(MatrixMode.Modelview)
-		GL.LoadIdentity()
+		GL.Disable(EnableCap.Blend)
+		//GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha)
 
 		// Set up camera and build frustum		
+		MatrixStacks.MatrixMode(MatrixMode.Modelview)
+		Core.Graphics.MatrixStacks.LoadIdentity()		
 		Game.Camera.Push()
-		Core.Util.Matrices.BeginCache()
-		mv = Core.Util.Matrices.ModelView
-		pr = Core.Util.Matrices.Projection
-		Frustum.Update(mv, pr)
-		
 		
 		Game.Light.Position = Vector4.Normalize(Vector4(0.5f, 1.0f, -2.0f, 0f)).AsArray()
 		Game.Light.Enable()
-		
+				
 		// Render skydome
-		GL.PushMatrix()
-		GL.Translate(0, -60f, 0)
-		GL.Translate(Game.Camera.Eye)
-		GL.Rotate(45.0, 0, 1, 0)
+		MatrixStacks.Push()
+		MatrixStacks.Translate(0, -60f, 0)
+		MatrixStacks.Translate(Game.Camera.Eye)
+		MatrixStacks.Rotate(45.0, 0, 1, 0)
 		Game.Skydome.Render()
-		GL.PopMatrix()
+		MatrixStacks.Pop()		
 		
 		// Boxes
 		RenderState.Instance.ApplyProgram(null)
@@ -126,7 +127,8 @@ class GameState(State):
 		
 		for o in Game.World.Objects:
 			sphere = Core.Math.Sphere(o.Position, 0.2f)
-			if Frustum.ContainsSphere(sphere) != IntersectionResult.Out:
+			//if Frustum.ContainsSphere(sphere) != IntersectionResult.Out:
+			if true:
 				o.Render() if o.EnableRendering
 			
 		
@@ -179,11 +181,9 @@ class GameState(State):
 	
 		Game.Terrain.Render()
 		
-		Game.Particles.Render()
+		//Game.Particles.Render()
 		
 		Game.Camera.Pop()
-		
-		Core.Util.Matrices.EndCache()
 
 class Task:
 	private Function as callable
@@ -287,8 +287,6 @@ class LoadingState(State):
 			// Terrain
 			Game.Terrain = Core.Graphics.Terrain({ file as string | Texture.Load(file) })
 		Tasks.Add(Task("Loading Level, Terrain, Sounds", t))	
-	
-		Tasks.Add(Task("Waiting 1s", { Threading.Thread.Sleep(1000) }))
 	
 	override def Update(dt as single) as State:
 		if Tasks.Count == 0:

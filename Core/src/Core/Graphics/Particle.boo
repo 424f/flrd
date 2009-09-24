@@ -38,9 +38,11 @@ TODO: completely rewrite
 	def Render():
 		# calculate up and right vector
 		model = array(double, 16)
-		glGetDoublev(GL_MODELVIEW_MATRIX, model)
+		/*glGetDoublev(GL_MODELVIEW_MATRIX, model)
 		right = Vector3(model[0], model[4], model[8]) * 3.0f
-		up = Vector3(model[1], model[5], model[9]) * 3.0f
+		up = Vector3(model[1], model[5], model[9]) * 3.0f*/
+		right = Vector3(1, 0, 0)
+		up = Vector3(0, 1, 0)
 		
 
 		glEnable(GL_TEXTURE_2D)

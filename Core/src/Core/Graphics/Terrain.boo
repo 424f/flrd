@@ -254,28 +254,20 @@ class Terrain:
 					t.LowPoly = mapList
 					Chunks[x, y] = t
 		
-		modelView = Core.Util.Matrices.ModelView
+		//modelView = Core.Util.Matrices.ModelView
 		
 		for x in range(numChunks):
 			for y in range(numChunks):
 				chunk = Chunks[x, y]
 				
-				// Calculate distance
-				center = Vector4(chunk.Max - chunk.Min)
-				center.W = 1.0
-				centerEye = Vector3(Vector4.Transform(center, modelView))
-				l = centerEye.Length
-				
-				if l >= 1000.0 and false:
-					glCallList(Chunks[x, y].LowPoly)
-				else:
-					glCallList(Chunks[x, y].ID)
+				// Calculate distance				
+				glCallList(Chunks[x, y].ID)
 				
 		program.Remove()
 		GL.ActiveTexture(TextureUnit.Texture0)	
 		
 		// Render grass
-		model = array(double, 16)
+		/*model = array(double, 16)
 		glGetDoublev(GL_MODELVIEW_MATRIX, model)
 		
 		GL.Enable(EnableCap.Blend)
@@ -309,7 +301,7 @@ class Terrain:
 		GL.Disable(EnableCap.Blend)		
 		GL.Disable(EnableCap.AlphaTest)
 		GL.AlphaFunc(AlphaFunction.Greater, 0.0)		
-
+		*/
 	public def PositionToIndex(position as Vector3) as Point:
 		ii = cast(int, (position.X + GridWidth / 2) / gridSize)
 		jj = cast(int, (position.Z + GridWidth / 2) / gridSize)
