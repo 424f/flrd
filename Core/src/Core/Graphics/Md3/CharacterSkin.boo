@@ -92,7 +92,7 @@ class CharacterSkin:
 		
 	private def RenderModel(model as Model, frame as int):
 		for mesh as Mesh in model.Meshes:		
-			if mesh in _textures.Keys:
+			if _textures.ContainsKey(mesh):
 				tex as Texture = _textures[mesh]
 				tex.Bind()
 			mesh.Render(frame)

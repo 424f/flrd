@@ -1,12 +1,10 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-# SharpDevelop 3.1.0.4545
+# SharpDevelop 3.1.0.4977
 Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "Core", "Core.booproj", "{f61c27c0-2ec7-4095-8443-e928af32dcd2}"
 EndProject
 Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "Floored", "..\Floored\Floored.booproj", "{C58F6FE5-AE46-4613-AEAD-3CF2272AA757}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Structs", "..\Core.Structs\Core.Structs.csproj", "{3635494B-34B8-47BE-9AB8-4214F315DCCE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,9 +20,5 @@ Global
 		{C58F6FE5-AE46-4613-AEAD-3CF2272AA757}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C58F6FE5-AE46-4613-AEAD-3CF2272AA757}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C58F6FE5-AE46-4613-AEAD-3CF2272AA757}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3635494B-34B8-47BE-9AB8-4214F315DCCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3635494B-34B8-47BE-9AB8-4214F315DCCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3635494B-34B8-47BE-9AB8-4214F315DCCE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3635494B-34B8-47BE-9AB8-4214F315DCCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 EndGlobal

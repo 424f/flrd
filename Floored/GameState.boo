@@ -29,7 +29,7 @@ class GameState(State):
 	
 	def constructor(game as Game):
 		Game = game
-		Game.webView.LoadURL("""L:\Floored\Data\UI\index.htm""")			
+		Game.webView.LoadURL(IO.Path.Combine(IO.Directory.GetCurrentDirectory(), """../Data/UI/index.htm"""))			
 	
 	override def Update(dt as single) as State:
 		Game.FpsCounter.Frame(dt)
@@ -88,7 +88,13 @@ class GameState(State):
 		
 	override def Render():		
 		// Center camera
-		Game.Camera.Eye = Game.Player.Position + Vector3(0f, 2f, 10f)
+		if Game.UpdateFrustum:
+			Game.Camera.Eye = Game.Player.Position + Vector3(0f, 2f, 20f)
+		else:
+			if Game.Camera.Eye.Y < 50f:
+				Game.Camera.Eye.Y += Game.RenderTime * 10f
+				Game.Camera.Eye.Z = Game.Camera.Eye.Y * 3f
+		
 		Game.Camera.LookAt = Game.Player.Position + Vector3(0f, 1f, 0f)
 	
 		// Set up scene
@@ -106,6 +112,9 @@ class GameState(State):
 		MatrixStacks.MatrixMode(MatrixMode.Modelview)
 		Core.Graphics.MatrixStacks.LoadIdentity()		
 		Game.Camera.Push()
+		
+		if Game.UpdateFrustum:
+			Frustum.Update(MatrixStacks.ModelView.Matrix, MatrixStacks.Projection.Matrix)
 		
 		Game.Light.Position = Vector4.Normalize(Vector4(0.5f, 1.0f, -2.0f, 0f)).AsArray()
 		Game.Light.Enable()
@@ -127,8 +136,7 @@ class GameState(State):
 		
 		for o in Game.World.Objects:
 			sphere = Core.Math.Sphere(o.Position, 0.2f)
-			//if Frustum.ContainsSphere(sphere) != IntersectionResult.Out:
-			if true:
+			if Frustum.ContainsSphere(sphere) != IntersectionResult.Out:
 				o.Render() if o.EnableRendering
 			
 		
@@ -179,7 +187,10 @@ class GameState(State):
 		
 			GL.Enable(EnableCap.DepthTest)
 	
-		Game.Terrain.Render()
+		Game.Terrain.Render(Frustum)
+
+		if not Game.UpdateFrustum:
+			Frustum.Render()
 		
 		//Game.Particles.Render()
 		

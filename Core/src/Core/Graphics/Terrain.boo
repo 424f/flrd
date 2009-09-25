@@ -9,6 +9,10 @@ import OpenTK
 import OpenTK.Graphics.OpenGL
 
 class TerrainChunk:
+	def constructor():
+		Min = Vector3(single.PositiveInfinity, single.PositiveInfinity, single.PositiveInfinity)
+		Max = Vector3(single.NegativeInfinity, single.NegativeInfinity, single.NegativeInfinity)
+	
 	public ID as int
 	public LowPoly as int
 	public Max as Vector3
@@ -35,17 +39,17 @@ class Terrain:
 	texGrass as Texture
 	texRock as Texture
 	texMaple as Texture
-	ChunkSize = 16
+	ChunkSize = 4
 	Chunks as (TerrainChunk, 2)
 	
 
 	public def constructor(textureLoader as callable(string) as Texture):
-		texRock = textureLoader("""../Data/Textures/Terrain/SnowDirt.jpg""")
+		/*texRock = textureLoader("""../Data/Textures/Terrain/SnowDirt.jpg""")
 		texGrass = textureLoader("""../Data/Textures/Terrain/Snow.jpg""")
-		texSand = textureLoader("""../Data/Textures/Terrain/Ice.jpg""")
-		/*texRock = textureLoader("""../Data/Textures/Terrain/Rock.jpg""")
+		texSand = textureLoader("""../Data/Textures/Terrain/Ice.jpg""")*/
+		texRock = textureLoader("""../Data/Textures/Terrain/Rock.jpg""")
 		texGrass = textureLoader("""../Data/Textures/Terrain/Grass.jpg""")
-		texSand = textureLoader("""../Data/Textures/Terrain/Sand.jpg""")		*/
+		texSand = textureLoader("""../Data/Textures/Terrain/Sand.jpg""")		
 		texMaple = textureLoader("""../Data/Textures/Billboards/Pine.png""")
 		
 		// Upper-most point
@@ -60,9 +64,9 @@ class Terrain:
 				       Sin(10+(j) / 16.0 * gridSize) + \
 				       1.2*Sin(3+(i) / 16.0 * gridSize / 2.3) + \
 				       Sin(Log(i)*Log(j)) 
-				vertex.v = Vector3((-GridLength / 2 + i)*gridSize,  30 + 10*(fact), (j - GridLength / 2)*gridSize)
+				vertex.v = Vector3((-GridLength / 2 + i)*gridSize,  30 + 10*(fact), ((GridLength - j - 1) - GridLength / 2)*gridSize)
 				vertex.v.Y -= j / 2.0
-				height = bitmap.GetPixel(i, j).GetBrightness() * 100.0 - 16.5f
+				height = bitmap.GetPixel(i, bitmap.Height - 1 - j).GetBrightness() * 100.0 - 16.5f
 				vertex.v.Y = height
 				if vertex.v.Y > ceiling:
 					ceiling = vertex.v.Y
@@ -98,7 +102,7 @@ class Terrain:
 		// Normalize normals and calculate lighting
 		for i in range(GridLength):
 			for j in range(GridLength):
-				heightMap[i, j].normal.Normalize()				
+				heightMap[i, j].normal.Normalize()		
 				// Is the vertex at all visible from the sun?
 				visible = true
 				heightMap[i, j].c = Vector4(0, 0, 0, 0)
@@ -158,7 +162,7 @@ class Terrain:
 		program.Attach(fragmentShader)
 		program.Link()
 			
-	public def Render():
+	public def Render(frustum as Frustum):
 		def clr(vertex as Vertex):			
 			v = vertex.v
 			GL.Color4(vertex.c)			
@@ -193,18 +197,18 @@ class Terrain:
 						clr(heightMap[i, j])
 						GL.Normal3(heightMap[i, j].normal)
 						GL.Vertex3(v)	
-						if t.Min.X < v.X:
+						if t.Min.X > v.X:
 							t.Min.X = v.X
-						if t.Min.Y < v.Y:
+						if t.Min.Y > v.Y:
 							t.Min.Y = v.Y
-						if t.Min.Z < v.Z:
+						if t.Min.Z > v.Z:
 							t.Min.Z = v.Z
 
-						if t.Max.X > v.X:
+						if t.Max.X < v.X:
 							t.Max.X = v.X
-						if t.Max.Y > v.Y:
+						if t.Max.Y < v.Y:
 							t.Max.Y = v.Y
-						if t.Max.Z > v.Z:
+						if t.Max.Z < v.Z:
 							t.Max.Z = v.Z							
 					//GL.CullFace(CullFaceMode.Back)
 					GL.Begin(BeginMode.Triangles)
@@ -232,7 +236,7 @@ class Terrain:
 					glEndList()
 					t.ID = mapList
 
-					// Create low resolution display list
+				/*	// Create low resolution display list
 					mapList = glGenLists(1)
 					glNewList(mapList, GL_COMPILE)
 						
@@ -249,30 +253,38 @@ class Terrain:
 							draw(i+8, j)
 							draw(i, j+8)
 					GL.End()		
-					glEndList()
+					glEndList()*/
 					
 					t.LowPoly = mapList
 					Chunks[x, y] = t
 		
 		//modelView = Core.Util.Matrices.ModelView
 		
+		rendered = 0
+		notRendered = 0
 		for x in range(numChunks):
 			for y in range(numChunks):
 				chunk = Chunks[x, y]
 				
-				// Calculate distance				
-				glCallList(Chunks[x, y].ID)
+				// Calculate distance		
+				center = (chunk.Max + chunk.Min) / 2f
+				radius = (chunk.Max - chunk.Min).Length / 2f
+				if frustum.ContainsSphere(Core.Math.Sphere(center, radius)) != IntersectionResult.Out:
+					glCallList(Chunks[x, y].ID)
+					rendered += 1
+				else:
+					notRendered += 1
+		print "Rendered ${rendered} / ${rendered + notRendered}"
 				
 		program.Remove()
 		GL.ActiveTexture(TextureUnit.Texture0)	
 		
 		// Render grass
-		/*model = array(double, 16)
-		glGetDoublev(GL_MODELVIEW_MATRIX, model)
+		model = MatrixStacks.ModelView.Matrix
 		
 		GL.Enable(EnableCap.Blend)
 		GL.Enable(EnableCap.Texture2D)
-		GL.AlphaFunc(AlphaFunction.Greater, 0.3)
+		GL.AlphaFunc(AlphaFunction.Greater, 0.05)
 		GL.Enable(EnableCap.AlphaTest)
 		
 		texMaple.Bind()
@@ -280,8 +292,8 @@ class Terrain:
 		GL.Begin(BeginMode.Triangles)
 		GL.Color4(Color.White)
 		ex = 3
-		right = Vector3(model[0], model[4], model[8]) * ex
-		up = Vector3(model[1], model[5], model[9]) * 2 * ex		
+		right = Vector3(model.M11, model.M12, model.M13) * ex
+		up = Vector3(model.M21, model.M22, model.M23) * 2 * ex		
 		for grass as Vector3 in maples:
 			GL.TexCoord2(0, 0)
 			GL.Vertex3(grass - right)
@@ -301,7 +313,7 @@ class Terrain:
 		GL.Disable(EnableCap.Blend)		
 		GL.Disable(EnableCap.AlphaTest)
 		GL.AlphaFunc(AlphaFunction.Greater, 0.0)		
-		*/
+		
 	public def PositionToIndex(position as Vector3) as Point:
 		ii = cast(int, (position.X + GridWidth / 2) / gridSize)
 		jj = cast(int, (position.Z + GridWidth / 2) / gridSize)

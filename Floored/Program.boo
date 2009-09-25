@@ -84,7 +84,6 @@ abstract class AbstractGame(OpenTK.GameWindow):
 		                                                                         webView.InjectKeyboardEvent(IntPtr.Zero, AwesomiumDotNet.WM.KeyDown, MapKey(e.Key), 0)}
 		self.Keyboard.KeyUp += { sender as object, e as KeyboardKeyEventArgs | webView.InjectKeyboardEvent(IntPtr.Zero, AwesomiumDotNet.WM.KeyUp, MapKey(e.Key), 0) }
 		self.KeyPress += { sender as object, e as OpenTK.KeyPressEventArgs | print "lawl" }
-		
 		browserTexture = GL.GenTexture()
 				
 		//GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, cast(int, TextureMinFilter.LinearMipmapLinear));
@@ -103,13 +102,14 @@ abstract class AbstractGame(OpenTK.GameWindow):
 			return string.Format("{0:d${i}}", a)
 		bmp.Save("Screenshots/Screenshot ${n.Year}-${fill(n.Month, 2)}-${fill(n.Day, 2)} - ${fill(n.Hour, 2)}${fill(n.Minute, 2)}${fill(n.Second, 2)}.png", ImageFormat.Png);*/
 		
-		webView.LoadURL("""L:\Floored\Data\UI\loading.htm""")			
+		path = IO.Path.Combine(IO.Directory.GetCurrentDirectory(), "../Data/UI/loading.htm")
+		webView.LoadURL(path)			
 
 	protected override def OnResize(e as EventArgs):
 		GL.Viewport(0, 0, self.Width, self.Height)
 		MatrixStacks.MatrixMode(MatrixMode.Projection)
 		Core.Graphics.MatrixStacks.LoadIdentity()
-		MatrixStacks.Perspective(25.0, Width / cast(double, Height), 1.0, 10000.0)
+		MatrixStacks.Perspective(25.0, Width / cast(double, Height), 1.0, 1000.0)
 
 	protected def UpdateGui():
 		self.WebCore.Update()
@@ -123,14 +123,14 @@ abstract class AbstractGame(OpenTK.GameWindow):
 			GL.ActiveTexture(TextureUnit.Texture0)
 			GL.BindTexture(TextureTarget.Texture2D, browserTexture)
 			GL.TexImage2D[of byte](TextureTarget.Texture2D, 0,PixelInternalFormat.Rgba, width, height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, buffer)			
-			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, cast(int, TextureMinFilter.Linear));
-			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, cast(int, TextureMagFilter.Linear));				
+			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, cast(int, TextureMinFilter.Linear))
+			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, cast(int, TextureMagFilter.Linear))		
 
 	protected def RenderGui():
 		MatrixStacks.MatrixMode(MatrixMode.Projection)
 		MatrixStacks.Push()
 		Core.Graphics.MatrixStacks.LoadIdentity()
-		Tao.OpenGl.Glu.gluOrtho2D(0, Width, Height, 0)
+		MatrixStacks.Ortho2D(0, Width, Height, 0)
 		
 		MatrixStacks.MatrixMode(MatrixMode.Modelview)
 		MatrixStacks.Push()
@@ -181,6 +181,7 @@ class Game(AbstractGame):
 	public Md3Shader as ShaderProgram
 	public Particles as ParticleEngine
 	public Terrain as Terrain
+	public UpdateFrustum = true
 	
 	// -- Gameplay --
 	public ReloadTime = 0f
@@ -243,11 +244,15 @@ class Game(AbstractGame):
 			Player.WalkDirection.X += 1.0f
 		elif key == Input.Key.W:
 			Player.DoJump = true
+		elif key == Input.Key.Escape:
+			Exit()
 		
 	public def KeyUp(sender as object, e as KeyboardKeyEventArgs):
 		key = e.Key
 		if key == Key.F1:
 			ShowPhysics = not ShowPhysics
+		elif key == Key.F2:
+			UpdateFrustum = not UpdateFrustum
 		elif key == Input.Key.A:
 			Player.WalkDirection.X -= -1.0f
 		elif key == Input.Key.D:

@@ -34,7 +34,7 @@
       <HintPath>..\Libs\Box2DX\Box2DX.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK">
-      <HintPath>..\Libs\OpenTK\Debug\OpenTK.dll</HintPath>
+      <HintPath>..\Libs\OpenTK\OpenTK.dll</HintPath>
     </Reference>
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -62,7 +62,6 @@
     <Compile Include="ContactListener.boo" />
     <Compile Include="Controller.boo" />
     <Compile Include="Faction.boo" />
-    <Compile Include="Frustum.boo" />
     <Compile Include="GameObject.boo" />
     <Compile Include="GameState.boo" />
     <Compile Include="Levels\Level.boo" />
@@ -87,6 +86,7 @@
     <Content Include="ProfilingSessions\Session20090924_195517.sdps" />
     <Content Include="ProfilingSessions\Session20090924_223052.sdps" />
     <Content Include="ProfilingSessions\Session20090924_225418.sdps" />
+    <Content Include="ProfilingSessions\Session20090925_002208.sdps" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Levels" />
