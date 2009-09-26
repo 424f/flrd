@@ -1,3 +1,4 @@
 # Ignored files for a SharpDevelop project
 obj/
 bin/
+ProfilingSessions/
