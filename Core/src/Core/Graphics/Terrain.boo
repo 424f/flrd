@@ -274,7 +274,7 @@ class Terrain:
 					rendered += 1
 				else:
 					notRendered += 1
-		print "Rendered ${rendered} / ${rendered + notRendered}"
+		//print "Rendered ${rendered} / ${rendered + notRendered}"
 				
 		program.Remove()
 		GL.ActiveTexture(TextureUnit.Texture0)	

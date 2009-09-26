@@ -24,22 +24,28 @@ class CharacterSkin:
 	[Getter(Icon)] _icon as Texture
 	"""The character icon for this skin"""
 
+	protected TexturesLoaded = false
+	protected _Path as string
+	
 	def constructor(model as CharacterModel, path as string, name as string):
 		_Model = model
 		_name = name
+		_Path = path
 		
 		LoadSkinFile(Path.Combine(path, "lower_${name}.Skin"))
 		LoadSkinFile(Path.Combine(path, "upper_${name}.Skin"))
 		LoadSkinFile(Path.Combine(path, "head_${name}.Skin"))
 		
+	public def LoadTextures():
+		return if TexturesLoaded	
 		LoadTexturesForModel(Model.Lower)
 		LoadTexturesForModel(Model.Upper)
 		LoadTexturesForModel(Model.Head)
 		
 		try:
-			_icon = Texture.Load(Path.Combine(path, "icon_${name}.tga"))
+			_icon = Texture.Load(Path.Combine(_Path, "icon_${Name}.tga"))
 		except:
-			pass
+			pass		
 		
 	private def LoadSkinFile(path as string):
 		using f = File.Open(path, FileMode.Open):
@@ -52,7 +58,7 @@ class CharacterSkin:
 					textureFile = r.Groups["texture"].Value
 					_textureNames[meshName] = textureFile
 					
-	def LoadTexturesForModel(model as Model):
+	private def LoadTexturesForModel(model as Model):
 		for mesh as Mesh in model.Meshes:
 			continue if _textures.ContainsKey(mesh)
 			continue if not _textureNames.ContainsKey(mesh.Header.Name)
@@ -98,4 +104,5 @@ class CharacterSkin:
 			mesh.Render(frame)
 			
 	def CreateInstance():
+		LoadTextures()
 		return CharacterInstance(self)

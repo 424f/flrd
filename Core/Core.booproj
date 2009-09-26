@@ -85,6 +85,7 @@
     </Compile>
     <Compile Include="src\Core\Graphics\ITexture.boo" />
     <Compile Include="src\Core\Graphics\Light.boo" />
+    <Compile Include="src\Core\Graphics\Material.boo" />
     <Compile Include="src\Core\Graphics\MatrixStack.boo" />
     <Compile Include="src\Core\Graphics\Md3\AnimationSet.boo" />
     <Compile Include="src\Core\Graphics\Md3\Util.boo" />

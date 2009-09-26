@@ -11,7 +11,7 @@ import System.Collections.Generic
 import Core.Util
 import Core.Graphics
 
-class Model(IRenderable):  
+class Model(AbstractRenderable):  
 	[Getter(Header)] _header as ModelHeader
 	[Getter(Frames)] _frames as (Frame)
 	[Getter(Tags)] _tags as (Tag, 2)

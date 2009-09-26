@@ -6,7 +6,7 @@ import OpenTK
 import Core.Math
 import Core.Graphics
 
-class CharacterInstance(IRenderable):
+class CharacterInstance(AbstractRenderable):
 """An instance of a CharacterModel using a given CharacterSkin"""
 	[Property(Position)] _Position as Vector3
 	"""World position where instance will be rendered"""

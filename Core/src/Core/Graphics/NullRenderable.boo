@@ -2,10 +2,9 @@
 
 import System
 
-class NullRenderable(IRenderable):
+class NullRenderable(AbstractRenderable):
 	public def constructor():
 		pass
 		
 	public def Render():
 		pass
-

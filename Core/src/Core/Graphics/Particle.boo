@@ -6,7 +6,7 @@ import OpenTK.Graphics.OpenGL
 import OpenTK
 import Tao.OpenGl.Gl
 
-class ParticleEngine(IRenderable):
+class ParticleEngine(AbstractRenderable):
 """
 A particle source using a certain textures and behaviours
 

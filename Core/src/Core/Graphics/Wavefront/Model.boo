@@ -5,10 +5,10 @@ import System.IO
 import Core.Graphics
 import OpenTK.Graphics.OpenGL
 
-class Model(IRenderable):
+class Model(AbstractRenderable):
 	static loadedModels = Collections.Generic.Dictionary[of string, Model]()
 	
-	materials = Collections.Generic.Dictionary[of string, Material]()
+	materials = Collections.Generic.Dictionary[of string, Wavefront.Material]()
 	_path as string
 	textureLoader as callable(string) as Texture
 	meshes = Collections.Generic.List[of Mesh]()
@@ -94,7 +94,7 @@ class Model(IRenderable):
 			print "No material file found!!"
 			return
 		reader = StreamReader(FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None))			
-		material as Material = null
+		material as Wavefront.Material = null
 		while not reader.EndOfStream:
 			line = reader.ReadLine()
 			continue if line.StartsWith("#") or line.Trim().Length == 0
@@ -102,7 +102,7 @@ class Model(IRenderable):
 			continue if vals.Length == 0
 			
 			if vals[0] == "newmtl":
-				material = Material()
+				material = Wavefront.Material()
 				materials.Add(vals[1], material)
 			continue if material is null
 			
@@ -111,7 +111,7 @@ class Model(IRenderable):
 				
 		reader.Close()
 
-	def GetMaterial(name as string) as Material:
+	def GetMaterial(name as string) as Wavefront.Material:
 		if not materials.ContainsKey(name):
 			return null
 		return materials[name]
