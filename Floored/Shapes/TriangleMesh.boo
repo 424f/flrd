@@ -2,7 +2,7 @@
 
 import System
 
-abstract class TriangleMesh(IShape):
+abstract class TriangleMesh(Core.Graphics.AbstractRenderable, IShape):
 """Description of TriangleMesh"""
 	protected Triangles as (Triangle)
 	protected Vertices as (Vertex)

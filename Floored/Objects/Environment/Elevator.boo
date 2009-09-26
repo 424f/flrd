@@ -3,6 +3,7 @@
 import Floored
 import Core.Util.Ext
 import OpenTK
+import Core.Graphics
 import Box2DX.Common
 import Box2DX.Dynamics
 
@@ -13,7 +14,7 @@ class Elevator(GameObject):
 	public TimePassed = 0f
 	public Joint as PrismaticJoint
 
-	public def constructor(world as World, start as Vec2, destination as Vec2):
+	public def constructor(world as World, start as Vec2, destination as Vec2, material as Material):
 		// Create a static box at start position
 		box = Shapes.Box(Vector3(1.5f, 0.2f, 1.5f))
 		bodyDef = BodyDef()
@@ -35,6 +36,8 @@ class Elevator(GameObject):
 		Joint = world.Physics.CreateJoint(joint)
 		
 		Position = start.AsVector3()
+		
+		Material = material
 
 	public override def Tick(dt as single):
 		TimePassed += dt

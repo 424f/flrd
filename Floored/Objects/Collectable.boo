@@ -2,7 +2,6 @@ namespace Floored.Objects
 
 import System
 import Floored
-import Tao.OpenGl
 import Core.Graphics
 
 class Collectable(GameObject):

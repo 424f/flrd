@@ -15,13 +15,21 @@ class Player(GameObject, IDamageable):
 	FeetShape as Shape
 	LastJump = 100f
 	JumpEnergy = 0f
-	public Weapon as Weapons.IWeapon
+	
+	
+	public Weapon:
+		set:
+			_Weapon = value
+			_Weapon.Carrier = self
+		get: return _Weapon
+	_Weapon as Weapons.IWeapon
 	
 	// -- Controls --
 	// TODO: refactor
 	public DoJump = false
-	public LookDirection = Vector2.Zero
-	public WalkDirection = Vector2.Zero
+	public DoFire = false
+	public LookDirection as Vector2 = Vector2.Zero
+	public WalkDirection as Vector2 = Vector2.Zero
 		/*
 		shape = PlayerBody.CreateShape(shapeDef);
 		shape.FilterData.MaskBits = ~cast(ushort, CollisionGroups.Player)
@@ -71,6 +79,8 @@ class Player(GameObject, IDamageable):
 		
 		
 		PlayerBody.AllowSleeping(false)
+		
+		Shader = Game.Instance.Md3Shader
 		
 		super(character, PlayerBody)
 		
@@ -139,6 +149,10 @@ class Player(GameObject, IDamageable):
 			Character.LowerAnimation = Character.Model.GetAnimation(Md3.AnimationId.LEGS_IDLE)		
 
 		// Weapon controls
+		Weapon.Tick(dt) if Weapon != null
+			
+		if DoFire:
+			Weapon.PrimaryFire()
 
 		// Reset sensor
 		OnGround = false

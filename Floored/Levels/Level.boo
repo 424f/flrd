@@ -90,6 +90,6 @@ class Level:
 			World.Objects.Add(box)
 			
 		// Create an elevator
-		World.Objects.Add(Objects.Environment.Elevator(World, Vec2(-10, 7), Vec2(-10, 0)))
-		World.Objects.Add(Objects.Environment.Elevator(World, Vec2(-5, 7), Vec2(-5, 20)))
-		World.Objects.Add(Objects.Environment.Elevator(World, Vec2(-2, 7), Vec2(10, 7)))
+		World.Objects.Add(Objects.Environment.Elevator(World, Vec2(-10, 7), Vec2(-10, 0), grass))
+		World.Objects.Add(Objects.Environment.Elevator(World, Vec2(-5, 7), Vec2(-5, 20), grass))
+		World.Objects.Add(Objects.Environment.Elevator(World, Vec2(-2, 7), Vec2(10, 7), grass))

@@ -11,6 +11,7 @@ class Bullet(GameObject):
 	static BulletHitSound as Core.Sound.Buffer
 	static Source as Core.Sound.Source
 	static BulletMissSource as Core.Sound.Source
+	TimeToLife = 5.0f
 	
 	public def constructor(world as World):
 		World = world
@@ -19,8 +20,8 @@ class Bullet(GameObject):
 		bodyDef.Position = Vec2(0, 0)
 		body = world.CreateBodyFromShape(bodyDef, box.CreatePhysicalRepresentation(), 0.3f, 0.3f, 0.1f)
 		body.SetBullet(true)
-		/*body.GetShapeList().FilterData.CategoryBits = cast(ushort, CollisionGroups.Projectiles)
-		body.GetShapeList().FilterData.MaskBits = cast(ushort, CollisionGroups.Player | CollisionGroups.Background)*/
+		body.GetShapeList().FilterData.CategoryBits = cast(ushort, CollisionGroups.Projectiles)
+		body.GetShapeList().FilterData.MaskBits = cast(ushort, CollisionGroups.Player | CollisionGroups.Background)
 		
 		if BulletHitSound == null:
 			BulletHitSound = Core.Sound.Buffer("../Data/Sound/Weapons/bullet_hit.wav")
@@ -32,7 +33,11 @@ class Bullet(GameObject):
 		super(box, body)
 		
 	public override def Tick(dt as single):
-		pass
+		TimeToLife -= dt
+		if TimeToLife < 0f:
+			print "Destroying bullet!"
+			Destroy()
+			Destroyed = true
 			
 	public override def Render():
 		super.Render()

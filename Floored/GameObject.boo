@@ -9,7 +9,7 @@ import OpenTK
 import OpenTK.Graphics
 import OpenTK.Graphics.OpenGL
 
-public class GameObject(IRenderable):
+public class GameObject(AbstractRenderable):
 	[Property(Body)] _Body as Body
 	[Property(Renderable)] _Renderable as IRenderable
 	[Property(AutoTransform)] _AutoTransform = true
@@ -22,10 +22,6 @@ public class GameObject(IRenderable):
 			Body.SetXForm(value.AsVec2(), Body.GetAngle())
 		get: return _Position
 	protected _Position as Vector3
-	
-	[Property(Material)] _Material as Material
-	"""The material that is used to render this object
-	TODO: handle objects with multiple materials or different shaders"""
 	
 	virtual ReportCollisions as bool:
 		get: return true

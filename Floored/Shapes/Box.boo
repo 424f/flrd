@@ -115,7 +115,6 @@ public class Box(TriangleMesh):
 		Dim = dim
 		TextureSpan = 1.0F
 		displayList = GL.GenLists(1)
-
 	
 	public def Render():
 		if IsDirty:

@@ -1,6 +1,7 @@
 ﻿namespace Floored
 
 import System
+import OpenTK.Graphics.OpenGL
 import Box2DX.Collision
 import Box2DX.Common
 import Box2DX.Dynamics
@@ -14,6 +15,7 @@ class World:
 	public Physics as Box2DX.Dynamics.World
 	public Objects = List[of GameObject]()
 	protected DestroyList = List[of GameObject]()
+	protected AddList = List[of GameObject]()
 	
 	public def constructor(worldAABB as AABB, gravity as Vec2, groundY as single):
 		/*worldAAB.LowerBound.Set(-200.0f, -200.0f);
@@ -38,6 +40,8 @@ class World:
 	public def Step(dt as single):
 		for o in Objects:
 			o.Tick(dt)
+		for o in AddList:
+			Objects.Add(o)
 		for o in DestroyList:
 			Objects.Remove(o)
 			Physics.DestroyBody(o.Body)
@@ -66,3 +70,52 @@ class World:
 	public def Destroy(o as GameObject):
 		if not DestroyList.Contains(o) and Objects.Contains(o):
 			DestroyList.Add(o)
+
+	public def Add(o as GameObject):
+		if not AddList.Contains(o) and not Objects.Contains(o):
+			AddList.Add(o)
+			
+	public def Visualize():
+		// Visualize physics
+		// Render AABBs
+		GL.Disable(EnableCap.DepthTest)
+		GL.Disable(EnableCap.DepthTest)
+		aabb as AABB
+		GL.Disable(EnableCap.Texture2D);
+		GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
+		GL.Begin(BeginMode.Quads);
+		b = Physics.GetBodyList()
+		while b != null:
+			s = b.GetShapeList()
+			while s != null:
+				if not b.IsSleeping():
+					GL.Color4(System.Drawing.Color.Green)
+				else:
+					GL.Color4(System.Drawing.Color.Gray);									
+				if s.IsSensor:
+					si = s.UserData as SensorInformation
+					if si.__LastContact < 1.0f:
+						GL.Color4(System.Drawing.Color.Purple)
+						si.__LastContact += 0.01f
+				s.ComputeAABB(aabb, b.GetXForm());
+				GL.Vertex3(aabb.LowerBound.X, aabb.LowerBound.Y, 0.0f);
+				GL.Vertex3(aabb.UpperBound.X, aabb.LowerBound.Y, 0.0f);
+				GL.Vertex3(aabb.UpperBound.X, aabb.UpperBound.Y, 0.0f);
+				GL.Vertex3(aabb.LowerBound.X, aabb.UpperBound.Y, 0.0f);
+				s = s.GetNext()
+			b = b.GetNext()
+		
+		// Render Joints
+		GL.Color4(System.Drawing.Color.Blue);
+		joint = Physics.GetJointList()
+		while joint != null:
+			GL.Vertex3(joint.Anchor1.X, joint.Anchor1.Y, 0.0f)
+			GL.Vertex3(joint.Anchor2.X, joint.Anchor2.Y, 0.0f)
+			GL.Vertex3(joint.GetBody1().GetPosition().X, joint.GetBody1().GetPosition().Y, 0.0f)
+			GL.Vertex3(joint.GetBody2().GetPosition().X, joint.GetBody2().GetPosition().Y, 0.0f)
+			joint = joint.GetNext()
+		
+		GL.End()
+		GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill)
+	
+		GL.Enable(EnableCap.DepthTest)		

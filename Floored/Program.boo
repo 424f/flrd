@@ -4,17 +4,13 @@ import System
 import OpenTK
 import OpenTK.Graphics
 import OpenTK.Graphics.OpenGL
-import OpenTK.Platform
 import OpenTK.Input
 import Tao.DevIl
 
 import Core.Graphics
-import Core.Util.Ext
 
 import AwesomiumDotNet
 
-import Box2DX.Collision
-import Box2DX.Common
 def LoadShader(vertexPath as string, fragmentPath as string) as ShaderProgram:
 	result = ShaderProgram()
 	vertexShader = Shader(ShaderType.VertexShader, vertexPath)
@@ -28,6 +24,8 @@ abstract class AbstractGame(OpenTK.GameWindow):
 	public WebCore as WebCore
 	public webView as WebView
 	browserTexture as int
+	WebViewWidth = 1280
+	WebViewHeight = 720
 	
 	public def constructor():
 		super(1280, 720, OpenTK.Graphics.GraphicsMode(ColorFormat(32), 32, 32, 0, ColorFormat(32)), "FLOORED")
@@ -41,22 +39,21 @@ abstract class AbstractGame(OpenTK.GameWindow):
 		Core.Sound.Sound.Init()
 		
 		WebCore = AwesomiumDotNet.WebCore()
-		webView = WebCore.CreateWebView(Width, Height, true, true)
-		webView.BeginLoading += { print "Loading!!" }
+		webView = WebCore.CreateWebView(WebViewWidth, WebViewHeight, true, true, 5)
+		webView.OnBeginLoading += { print "Loading!!" }
 		isRunning = true
-		webView.FinishLoading += def():
+		webView.OnFinishLoading += def():
 			print "Finished loading"
 			isRunning = false
 		
-		webView.BeginNavigation += { print "begin navigation" }
-		webView.Callback += { print "Callback" }
-		webView.ChangeCursor += { print "cursor" }
-		webView.ChangeKeyboardFocus += { print "keyboard focus" }
-		webView.ChangeTargetURL += { print "target url" }
-		webView.ChangeTooltip += { print "Tooltip" }
-		webView.ReceiveTitle += { print "Receive title" }
-		webView.SetCallback("Eval")
-		
+		webView.OnBeginNavigation += { print "begin navigation" }
+		webView.OnCallback += { print "Callback" }
+		webView.OnChangeCursor += { print "cursor" }
+		webView.OnChangeKeyboardFocus += { print "keyboard focus" }
+		webView.OnChangeTargetUrl += { print "target url" }
+		webView.OnChangeTooltip += { print "Tooltip" }
+		webView.OnReceiveTitle += { print "Receive title" }
+		webView.SetCallback("Eval")		
 
 		def convert(mb as OpenTK.Input.MouseButton) as AwesomiumDotNet.MouseButton:
 			if mb == OpenTK.Input.MouseButton.Left:
@@ -103,7 +100,7 @@ abstract class AbstractGame(OpenTK.GameWindow):
 		bmp.Save("Screenshots/Screenshot ${n.Year}-${fill(n.Month, 2)}-${fill(n.Day, 2)} - ${fill(n.Hour, 2)}${fill(n.Minute, 2)}${fill(n.Second, 2)}.png", ImageFormat.Png);*/
 		
 		path = IO.Path.Combine(IO.Directory.GetCurrentDirectory(), "../Data/UI/loading.htm")
-		webView.LoadURL(path)			
+		webView.LoadUrl(path)			
 
 	protected override def OnResize(e as EventArgs):
 		GL.Viewport(0, 0, self.Width, self.Height)
@@ -111,18 +108,34 @@ abstract class AbstractGame(OpenTK.GameWindow):
 		Core.Graphics.MatrixStacks.LoadIdentity()
 		MatrixStacks.Perspective(25.0, Width / cast(double, Height), 1.0, 1000.0)
 
+	Created = false
+	buffer = array(byte, WebViewWidth*WebViewHeight*4)
 	protected def UpdateGui():
 		self.WebCore.Update()
 		if webView.IsDirty():
-			width = Width
-			height = Height
-			buffer = array(byte, width*height*4)
+			width = WebViewWidth
+			height = WebViewHeight
 			bytesPerRow = 4*width
 			
-			webView.Render(buffer, bytesPerRow, 4)
+			rect = System.Drawing.Rectangle(0, 0, width, height)
+			//AwesomiumDotNet.WebView().Render(
+			webView.Render(buffer, bytesPerRow, 4, rect)
+			
+			/*if rect.Width != width or rect.Height != height:
+				needed = array(byte, rect.Width*rect.Height*4)
+				for i in range(rect.Top, rect.Bottom):
+					Buffer.BlockCopy(buffer, bytesPerRow*i + rect.Left*4, needed, rect.Width*4*(i - rect.Top), rect.Width*4)
+				buffer = needed*/
+			print rect
 			GL.ActiveTexture(TextureUnit.Texture0)
 			GL.BindTexture(TextureTarget.Texture2D, browserTexture)
-			GL.TexImage2D[of byte](TextureTarget.Texture2D, 0,PixelInternalFormat.Rgba, width, height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, buffer)			
+			if not Created:
+				GL.TexImage2D[of byte](TextureTarget.Texture2D, 0,PixelInternalFormat.Rgba, width, height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, buffer)
+				Created = true
+			else:
+				//OpenTK.Graphics.OpenGL.GL.TexSubImage2D(TextureTarget.Texture2D, 0, rect.Left, rect.Top, rect.Width, rect.Height, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, buffer)
+				OpenTK.Graphics.OpenGL.GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, width, height, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, buffer)
+				
 			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, cast(int, TextureMinFilter.Linear))
 			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, cast(int, TextureMagFilter.Linear))		
 
@@ -229,12 +242,16 @@ class Game(AbstractGame):
 		FpsCounter = Core.Common.FPSCounter()
 		
 		State = LoadingState(self)
+
+	public override def OnUpdateFrame(e as FrameEventArgs):		
+		_Dt = e.Time
+		State = State.Update(_Dt)
+		SwapBuffers()
 		
 	public override def OnRenderFrame(e as FrameEventArgs):
 		UpdateGui()
 		State.Render()
 		RenderGui()
-		SwapBuffers()
 		
 	public def KeyDown(sender as object, e as KeyboardKeyEventArgs):
 		key = e.Key
@@ -244,6 +261,8 @@ class Game(AbstractGame):
 			Player.WalkDirection.X += 1.0f
 		elif key == Input.Key.W:
 			Player.DoJump = true
+		elif key == Input.Key.E:
+			Player.DoFire = true
 		elif key == Input.Key.Escape:
 			Exit()
 		
@@ -259,10 +278,8 @@ class Game(AbstractGame):
 			Player.WalkDirection.X -= 1.0f			
 		elif key == Key.W:
 			Player.DoJump = false
-		
-	public override def OnUpdateFrame(e as FrameEventArgs):		
-		_Dt = e.Time
-		State = State.Update(_Dt)
+		elif key == Input.Key.E:
+			Player.DoFire = false
 
 game = Game.Instance
 game.Run()

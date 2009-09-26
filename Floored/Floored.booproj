@@ -27,7 +27,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AwesomiumDotNet">
-      <HintPath>..\Libs\AwesomiumDotNet.dll</HintPath>
+      <HintPath>..\..\AwesomiumDotNet\Debug\AwesomiumDotNet.dll</HintPath>
     </Reference>
     <Reference Include="Boo.Lang.Useful" />
     <Reference Include="Box2DX">
@@ -63,9 +63,9 @@
     <Compile Include="Controller.boo" />
     <Compile Include="Faction.boo" />
     <Compile Include="GameObject.boo" />
-    <Compile Include="GameState.boo" />
+    <Compile Include="GameStates\GameState.boo" />
+    <Compile Include="GameStates\LoadingState.boo" />
     <Compile Include="Levels\Level.boo" />
-    <Compile Include="Material.boo" />
     <Compile Include="Objects\Bullet.boo" />
     <Compile Include="Objects\Collectable.boo" />
     <Compile Include="Objects\Environment\Elevator.boo" />
@@ -87,9 +87,12 @@
     <Content Include="ProfilingSessions\Session20090924_223052.sdps" />
     <Content Include="ProfilingSessions\Session20090924_225418.sdps" />
     <Content Include="ProfilingSessions\Session20090925_002208.sdps" />
+    <Content Include="ProfilingSessions\Session20090925_185815.sdps" />
+    <Content Include="ProfilingSessions\Session20090925_190751.sdps" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Levels" />
+    <Folder Include="GameStates" />
     <Folder Include="Objects" />
     <Folder Include="Objects\Environment" />
     <Folder Include="Objects\Weapons" />
