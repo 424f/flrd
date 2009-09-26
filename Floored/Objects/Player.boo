@@ -28,7 +28,7 @@ class Player(GameObject, IDamageable):
 	// TODO: refactor
 	public DoJump = false
 	public DoFire = false
-	public LookDirection as Vector2 = Vector2.Zero
+	public LookDirection as Vector2 = Vector2.Zero	
 	public WalkDirection as Vector2 = Vector2.Zero
 		/*
 		shape = PlayerBody.CreateShape(shapeDef);

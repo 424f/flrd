@@ -21,12 +21,14 @@ class GameState(State):
 	
 	def constructor(game as Game):
 		Game = game
-		Game.webView.LoadUrl(IO.Path.Combine(IO.Directory.GetCurrentDirectory(), """../Data/UI/index.htm"""))			
+		Game.FPSDialog.LoadUrl(IO.Path.Combine(IO.Directory.GetCurrentDirectory(), """../Data/UI/FPSDialog.htm"""))			
 	
 	override def Update(dt as single) as State:
 		Game.FpsCounter.Frame(dt)
 		if Game.FpsCounter.Updated:		
-			Game.webView.ExecuteJavaScript("updateFPS(${Game.FpsCounter.FramesPerSecond})")			
+			Game.FPSDialog.WebView.ExecuteJavaScript("updateFPS(${Game.FpsCounter.FramesPerSecond})")			
+		
+		Game.LoadingDialog.Opacity -= dt * 0.3f
 		
 		# We ignore big steps
 		dt = System.Math.Min(0.16f, dt)
@@ -81,7 +83,7 @@ class GameState(State):
 	override def Render():		
 		// Center camera
 		if Game.UpdateFrustum:
-			Game.Camera.Eye = Game.Player.Position + Vector3(0f, 2f, 20f)
+			Game.Camera.Eye = Game.Player.Position + Vector3(0f, 1f, 20f)
 		else:
 			if Game.Camera.Eye.Y < 50f:
 				Game.Camera.Eye.Y += Game.RenderTime * 10f
@@ -92,7 +94,8 @@ class GameState(State):
 		// Set up scene
 		GL.ClearColor(System.Drawing.Color.SkyBlue)
 		GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit)
-		GL.Fog(FogParameter.FogColor, (1f, 1f, 1f, 1f))
+		GL.Fog(FogParameter.FogColor, (0.6f, 0.6f, 0.6f, 1f))
+		GL.Fog(FogParameter.FogDensity, 0.3f)
 		
 		
 		GL.Disable(EnableCap.Texture2D)
@@ -108,7 +111,7 @@ class GameState(State):
 		if Game.UpdateFrustum:
 			Frustum.Update(MatrixStacks.ModelView.Matrix, MatrixStacks.Projection.Matrix)
 		
-		Game.Light.Position = Vector4.Normalize(Vector4(0.5f, 1.0f, -2.0f, 0f)).AsArray()
+		Game.Light.Position = Vector4.Normalize(Vector4(1f, 2.0f, 4.0f, 0f)).AsArray()
 		Game.Light.Enable()
 				
 		// Render skydome

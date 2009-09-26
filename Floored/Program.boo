@@ -1,6 +1,7 @@
 ﻿namespace Floored
 
 import System
+import Core
 import OpenTK
 import OpenTK.Graphics
 import OpenTK.Graphics.OpenGL
@@ -20,13 +21,10 @@ def LoadShader(vertexPath as string, fragmentPath as string) as ShaderProgram:
 	result.Link()
 	return result
 
-abstract class AbstractGame(OpenTK.GameWindow):
-	public WebCore as WebCore
-	public webView as WebView
-	browserTexture as int
-	WebViewWidth = 1280
-	WebViewHeight = 720
-	
+abstract class AbstractGame(OpenTK.GameWindow):	
+	public FPSDialog as Ui.Dialog
+	public LoadingDialog as Ui.Dialog
+
 	public def constructor():
 		super(1280, 720, OpenTK.Graphics.GraphicsMode(ColorFormat(32), 32, 32, 0, ColorFormat(32)), "FLOORED")
 		VSync = VSyncMode.Off	
@@ -37,51 +35,6 @@ abstract class AbstractGame(OpenTK.GameWindow):
 		Ilut.ilutRenderer(Ilut.ILUT_OPENGL)		
 		
 		Core.Sound.Sound.Init()
-		
-		WebCore = AwesomiumDotNet.WebCore()
-		webView = WebCore.CreateWebView(WebViewWidth, WebViewHeight, true, true, 5)
-		webView.OnBeginLoading += { print "Loading!!" }
-		isRunning = true
-		webView.OnFinishLoading += def():
-			print "Finished loading"
-			isRunning = false
-		
-		webView.OnBeginNavigation += { print "begin navigation" }
-		webView.OnCallback += { print "Callback" }
-		webView.OnChangeCursor += { print "cursor" }
-		webView.OnChangeKeyboardFocus += { print "keyboard focus" }
-		webView.OnChangeTargetUrl += { print "target url" }
-		webView.OnChangeTooltip += { print "Tooltip" }
-		webView.OnReceiveTitle += { print "Receive title" }
-		webView.SetCallback("Eval")		
-
-		def convert(mb as OpenTK.Input.MouseButton) as AwesomiumDotNet.MouseButton:
-			if mb == OpenTK.Input.MouseButton.Left:
-				return AwesomiumDotNet.MouseButton.Left
-			elif mb == OpenTK.Input.MouseButton.Middle:
-				return AwesomiumDotNet.MouseButton.Middle
-			elif mb == OpenTK.Input.MouseButton.Right:
-				return AwesomiumDotNet.MouseButton.Right
-		
-				
-		self.Mouse.Move += { sender as object, e as OpenTK.Input.MouseMoveEventArgs | webView.InjectMouseMove(e.X, e.Y) }
-		self.Mouse.ButtonDown += { sender as object, mbe as OpenTK.Input.MouseButtonEventArgs | webView.InjectMouseDown(convert(mbe.Button)) }
-		self.Mouse.ButtonUp += { sender as object, mbe as OpenTK.Input.MouseButtonEventArgs | webView.InjectMouseUp(convert(mbe.Button)) }
-		
-		def MapKey(k as OpenTK.Input.Key):
-			i = 0
-			try:
-				i = cast(int, System.Windows.Forms.Keys.Parse(System.Windows.Forms.Keys, k.ToString()))
-			except:
-				pass
-			return i
-		
-		//System.Windows.Forms.7
-		self.Keyboard.KeyDown += { sender as object, e as KeyboardKeyEventArgs | webView.InjectKeyboardEvent(IntPtr.Zero, AwesomiumDotNet.WM.Char, MapKey(e.Key), 0); 
-		                                                                         webView.InjectKeyboardEvent(IntPtr.Zero, AwesomiumDotNet.WM.KeyDown, MapKey(e.Key), 0)}
-		self.Keyboard.KeyUp += { sender as object, e as KeyboardKeyEventArgs | webView.InjectKeyboardEvent(IntPtr.Zero, AwesomiumDotNet.WM.KeyUp, MapKey(e.Key), 0) }
-		self.KeyPress += { sender as object, e as OpenTK.KeyPressEventArgs | print "lawl" }
-		browserTexture = GL.GenTexture()
 				
 		//GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, cast(int, TextureMinFilter.LinearMipmapLinear));
 		//GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, cast(int, TextureMagFilter.Linear));	
@@ -97,10 +50,16 @@ abstract class AbstractGame(OpenTK.GameWindow):
 		n = DateTime.Now
 		def fill(a as int, i as int):
 			return string.Format("{0:d${i}}", a)
-		bmp.Save("Screenshots/Screenshot ${n.Year}-${fill(n.Month, 2)}-${fill(n.Day, 2)} - ${fill(n.Hour, 2)}${fill(n.Minute, 2)}${fill(n.Second, 2)}.png", ImageFormat.Png);*/
+		bmp.Save("Screenshots/Screenshot ${n.Year}-${fill(n.Month, 2)}-${fill(n.Day, 2)} - ${fill(n.Hour, 2)}${fill(n.Minute, 2)}${fill(n.Second, 2)}.png", ImageFormat.Png);*/				
 		
+		FPSDialog = Ui.Dialog(64, 64)
 		path = IO.Path.Combine(IO.Directory.GetCurrentDirectory(), "../Data/UI/loading.htm")
-		webView.LoadUrl(path)			
+		FPSDialog.LoadUrl(path)
+		
+		LoadingDialog = Ui.Dialog(512, 512)
+		LoadingDialog.Position = Drawing.Point(0, 200)
+		path = IO.Path.Combine(IO.Directory.GetCurrentDirectory(), "../Data/UI/loading.htm")
+		LoadingDialog.LoadUrl(path)
 
 	protected override def OnResize(e as EventArgs):
 		GL.Viewport(0, 0, self.Width, self.Height)
@@ -108,36 +67,10 @@ abstract class AbstractGame(OpenTK.GameWindow):
 		Core.Graphics.MatrixStacks.LoadIdentity()
 		MatrixStacks.Perspective(25.0, Width / cast(double, Height), 1.0, 1000.0)
 
-	Created = false
-	buffer = array(byte, WebViewWidth*WebViewHeight*4)
 	protected def UpdateGui():
-		self.WebCore.Update()
-		if webView.IsDirty():
-			width = WebViewWidth
-			height = WebViewHeight
-			bytesPerRow = 4*width
-			
-			rect = System.Drawing.Rectangle(0, 0, width, height)
-			//AwesomiumDotNet.WebView().Render(
-			webView.Render(buffer, bytesPerRow, 4, rect)
-			
-			/*if rect.Width != width or rect.Height != height:
-				needed = array(byte, rect.Width*rect.Height*4)
-				for i in range(rect.Top, rect.Bottom):
-					Buffer.BlockCopy(buffer, bytesPerRow*i + rect.Left*4, needed, rect.Width*4*(i - rect.Top), rect.Width*4)
-				buffer = needed*/
-			print rect
-			GL.ActiveTexture(TextureUnit.Texture0)
-			GL.BindTexture(TextureTarget.Texture2D, browserTexture)
-			if not Created:
-				GL.TexImage2D[of byte](TextureTarget.Texture2D, 0,PixelInternalFormat.Rgba, width, height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, buffer)
-				Created = true
-			else:
-				//OpenTK.Graphics.OpenGL.GL.TexSubImage2D(TextureTarget.Texture2D, 0, rect.Left, rect.Top, rect.Width, rect.Height, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, buffer)
-				OpenTK.Graphics.OpenGL.GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, width, height, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, buffer)
-				
-			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, cast(int, TextureMinFilter.Linear))
-			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, cast(int, TextureMagFilter.Linear))		
+		Ui.Dialog.Update()
+		FPSDialog.UpdateTexture()
+		LoadingDialog.UpdateTexture()
 
 	protected def RenderGui():
 		MatrixStacks.MatrixMode(MatrixMode.Projection)
@@ -153,24 +86,12 @@ abstract class AbstractGame(OpenTK.GameWindow):
 		GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha)
 		GL.Enable(EnableCap.Blend)
 		GL.Enable(EnableCap.Texture2D)
-		GL.BindTexture(TextureTarget.Texture2D, browserTexture)
-		GL.Begin(BeginMode.Triangles)
-		GL.TexCoord2(0, 0)
-		GL.Vertex3(0, 0, 0)
-		GL.TexCoord2(1, 0)
-		GL.Vertex3(Width, 0, 0)
-		GL.TexCoord2(1, 1)
-		GL.Vertex3(Width, Height, 0)
-
-		GL.TexCoord2(1, 1)
-		GL.Vertex3(Width, Height, 0)
-		GL.TexCoord2(0, 1)
-		GL.Vertex3(0, Height, 0)
-		GL.TexCoord2(0, 0)
-		GL.Vertex3(0, 0, 0)
 		
-
-		GL.End()		
+		// Center Loading Dialog
+		LoadingDialog.Position = Drawing.Point(Width / 2 - LoadingDialog.Width / 2, Height / 2 - LoadingDialog.Height / 2)
+		
+		LoadingDialog.Render()
+		FPSDialog.Render()
 
 		MatrixStacks.MatrixMode(MatrixMode.Projection)
 		MatrixStacks.Pop()

@@ -35,6 +35,9 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AwesomiumDotNet">
+      <HintPath>..\Libs\Awesomium\AwesomiumDotNet.dll</HintPath>
+    </Reference>
     <Reference Include="Boo.Lang.Compiler">
       <HintPath>C:\dev\boo\bin\Boo.Lang.Compiler.dll</HintPath>
     </Reference>
@@ -139,6 +142,7 @@
     <Compile Include="src\Core\Sound\Listener.boo" />
     <Compile Include="src\Core\Sound\Sound.boo" />
     <Compile Include="src\Core\Sound\Source.boo" />
+    <Compile Include="src\Core\Ui\Dialog.boo" />
     <Compile Include="src\Core\Util\Ext.boo" />
     <Compile Include="src\Core\Util\Matrices.boo" />
     <Compile Include="src\Core\Util\Structs.boo">
@@ -160,6 +164,7 @@
     <Folder Include="src\Core\Input" />
     <Folder Include="src\Core\Math" />
     <Folder Include="src\Core\Common" />
+    <Folder Include="src\Core\Ui" />
     <Folder Include="src\Core\Sound" />
     <Folder Include="src\Core\Util" />
     <Folder Include="src\Core\Script" />

@@ -43,14 +43,16 @@ class Terrain:
 	Chunks as (TerrainChunk, 2)
 	
 
-	public def constructor(textureLoader as callable(string) as Texture):
+	public def constructor(textureLoader as callable(string) as Texture, sunDir as Vector3):
 		/*texRock = textureLoader("""../Data/Textures/Terrain/SnowDirt.jpg""")
 		texGrass = textureLoader("""../Data/Textures/Terrain/Snow.jpg""")
 		texSand = textureLoader("""../Data/Textures/Terrain/Ice.jpg""")*/
 		texRock = textureLoader("""../Data/Textures/Terrain/Rock.jpg""")
 		texGrass = textureLoader("""../Data/Textures/Terrain/Grass.jpg""")
 		texSand = textureLoader("""../Data/Textures/Terrain/Sand.jpg""")		
-		texMaple = textureLoader("""../Data/Textures/Billboards/Pine.png""")
+		texMaple = textureLoader("""../Data/Textures/Billboards/Grass.png""")
+		
+		sunDir = Vector3.Normalize(sun)
 		
 		// Upper-most point
 		ceiling = -10000.0
@@ -75,8 +77,6 @@ class Terrain:
 				heightMap[i, j] = vertex
 				//if vertex.v.Y > 0 and r.Next(0, 15) == 0:
 				//	grasses.Add(vertex.v)
-				if vertex.v.Y > 2 and r.Next(0, 10) == 0:
-					maples.Add(vertex.v)
 					
 		// Loop through every triangle and add its normal to the three vertices
 		for i in range(GridLength-1):
@@ -131,7 +131,7 @@ class Terrain:
 				Y = heightMap[i, j].v.Y
 				heightMap[i, j].c.X = 0.0
 				trans = 2.0
-				levels = (5.0, 15.0)
+				levels = (2.5, 15.0)
 				
 				if Y > levels[0] - trans and Y < levels[1]:
 					if Y < levels[0]:
@@ -152,6 +152,22 @@ class Terrain:
 						heightMap[i, j].c.Z = 1.0
 					else:
 						heightMap[i, j].c.Z = (levels[0] - Y) / trans		
+
+				if heightMap[i, j].c.X > 0.7f and false:
+					//maples.Add(heightMap[i, j].v)
+				
+					if i < GridLength - 1 and j < GridLength - 1:
+						for times in range(r.Next(1, 5)):
+							a = r.NextDouble()
+							b = r.NextDouble()
+							if a + b > 1:
+								a, b = 1-a, 1-b
+							c = 1f - a - b
+							A as Vector3 = heightMap[i, j].v
+							B as Vector3 = (heightMap[i+1, j].v, heightMap[i, j+1].v)[r.Next(0, 1)]
+							C as Vector3 = heightMap[i+1, j+1].v
+							bpos as Vector3 = Vector3.Mult(A, a) + Vector3.Mult(B, b) + Vector3.Mult(C, c)
+							maples.Add(bpos)
 
 		// Load shaders
 		vertexShader = Shader(ShaderType.VertexShader, "../Data/Shaders/terrain.vert")
@@ -286,14 +302,16 @@ class Terrain:
 		GL.Enable(EnableCap.Texture2D)
 		GL.AlphaFunc(AlphaFunction.Greater, 0.05)
 		GL.Enable(EnableCap.AlphaTest)
-		
+		maples.Sort({ a as Vector3, b as Vector3 | a.Z.CompareTo(b.Z) })
 		texMaple.Bind()
 		glDisable(GL_LIGHTING)
+		GL.Fog(FogParameter.FogDensity, 0.003f)
+		glEnable(GL_FOG)
 		GL.Begin(BeginMode.Triangles)
 		GL.Color4(Color.White)
-		ex = 3
-		right = Vector3(model.M11, model.M12, model.M13) * ex
-		up = Vector3(model.M21, model.M22, model.M23) * 2 * ex		
+		ex = 3.5
+		right = Vector3(model.M11, model.M12, model.M13) *ex
+		up = Vector3(model.M21, model.M22, model.M23) * ex		
 		for grass as Vector3 in maples:
 			GL.TexCoord2(0, 0)
 			GL.Vertex3(grass - right)
@@ -309,7 +327,7 @@ class Terrain:
 			GL.TexCoord2(1, 1)
 			GL.Vertex3(grass + right + up)
 		GL.End()
-		
+		glDisable(GL_FOG)
 		GL.Disable(EnableCap.Blend)		
 		GL.Disable(EnableCap.AlphaTest)
 		GL.AlphaFunc(AlphaFunction.Greater, 0.0)		

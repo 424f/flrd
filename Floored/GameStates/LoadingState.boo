@@ -99,7 +99,9 @@ class LoadingState(State):
 		t = def():
 			// Create level
 			Game.Level = Levels.Level(Game.World)
-			
+		Tasks.Add(Task("Loading level", t))	
+		
+		t = def():
 			// Sound
 			Game.Listener = Core.Sound.Sound.GetListener()
 			if Game.Sound == null:
@@ -107,10 +109,12 @@ class LoadingState(State):
 				Game.Source = Core.Sound.Source(Game.Sound)	
 				Game.GSound = Core.Sound.Buffer("../Data/Sound/Weapons/grenlf1a.wav")
 				Game.GSource = Core.Sound.Source(Game.GSound)	
-			
+		Tasks.Add(Task("Loading Sounds", t))	
+		
+		t = def():
 			// Terrain
-			Game.Terrain = Core.Graphics.Terrain({ file as string | Texture.Load(file) })
-		Tasks.Add(Task("Loading Level, Terrain, Sounds", t))	
+			Game.Terrain = Core.Graphics.Terrain({ file as string | Texture.Load(file) }, Vector3(1f, 2f, 4f))
+		Tasks.Add(Task("Loading terrain", t))	
 	
 	override def Update(dt as single) as State:
 		if Tasks.Count == 0:
@@ -123,7 +127,7 @@ class LoadingState(State):
 		passedStr = passed.Ticks / 10000000.0f
 		description = task.Description + " (${passedStr}s)"
 		description = description.Replace("\"", "\\\"")
-		Game.webView.ExecuteJavaScript("finishedTask(\"${description}\")")
+		Game.LoadingDialog.WebView.ExecuteJavaScript("finishedTask(\"${description}\")")
 		return self
 
 	override def Render():
