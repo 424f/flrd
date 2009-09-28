@@ -1,6 +1,8 @@
 ﻿namespace Floored
 
 import System
+import System.Drawing
+import System.Drawing.Imaging
 import Core
 import OpenTK
 import OpenTK.Graphics.OpenGL
@@ -67,6 +69,7 @@ class Game(AbstractGame):
 	public GSource as Core.Sound.Source
 	
 	public State as State
+	public TakeScreenshot = false
 	
 	public override def OnLoad(e as EventArgs):
 		super.OnLoad(e)
@@ -85,14 +88,28 @@ class Game(AbstractGame):
 		State = LoadingState(self)
 
 	public override def OnUpdateFrame(e as FrameEventArgs):		
+		System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
 		_Dt = e.Time
 		State = State.Update(_Dt)
 		SwapBuffers()
 		
 	public override def OnRenderFrame(e as FrameEventArgs):
-		//UpdateGui()
+		UpdateGui()
 		State.Render()
-		//RenderGui()
+		RenderGui()
+		
+		if TakeScreenshot:
+			bmp = Bitmap(Width, Height)
+			data = bmp.LockBits(Rectangle(0, 0, Width, Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb)
+			GL.ReadPixels(0, 0, Width, Height, OpenTK.Graphics.OpenGL.PixelFormat.Bgr, PixelType.UnsignedByte, data.Scan0)
+			GL.Finish()
+			bmp.UnlockBits(data)
+			bmp.RotateFlip(RotateFlipType.RotateNoneFlipY)
+			n = DateTime.Now
+			def fill(a as int, i as int):
+				return string.Format("{0:d${i}}", a)
+			bmp.Save("../Screenshots/Screenshot ${n.Year}-${fill(n.Month, 2)}-${fill(n.Day, 2)} - ${fill(n.Hour, 2)}${fill(n.Minute, 2)}${fill(n.Second, 2)}.png", ImageFormat.Png)
+			TakeScreenshot = false
 		
 	public def KeyDown(sender as object, e as KeyboardKeyEventArgs):
 		key = e.Key
@@ -104,6 +121,8 @@ class Game(AbstractGame):
 			Player.DoJump = true
 		elif key == Input.Key.E:
 			Player.DoFire = true
+		elif key == Input.Key.R:
+			Player.DoSecondaryFire = true
 		elif key == Input.Key.Escape:
 			Exit()
 		
@@ -119,6 +138,8 @@ class Game(AbstractGame):
 			Player.WalkDirection.X -= 1.0f			
 		elif key == Key.W:
 			Player.DoJump = false
+		elif key == Input.Key.R:
+			Player.DoSecondaryFire = false			
 		elif key == Input.Key.E:
 			Player.DoFire = false
 

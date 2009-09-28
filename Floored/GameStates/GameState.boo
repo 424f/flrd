@@ -7,6 +7,8 @@ import OpenTK.Graphics.OpenGL
 import Core
 import Core.Graphics
 import Core.Util.Ext
+import Core.Ui
+import AwesomiumDotNet
 
 
 abstract class State:
@@ -19,13 +21,28 @@ abstract class State:
 class GameState(State):
 	Game as Game
 	Frustum = Frustum()
-	ConfigDialog as Ui.Dialog
+	ConfigDialog as Ui.ConfigDialog
+	
+	VisualizePhysics = ConfigProperty("VisualizePhysics", JSValue(false))
+	UpdateFrustum = ConfigProperty("UpdateFrustum", JSValue(true))
 	
 	def constructor(game as Game):
 		Game = game
 		Game.FPSDialog.LoadUrl(IO.Path.Combine(IO.Directory.GetCurrentDirectory(), """../Data/UI/FPSDialog.htm"""))			
-		ConfigDialog = Ui.Dialog(512, 512)
-		ConfigDialog.LoadUrl(IO.Path.Combine(IO.Directory.GetCurrentDirectory(), """../Data/UI/ConfigWindow.htm"""))
+		
+		// Set up configuration dialog
+		ConfigDialog = Ui.ConfigDialog()
+		ConfigDialog.WebView.OnCallback += def(sender as object, e as Args.CallbackEventArgs):
+			if e.Name == "TakeScreenshot":
+				Game.TakeScreenshot = true
+		
+		ConfigDialog.AddProperty(VisualizePhysics)
+		VisualizePhysics.Updated += { Game.ShowPhysics = VisualizePhysics.Value.ToBoolean() }
+		
+		ConfigDialog.AddProperty(UpdateFrustum)
+		UpdateFrustum.Updated += { Game.UpdateFrustum = UpdateFrustum.Value.ToBoolean() }
+		
+		
 		ConfigDialog.Position.X = Game.Width - ConfigDialog.Width
 		ConfigDialog.Position.Y = Game.Height - ConfigDialog.Height
 	
@@ -54,31 +71,6 @@ class GameState(State):
 			//Player.LookDirection = Vector2(-joystick.Axis[2], -joystick.Axis[3])
 			//Player.DoJump = joystick.Button[0]
 			
-			# Walking
-			/*
-			
-				
-				
-			
-			Dir = Vector3(dir2.X, dir2.Y, 0.0f);
-			
-			# Shooting
-			for i in range(joystick.Button.Count):
-				if joystick.Button[i]:
-					pass
-		
-					
-			if joystick.Button[5] and ReloadTime <= 0f:
-				o = Objects.Grenade(World)
-				look = Vector3.Normalize(Character.LookDirection)
-				o.Body.SetXForm((PlayerBody.GetPosition()) + (look * 0.7f).AsVec2(), 0.0f)
-				o.Body.ApplyImpulse(o.Body.GetMass() * look.AsVec2() * 30.0f, Vec2.Zero)
-				World.Objects.Add(o)
-				ReloadTime = 0.5f
-				GSource.Position = Character.Position
-				//Source.Direction = Character.LookDirection
-				GSource.Velocity = Character.LookDirection * 100.0f
-				GSource.Play()*/
 				
 			Game.Particles.Tick(dt)
 

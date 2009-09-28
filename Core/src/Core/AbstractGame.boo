@@ -10,8 +10,6 @@ import Tao.DevIl
 
 import Core.Graphics
 
-import AwesomiumDotNet
-
 abstract class AbstractGame(OpenTK.GameWindow):	
 	public FPSDialog as Ui.Dialog
 	public LoadingDialog as Ui.Dialog
@@ -25,23 +23,7 @@ abstract class AbstractGame(OpenTK.GameWindow):
 		Ilut.ilutInit()
 		Ilut.ilutRenderer(Ilut.ILUT_OPENGL)		
 		
-		Core.Sound.Sound.Init()
-				
-		//GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, cast(int, TextureMinFilter.LinearMipmapLinear));
-		//GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, cast(int, TextureMagFilter.Linear));	
-
-		
-		//OpenTK.Graphics.Glu.Build2DMipmap(TextureTarget.Texture2D, cast(int, PixelInternalFormat.Rgba), data.Width, data.Height, OpenTK.Graphics.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0)
-		/*bmp = Bitmap(Width, Height)
-		data = bmp.LockBits(Rectangle(0, 0, Width, Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb)
-		GL.ReadPixels(0, 0, Width, Height, OpenTK.Graphics.PixelFormat.Bgr, PixelType.UnsignedByte, data.Scan0)
-		GL.Finish()
-		bmp.UnlockBits(data)
-		bmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
-		n = DateTime.Now
-		def fill(a as int, i as int):
-			return string.Format("{0:d${i}}", a)
-		bmp.Save("Screenshots/Screenshot ${n.Year}-${fill(n.Month, 2)}-${fill(n.Day, 2)} - ${fill(n.Hour, 2)}${fill(n.Minute, 2)}${fill(n.Second, 2)}.png", ImageFormat.Png);*/				
+		Core.Sound.Sound.Init()		
 		
 		UpdateViewport()
 		

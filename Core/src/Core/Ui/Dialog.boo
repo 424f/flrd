@@ -40,17 +40,18 @@ class Dialog(IDisposable):
 		_Width = width
 		_Height = height
 		
-		webView = WebCore.CreateWebView(width, height, true, true, 5)
+		webView = WebCore.CreateWebView(width, height, true, true, 10)
 		webView.OnBeginLoading += { print "Loading!!" }
-		
+		webView.OnFinishLoading += { print "Finished loading" }
 		webView.OnBeginNavigation += { print "begin navigation" }
-		webView.OnCallback += { print "Callback" }
+		webView.OnCallback += Callback
 		webView.OnChangeCursor += { print "cursor" }
 		webView.OnChangeKeyboardFocus += { print "keyboard focus" }
 		webView.OnChangeTargetUrl += { print "target url" }
 		webView.OnChangeTooltip += { print "Tooltip" }
 		webView.OnReceiveTitle += { print "Receive title" }
 		webView.SetCallback("Eval")		
+		webView.SetCallback("TakeScreenshot")
 
 		def convert(mb as OpenTK.Input.MouseButton) as AwesomiumDotNet.MouseButton:
 			if mb == OpenTK.Input.MouseButton.Left:
@@ -85,6 +86,9 @@ class Dialog(IDisposable):
 		Buffer = array(byte, Width*Height*4)
 		
 		Dialogs.Add(self)
+	
+	public virtual def Callback(sender as object, e as Args.CallbackEventArgs):
+		pass
 	
 	public def LoadUrl(url as string):
 		WebView.LoadUrl(url)			
@@ -131,3 +135,27 @@ class Dialog(IDisposable):
 	public def Dispose():
 		WebView.Dispose()
 		Dialogs.Remove(self)
+		
+	public def CallJavascriptMethod(method as string, args as (JSValue)):
+		call = method + "("
+		values = array(string, args.Length)
+		i = 0
+		for arg in args:
+			val as string
+			if arg.IsString():
+				val = arg.ToString()
+				val = val.Replace("\"", "\\\"")
+				val = "\"${val}\""
+			elif arg.IsDouble():
+				val = arg.ToString()
+			elif arg.IsInteger():
+				val = arg.ToString()
+			elif arg.IsBoolean():
+				val = arg.ToString()				
+			elif arg.IsNull():
+				val = "null"
+			values[i] = val
+			i += 1
+		call += string.Join(", ", values)
+		call += ")"
+		WebView.ExecuteJavaScript(call)

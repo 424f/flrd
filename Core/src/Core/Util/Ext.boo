@@ -11,6 +11,10 @@ class Ext:
 		return Vec2(v.X, v.Y)
 
 	[Extension]
+	public static def AsVec2(v as Vector2) as Vec2:
+		return Vec2(v.X, v.Y)
+
+	[Extension]
 	public static def AsArray(v as Vector3) as (single):
 		return (v.X, v.Y, v.Z)
 

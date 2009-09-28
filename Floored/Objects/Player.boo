@@ -1,7 +1,6 @@
 ﻿namespace Floored.Objects
 
 import Floored
-import Core.Util.Ext
 import Core.Graphics
 import OpenTK
 import Box2DX.Common
@@ -30,6 +29,7 @@ class Player(GameObject, IDamageable):
 	// TODO: refactor
 	public DoJump = false
 	public DoFire = false
+	public DoSecondaryFire = false
 	public LookDirection as Vector2 = Vector2.Zero	
 	public WalkDirection as Vector2 = Vector2.Zero
 		/*
@@ -165,6 +165,8 @@ class Player(GameObject, IDamageable):
 			if DoFire:
 				Character.SetUpperAnimation(Character.Model.GetAnimation(Md3.AnimationId.TORSO_ATTACK), true)
 				Weapon.PrimaryFire()
+			elif DoSecondaryFire:
+				Weapon.SecondaryFire()
 	
 			// Reset sensor
 			OnGround = false

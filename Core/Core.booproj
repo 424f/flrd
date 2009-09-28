@@ -59,6 +59,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(BooBinPath)\Boo.Lang.Useful.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="Tao.DevIl">
       <HintPath>..\Libs\Tao\Tao.DevIl.dll</HintPath>
     </Reference>
@@ -144,6 +145,7 @@
     <Compile Include="src\Core\Sound\Listener.boo" />
     <Compile Include="src\Core\Sound\Sound.boo" />
     <Compile Include="src\Core\Sound\Source.boo" />
+    <Compile Include="src\Core\Ui\ConfigDialog.boo" />
     <Compile Include="src\Core\Ui\Dialog.boo" />
     <Compile Include="src\Core\Util\Ext.boo" />
     <Compile Include="src\Core\Util\Matrices.boo" />
