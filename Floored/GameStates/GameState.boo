@@ -4,6 +4,7 @@ import System
 import System.Collections.Generic
 import OpenTK
 import OpenTK.Graphics.OpenGL
+import Core
 import Core.Graphics
 import Core.Util.Ext
 
@@ -18,10 +19,15 @@ abstract class State:
 class GameState(State):
 	Game as Game
 	Frustum = Frustum()
+	ConfigDialog as Ui.Dialog
 	
 	def constructor(game as Game):
 		Game = game
 		Game.FPSDialog.LoadUrl(IO.Path.Combine(IO.Directory.GetCurrentDirectory(), """../Data/UI/FPSDialog.htm"""))			
+		ConfigDialog = Ui.Dialog(512, 512)
+		ConfigDialog.LoadUrl(IO.Path.Combine(IO.Directory.GetCurrentDirectory(), """../Data/UI/ConfigWindow.htm"""))
+		ConfigDialog.Position.X = Game.Width - ConfigDialog.Width
+		ConfigDialog.Position.Y = Game.Height - ConfigDialog.Height
 	
 	override def Update(dt as single) as State:
 		Game.FpsCounter.Frame(dt)

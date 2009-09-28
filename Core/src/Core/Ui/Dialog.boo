@@ -1,17 +1,27 @@
 ﻿namespace Core.Ui
 
 import System
+import System.Collections.Generic
 import OpenTK
+import OpenTK.Graphics
 import OpenTK.Graphics.OpenGL
+import Core.Graphics
 import AwesomiumDotNet
 
 class Dialog:
 	static protected WebCore as WebCore
 	static public def Update():
 		WebCore.Update()
+		for dialog in Dialogs:
+			dialog.UpdateTexture()
+	
+	static Dialogs as List[of Dialog]:
+		public get: return _Dialogs
+	static protected _Dialogs = List[of Dialog]()
 	
 	protected _Texture as int
 	protected Buffer as (byte)
+	
 	
 	public Position as Drawing.Point
 	public Opacity as single = 1.0f
@@ -20,11 +30,15 @@ class Dialog:
 	[Getter(Width)] _Width as int
 	[Getter(Height)] _Height as int
 	
+	
+	pbo as PixelBufferObject
 
 	public def constructor(width as int, height as int):
 		if WebCore == null:
 			WebCore = AwesomiumDotNet.WebCore()
-	
+		
+		pbo = PixelBufferObject(512, 512)
+		
 		_Width = width
 		_Height = height
 		
@@ -48,11 +62,6 @@ class Dialog:
 			elif mb == OpenTK.Input.MouseButton.Right:
 				return AwesomiumDotNet.MouseButton.Right
 		
-				
-		/*self.Mouse.Move += { sender as object, e as OpenTK.Input.MouseMoveEventArgs | webView.InjectMouseMove(e.X, e.Y) }
-		self.Mouse.ButtonDown += { sender as object, mbe as OpenTK.Input.MouseButtonEventArgs | webView.InjectMouseDown(convert(mbe.Button)) }
-		self.Mouse.ButtonUp += { sender as object, mbe as OpenTK.Input.MouseButtonEventArgs | webView.InjectMouseUp(convert(mbe.Button)) }*/
-		
 		/*def MapKey(k as OpenTK.Input.Key):
 			i = 0
 			try:
@@ -71,11 +80,14 @@ class Dialog:
 
 		GL.ActiveTexture(TextureUnit.Texture0)
 		GL.BindTexture(TextureTarget.Texture2D, _Texture)
-		GL.TexImage2D[of byte](TextureTarget.Texture2D, 0,PixelInternalFormat.Rgba, width, height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, null as (byte))
+		GL.TexImage2D[of byte](TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, width, height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, null as (byte))
 		GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, cast(int, TextureMinFilter.Linear))
 		GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, cast(int, TextureMagFilter.Linear))		
 		
 		Buffer = array(byte, Width*Height*4)
+		pbo = PixelBufferObject(Width, Height)
+		
+		Dialogs.Add(self)
 	
 	public def LoadUrl(url as string):
 		WebView.LoadUrl(url)			
@@ -87,7 +99,12 @@ class Dialog:
 		if WebView.IsDirty():
 			bytesPerRow = 4*Width
 			rect = System.Drawing.Rectangle(0, 0, Width, Height)
-			WebView.Render(Buffer, bytesPerRow, 4, rect)
+			//WebView.Render(Buffer, bytesPerRow, 4) //, rect)
+			
+			pbo.BeginUsage()
+			ptr as IntPtr = pbo.MapUnpackBuffer()
+			WebView.Render(ptr.ToInt32(), bytesPerRow, 4)
+			pbo.UnmapBuffer()
 			
 			/*if rect.Width != width or rect.Height != height:
 				needed = array(byte, rect.Width*rect.Height*4)
@@ -96,9 +113,12 @@ class Dialog:
 				buffer = needed*/
 			GL.ActiveTexture(TextureUnit.Texture0)
 			GL.BindTexture(TextureTarget.Texture2D, _Texture)
-			OpenTK.Graphics.OpenGL.GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, Width, Height, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, Buffer)		
+			//OpenTK.Graphics.OpenGL.GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, Width, Height, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, Buffer)		
+			GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, Width, Height, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, IntPtr.Zero)		
+			pbo.EndUsage()
 	
 	public def Render():
+		GL.DepthMask(false)
 		GL.BindTexture(TextureTarget.Texture2D, _Texture)
 		GL.Color4(Vector4(1, 1, 1, Opacity))
 		GL.Begin(BeginMode.Triangles)
@@ -116,3 +136,4 @@ class Dialog:
 		GL.TexCoord2(0, 0)
 		GL.Vertex3(Position.X, Position.Y, 0)
 		GL.End()				
+		GL.DepthMask(true)

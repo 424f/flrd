@@ -9,6 +9,7 @@ import OpenTK.Input
 import Tao.DevIl
 
 import Core.Graphics
+import Floored
 
 import AwesomiumDotNet
 
@@ -53,13 +54,42 @@ abstract class AbstractGame(OpenTK.GameWindow):
 		bmp.Save("Screenshots/Screenshot ${n.Year}-${fill(n.Month, 2)}-${fill(n.Day, 2)} - ${fill(n.Hour, 2)}${fill(n.Minute, 2)}${fill(n.Second, 2)}.png", ImageFormat.Png);*/				
 		
 		FPSDialog = Ui.Dialog(64, 64)
-		path = IO.Path.Combine(IO.Directory.GetCurrentDirectory(), "../Data/UI/loading.htm")
+		path = IO.Path.Combine(IO.Directory.GetCurrentDirectory(), "../Data/UI/FPSDialog.htm")
 		FPSDialog.LoadUrl(path)
 		
 		LoadingDialog = Ui.Dialog(512, 512)
 		LoadingDialog.Position = Drawing.Point(0, 200)
 		path = IO.Path.Combine(IO.Directory.GetCurrentDirectory(), "../Data/UI/loading.htm")
 		LoadingDialog.LoadUrl(path)
+
+		def findWebViewAt(x as int, y as int):
+			for dialog in Ui.Dialog.Dialogs:
+				if dialog.Position.X <= x and dialog.Position.Y <= y and dialog.Position.X + dialog.Width >= x and dialog.Position.Y + dialog.Height >= y:
+				   	return dialog
+			return null
+			
+		def convert(mb as OpenTK.Input.MouseButton) as AwesomiumDotNet.MouseButton:
+			if mb == OpenTK.Input.MouseButton.Left:
+				return AwesomiumDotNet.MouseButton.Left
+			elif mb == OpenTK.Input.MouseButton.Middle:
+				return AwesomiumDotNet.MouseButton.Middle
+			elif mb == OpenTK.Input.MouseButton.Right:
+				return AwesomiumDotNet.MouseButton.Right			
+		
+		Mouse.Move += def(sender as object, e as OpenTK.Input.MouseMoveEventArgs):
+			webView = findWebViewAt(e.X, e.Y)
+			if webView != null:
+				webView.WebView.InjectMouseMove(e.X - webView.Position.X, e.Y - webView.Position.Y)
+		
+		Mouse.ButtonDown += def(sender as object, e as OpenTK.Input.MouseButtonEventArgs):
+			webView = findWebViewAt(e.X, e.Y)
+			if webView != null:			
+				webView.WebView.InjectMouseDown(convert(e.Button))
+		
+		Mouse.ButtonUp += def(sender as object, e as OpenTK.Input.MouseButtonEventArgs):
+			webView = findWebViewAt(e.X, e.Y)
+			if webView != null:			
+				webView.WebView.InjectMouseUp(convert(e.Button))
 
 	protected override def OnResize(e as EventArgs):
 		GL.Viewport(0, 0, self.Width, self.Height)
@@ -69,8 +99,6 @@ abstract class AbstractGame(OpenTK.GameWindow):
 
 	protected def UpdateGui():
 		Ui.Dialog.Update()
-		FPSDialog.UpdateTexture()
-		LoadingDialog.UpdateTexture()
 
 	protected def RenderGui():
 		MatrixStacks.MatrixMode(MatrixMode.Projection)
@@ -90,9 +118,9 @@ abstract class AbstractGame(OpenTK.GameWindow):
 		// Center Loading Dialog
 		LoadingDialog.Position = Drawing.Point(Width / 2 - LoadingDialog.Width / 2, Height / 2 - LoadingDialog.Height / 2)
 		
-		LoadingDialog.Render()
-		FPSDialog.Render()
-
+		for dialog in Ui.Dialog.Dialogs:
+			dialog.Render()
+			
 		MatrixStacks.MatrixMode(MatrixMode.Projection)
 		MatrixStacks.Pop()
 		

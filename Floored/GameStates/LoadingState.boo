@@ -29,7 +29,7 @@ class LoadingState(State):
 		
 		// Set up skydome
 		t = def():
-			Game.Skydome = Skydome(Texture.Load("../Data/Textures/Sky.jpg"), 150f)
+			Game.Skydome = Skydome(Texture.Load("../Data/Textures/SkyBlue.jpg"), 150f)
 		Tasks.Add(Task("Loading skydome", t))
 	
 		// Load shaders
