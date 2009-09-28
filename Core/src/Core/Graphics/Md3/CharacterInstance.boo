@@ -66,18 +66,14 @@ class CharacterInstance(AbstractRenderable):
 	
 	LowerAnimation as AnimationDescriptor:
 		set:
-			return if _lowerAnimation == value
-			_lowerAnimation = value
-			_lowerFrame = value.FirstFrame
+			SetLowerAnimation(value, false)
 		get:
 			return _lowerAnimation
 	_lowerAnimation = AnimationDescriptor()
 
 	UpperAnimation as AnimationDescriptor:
 		set:
-			return if _upperAnimation == value
-			_upperAnimation = value
-			_upperFrame = value.FirstFrame
+			SetUpperAnimation(value, false)
 		get:
 			return _upperAnimation
 	_upperAnimation = AnimationDescriptor()
@@ -91,7 +87,17 @@ class CharacterInstance(AbstractRenderable):
 		_upperFrame = 0
 		_lookDirection = Vector3(0, 0, -1)
 		_walkDirection = Vector3(0, 0, -1)
-		
+	
+	def SetUpperAnimation(animation as AnimationDescriptor, forceRestart as bool):
+		return if not forceRestart and _upperAnimation == animation
+		_upperAnimation = animation
+		_upperFrame = animation.FirstFrame
+
+	def SetLowerAnimation(animation as AnimationDescriptor, forceRestart as bool):
+		return if not forceRestart and _lowerAnimation == animation
+		_lowerAnimation = animation
+		_lowerFrame = animation.FirstFrame
+	
 	def Render():
 		MatrixStacks.Push()
 		MatrixStacks.Translate(_Position.X, _Position.Y, _Position.Z)
@@ -116,8 +122,16 @@ class CharacterInstance(AbstractRenderable):
 		return Sphere(self.Position, frameinfo.Radius)
 		
 	def CalculateWeaponPosition():
-		m as Matrix4 = Model.Lower.GetTagMatrix("tag_torso", self._lowerFrame)
-		m2 = Model.Upper.GetTagMatrix("tag_weapon", self._upperFrame)
-		m = Matrix4.Mult(m, m2)
+		MatrixStacks.SetUserMode(true)
+		
+		MatrixStacks.Rotate(-WalkAngle, 0, 1, 0)
+		MatrixStacks.Multiply(Model.Lower.GetTagMatrix("tag_torso", self._lowerFrame))
+		MatrixStacks.Rotate(-LookAngle + WalkAngle, 0, 1, 0)
+		MatrixStacks.Rotate(VerticalLookAngle, 1, 0, 0)
+		MatrixStacks.Multiply(Model.Upper.GetTagMatrix("tag_weapon", self._upperFrame))
+		
+		m = MatrixStacks.User.Matrix
 		x = Vector4.Transform(Vector4(0, 0, 0, 1), m)
-		return self.Position + Vector3(x.X, x.Y, x.Z)
+		
+		MatrixStacks.SetUserMode(false)
+		return Scale*Vector3(x.X, x.Y, x.Z)

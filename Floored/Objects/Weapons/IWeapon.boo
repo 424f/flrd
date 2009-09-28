@@ -31,7 +31,7 @@ abstract class AbstractWeapon(IWeapon, GameObject):
 	_Carrier as Player
 	
 class MachineGun(AbstractWeapon):
-	FireInterval = 2f
+	FireInterval = 0.2f
 	LastFired = FireInterval
 	
 	public def constructor():
@@ -44,8 +44,8 @@ class MachineGun(AbstractWeapon):
 			bullet = Bullet(world)
 			look = Carrier.LookDirection
 			look2 = Box2DX.Common.Vec2(look.X, look.Y) 
-			bullet.Position = Carrier.Position + Vector3(look.X, look.Y, 0)
-			bullet.Body.SetLinearVelocity(look2 * 100f)
+			bullet.Position = Carrier.Position + Carrier.CalculateWeaponOffset() + 0.5f*Vector3(look.X, look.Y, 0)
+			bullet.Body.SetLinearVelocity(look2*35)
 			world.Add(bullet)
 			LastFired = 0f
 		

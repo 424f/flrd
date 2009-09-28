@@ -20,17 +20,18 @@ class PixelBufferObject:
 
 		GL.BindBuffer(BufferTarget.PixelUnpackBuffer, Pbo)		
 		GL.BufferData(BufferTarget.PixelUnpackBuffer, IntPtr(NumBytes), IntPtr.Zero, BufferUsageHint.StreamDraw)	
+		EndUsage()
 	
 	def BeginUsage():
-		OpenTK.Graphics.OpenGL.GL.BindBuffer(OpenTK.Graphics.OpenGL.BufferTarget.PixelUnpackBuffer, Pbo)
+		GL.BindBuffer(BufferTarget.PixelUnpackBuffer, Pbo)
 	
 	def MapUnpackBuffer() as IntPtr:
 		GL.BufferData(BufferTarget.PixelUnpackBuffer, IntPtr(NumBytes), IntPtr.Zero, BufferUsageHint.StreamDraw)
-		ptr as IntPtr = OpenTK.Graphics.OpenGL.GL.MapBuffer(OpenTK.Graphics.OpenGL.BufferTarget.PixelUnpackBuffer, OpenTK.Graphics.OpenGL.BufferAccess.WriteOnly)
+		ptr as IntPtr = GL.MapBuffer(BufferTarget.PixelUnpackBuffer, BufferAccess.WriteOnly)
 		return ptr
 
 	def UnmapBuffer():
-		OpenTK.Graphics.OpenGL.GL.UnmapBuffer(OpenTK.Graphics.OpenGL.BufferTarget.PixelUnpackBuffer)		
+		GL.UnmapBuffer(BufferTarget.PixelUnpackBuffer)		
 				
 	def EndUsage():
-		OpenTK.Graphics.OpenGL.GL.BindBuffer(OpenTK.Graphics.OpenGL.BufferTarget.PixelUnpackBuffer, 0)
+		GL.BindBuffer(BufferTarget.PixelUnpackBuffer, 0)

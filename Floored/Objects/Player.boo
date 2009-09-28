@@ -1,6 +1,7 @@
 ﻿namespace Floored.Objects
 
 import Floored
+import Core.Util.Ext
 import Core.Graphics
 import OpenTK
 import Box2DX.Common
@@ -15,6 +16,7 @@ class Player(GameObject, IDamageable):
 	FeetShape as Shape
 	LastJump = 100f
 	JumpEnergy = 0f
+	Height = 1.8f
 	
 	
 	public Weapon:
@@ -53,7 +55,7 @@ class Player(GameObject, IDamageable):
 		shapeDef = PolygonDef()
 		shapeDef.SetAsBox(0.5f, 0.9f, Vec2(0, 0.05f), 0f)
 		shapeDef.Density = 50.0f
-		shapeDef.Friction = 0.0f
+		shapeDef.Friction = 0.1f
 		shapeDef.Restitution = 0.0f
 
 		x as ushort = CollisionGroups.Player
@@ -89,73 +91,83 @@ class Player(GameObject, IDamageable):
 		OnGround = (FeetShape.UserData as SensorInformation).Contacts.Count > 0
 		dir = Body.GetLinearVelocity()
 		
-		// User controls
-		if WalkDirection.Length >= 0.2f:
-			Character.WalkDirection = Vector3(WalkDirection.X, WalkDirection.Y, 0f)		
-		
-		if LookDirection.Length >= 0.2f:
-				Character.LookDirection = Vector3(LookDirection.X, LookDirection.Y, 0f)
-			else:
-				Character.LookDirection = Character.WalkDirection	
-		
-		// Walking
-		maxWalkVelocity = 7.0f
-		if OnGround or true:
-			if System.Math.Abs(WalkDirection.X) > 0.2f:
-				pass
-			else:
-				maxWalkVelocity = 0.0f
-			maxWalkVelocity *= System.Math.Sign(WalkDirection.X)
-			impulse = Body.GetMass()*(maxWalkVelocity - dir.X)*5.0f
-			Body.ApplyForce(Vec2(impulse, 0.0f), Vec2.Zero)		
-		
-		// Jumping
-		LastJump += dt		
-		if DoJump and OnGround and LastJump >= 0.25f:
-			Body.ApplyImpulse(Body.GetMass()*Vec2(0f, 8f), Vec2.Zero)
-			JumpEnergy = 0.3f
-			LastJump = 0f
-			print "Start jump"
+		if Health > 0.0f:
+			// User controls
+			if WalkDirection.Length >= 0.2f:
+				Character.WalkDirection = Vector3(WalkDirection.X, WalkDirection.Y, 0f)		
 			
-		if DoJump and JumpEnergy > 0f:
-			Body.ApplyForce(Body.GetMass()*Vec2(0f, 35f), Vec2.Zero)
-			JumpEnergy -= dt
-			print "Jump force"
-			print JumpEnergy
-
-		// Set correct animation
-		Dir = Body.GetLinearVelocity()
-		walkingThreshold = 2f
-		runningThreshold = 4f
-		/*maxSpeed = 10.5f
-		accel = 2.0f
-		walking = Dir.Length() >= walkingThreshold
-		running = Dir.Length() >= runningThreshold*/
-		
-		if not OnGround:
-			if Dir.Y > 0.1f:
-				Character.LowerAnimation = Character.Model.GetAnimation(Md3.AnimationId.LEGS_JUMP)
-			elif Dir.Y < -0.1f:
-				Character.LowerAnimation = Character.Model.GetAnimation(Md3.AnimationId.LEGS_LAND)
-		elif Math.Abs(Dir.X) >= walkingThreshold:
-			if (Dir.X > 0f) ^ (LookDirection.X > 0f):
-				Character.LowerAnimation = Character.Model.GetAnimation(Md3.AnimationId.LEGS_BACK)
-				Character.WalkDirection = -Character.WalkDirection
-			elif Math.Abs(Dir.X) >= runningThreshold:
-				Character.LowerAnimation = Character.Model.GetAnimation(Md3.AnimationId.LEGS_RUN)
+			/*if LookDirection.Length >= 0.2f:
+					Character.LookDirection = Vector3(LookDirection.X, LookDirection.Y, 0f)
+				else:
+					Character.LookDirection = Character.WalkDirection	*/
+			
+			// TODO: replace with real controls
+			if Character.WalkDirection.Length >= 0.1f:
+				Character.LookDirection = Character.WalkDirection 
+				LookDirection = Vector2(Character.LookDirection.X, Character.LookDirection.Y)
+			
+			// Walking
+			maxWalkVelocity = 7.0f
+			if OnGround or true:
+				if System.Math.Abs(WalkDirection.X) > 0.2f:
+					pass
+				else:
+					maxWalkVelocity = 0.0f
+				maxWalkVelocity *= System.Math.Sign(WalkDirection.X)
+				impulse = Body.GetMass()*(maxWalkVelocity - dir.X)*5.0f
+				Body.ApplyForce(Vec2(impulse, 0.0f), Vec2.Zero)		
+			
+			// Jumping
+			LastJump += dt		
+			if DoJump and OnGround and LastJump >= 0.25f:
+				Body.ApplyImpulse(Body.GetMass()*Vec2(0f, 8f), Vec2.Zero)
+				JumpEnergy = 0.3f
+				LastJump = 0f
+				print "Start jump"
+				
+			if DoJump and JumpEnergy > 0f:
+				Body.ApplyForce(Body.GetMass()*Vec2(0f, 35f), Vec2.Zero)
+				JumpEnergy -= dt
+				print "Jump force"
+				print JumpEnergy
+			
+			if not DoJump and not OnGround:
+				JumpEnergy = 0f
+	
+			// Set correct animation
+			Dir = Body.GetLinearVelocity()
+			walkingThreshold = 2f
+			runningThreshold = 4f
+			/*maxSpeed = 10.5f
+			accel = 2.0f
+			walking = Dir.Length() >= walkingThreshold
+			running = Dir.Length() >= runningThreshold*/
+			
+			if not OnGround:
+				if Dir.Y > 0.1f:
+					Character.LowerAnimation = Character.Model.GetAnimation(Md3.AnimationId.LEGS_JUMP)
+				elif Dir.Y < -0.1f:
+					Character.LowerAnimation = Character.Model.GetAnimation(Md3.AnimationId.LEGS_LAND)
 			elif Math.Abs(Dir.X) >= walkingThreshold:
-				Character.LowerAnimation = Character.Model.GetAnimation(Md3.AnimationId.LEGS_WALK)
-		else:
-			Character.LowerAnimation = Character.Model.GetAnimation(Md3.AnimationId.LEGS_IDLE)		
-
-		// Weapon controls
-		Weapon.Tick(dt) if Weapon != null
-			
-		if DoFire:
-			Weapon.PrimaryFire()
-
-		// Reset sensor
-		OnGround = false
+				if (Dir.X > 0f) ^ (LookDirection.X > 0f):
+					Character.LowerAnimation = Character.Model.GetAnimation(Md3.AnimationId.LEGS_BACK)
+					Character.WalkDirection = -Character.WalkDirection
+				elif Math.Abs(Dir.X) >= runningThreshold:
+					Character.LowerAnimation = Character.Model.GetAnimation(Md3.AnimationId.LEGS_RUN)
+				elif Math.Abs(Dir.X) >= walkingThreshold:
+					Character.LowerAnimation = Character.Model.GetAnimation(Md3.AnimationId.LEGS_WALK)
+			else:
+				Character.LowerAnimation = Character.Model.GetAnimation(Md3.AnimationId.LEGS_IDLE)		
+	
+			// Weapon controls
+			Weapon.Tick(dt) if Weapon != null
+				
+			if DoFire:
+				Character.SetUpperAnimation(Character.Model.GetAnimation(Md3.AnimationId.TORSO_ATTACK), true)
+				Weapon.PrimaryFire()
+	
+			// Reset sensor
+			OnGround = false
 		
 		// Animations etc
 		Character.Tick(dt)
@@ -163,10 +175,7 @@ class Player(GameObject, IDamageable):
 		
 	public override def Update():
 		super.Update()
-		if Body.GetAngle() != 0f:
-			Body.SetXForm(Body.GetPosition(), 0f)
-			Body.SetAngularVelocity(0.0f)
-		_Position.Y = Body.GetPosition().Y - 0.9f					
+		_Position.Y = Body.GetPosition().Y - Height / 2f			
 	
 	public override def Render():
 		Character.WeaponModel = Weapon
@@ -182,4 +191,7 @@ class Player(GameObject, IDamageable):
 	public override def Collide(other as GameObject, contact as ContactResult):
 		if FeetShape in (contact.Shape1, contact.Shape2):
 			OnGround = true
-			//print "${contact.Shape1} ${contact.Shape2}"
+		
+		
+	public def CalculateWeaponOffset() as Vector3:
+		return Vector3(0, Height / 2f, 0) + Character.CalculateWeaponPosition()

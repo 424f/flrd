@@ -17,16 +17,19 @@ class Skydome:
 		_Radius = radius
 	
 	public def Render():
-		n = 10
-		phi = -PI * 0.5
-		dphi = PI / n * 0.5
-		dtheta = 2 * PI / n
 		GL.DepthMask(false)
+		OpenTK.Graphics.OpenGL.GL.ActiveTexture(OpenTK.Graphics.OpenGL.TextureUnit.Texture0)
 		GL.Enable(EnableCap.Texture2D)
-		radius = _Radius
 		if skyList == -1:	
+			radius = _Radius
+			n = 10
+			phi = -PI * 0.5
+			dphi = PI / n * 0.5
+			dtheta = 2 * PI / n		
 			skyList = glGenLists(1)
 			glNewList(skyList, GL_COMPILE)
+			GL.Enable(EnableCap.Texture2D)
+			GL.Disable(EnableCap.Blend)
 			Texture.Bind()
 			GL.Begin(BeginMode.Triangles)
 			for i in range(n):
@@ -54,8 +57,7 @@ class Skydome:
 					if t2.X > t4.X:
 						t4.X += 1.0
 					
-					//print "${j} ${SkydomeTex(v1, false)} ${SkydomeTex(v3, false)}"
-					GL.Color4(Color.White)
+					GL.Color4(Vector4(1, 1, 1, 1))
 					GL.TexCoord2(t1)
 					GL.Vertex3(v1)
 					GL.TexCoord2(t2)

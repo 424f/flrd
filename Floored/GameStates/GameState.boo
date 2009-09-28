@@ -34,7 +34,11 @@ class GameState(State):
 		if Game.FpsCounter.Updated:		
 			Game.FPSDialog.WebView.ExecuteJavaScript("updateFPS(${Game.FpsCounter.FramesPerSecond})")			
 		
-		Game.LoadingDialog.Opacity -= dt * 0.3f
+		if Game.LoadingDialog != null:
+			Game.LoadingDialog.Opacity -= dt * 0.3f
+			if Game.LoadingDialog.Opacity <= 0f:
+				Game.LoadingDialog.Dispose()
+				Game.LoadingDialog = null
 		
 		# We ignore big steps
 		dt = System.Math.Min(0.16f, dt)
@@ -113,20 +117,21 @@ class GameState(State):
 		MatrixStacks.MatrixMode(MatrixMode.Modelview)
 		Core.Graphics.MatrixStacks.LoadIdentity()		
 		Game.Camera.Push()
-		
-		if Game.UpdateFrustum:
-			Frustum.Update(MatrixStacks.ModelView.Matrix, MatrixStacks.Projection.Matrix)
-		
-		Game.Light.Position = Vector4.Normalize(Vector4(1f, 2.0f, 4.0f, 0f)).AsArray()
-		Game.Light.Enable()
-				
+
 		// Render skydome
+		RenderState.Instance.ApplyProgram(null)
 		MatrixStacks.Push()
 		MatrixStacks.Translate(0, -60f, 0)
 		MatrixStacks.Translate(Game.Camera.Eye)
 		MatrixStacks.Rotate(45.0, 0, 1, 0)
 		Game.Skydome.Render()
-		MatrixStacks.Pop()		
+		MatrixStacks.Pop()	
+		
+		if Game.UpdateFrustum:
+			Frustum.Update(MatrixStacks.ModelView.Matrix, MatrixStacks.Projection.Matrix)
+		
+		Game.Light.Position = Vector4.Normalize(Vector4(1f, 2.0f, 4.0f, 0f)).AsArray()
+		Game.Light.Enable()	
 		
 		Game.Terrain.Render(Frustum)
 		
@@ -134,7 +139,6 @@ class GameState(State):
 		for o in Game.World.Objects:
 			sphere = Core.Math.Sphere(o.Position, 0.2f)
 			if Frustum.ContainsSphere(sphere) != IntersectionResult.Out:
-				//o.Render() if o.EnableRendering
 				renderables.Add(o) if o.EnableRendering
 		
 		// Sort renderables by material, etc.

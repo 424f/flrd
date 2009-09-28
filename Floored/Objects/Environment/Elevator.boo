@@ -19,7 +19,7 @@ class Elevator(GameObject):
 		box = Shapes.Box(Vector3(1.5f, 0.2f, 1.5f))
 		bodyDef = BodyDef()
 		bodyDef.Position = start
-		body = world.CreateBodyFromShape(bodyDef, box.CreatePhysicalRepresentation(), 500.0f, 0.4f, 0.0f)
+		body = world.CreateBodyFromShape(bodyDef, box.CreatePhysicalRepresentation(), 500.0f, 1.5f, 0.0f)
 		super(box, body)
 
 		// Create a prismatic joint

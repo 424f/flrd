@@ -7,6 +7,8 @@ import OpenTK.Graphics.OpenGL
 class MatrixStacks:
 	static public ModelView = MatrixStack(OpenTK.Graphics.OpenGL.MatrixMode.Modelview)
 	static public Projection = MatrixStack(OpenTK.Graphics.OpenGL.MatrixMode.Projection)
+	static public User = MatrixStack(null, false)
+	static protected Previous as MatrixStack = null
 	static public Current as MatrixStack
 	
 	static public def Rotate(axis as Vector3, angle as single):
@@ -14,6 +16,15 @@ class MatrixStacks:
 		
 	static public def Rotate(angle as single, x as single, y as single, z as single):
 		Rotate(Vector3(x, y, z), angle * Math.PI / 180f)
+	
+	static public def SetUserMode(enable as bool):
+	"""Enables or disables the user mode. In user mode, all transformations performed via the static MatrixStacks methods
+	are applied to the user matrix stack, which can be accessed via `User`."""
+		if enable:
+			User.Clear()
+			Current = User
+		else:
+			Current = Previous
 	
 	static public def MatrixMode(mode as OpenTK.Graphics.OpenGL.MatrixMode):
 		if mode == OpenTK.Graphics.OpenGL.MatrixMode.Modelview:
@@ -69,11 +80,20 @@ class MatrixStack:
 	final MaxSize = 16
 	Matrices = array(Matrix4, MaxSize)
 	Position = 0
+	AutoLoad as bool
 	
 	public Matrix as Matrix4:
 		get: return Matrices[Position]
 
 	public def constructor(x as object):
+		self(x, true)
+		
+	public def constructor(x as object, autoLoad as bool):
+		AutoLoad = autoLoad
+		LoadIdentity()
+		
+	public def Clear():
+		Position = 0
 		LoadIdentity()
 
 	public def Multiply(m as Matrix4):
@@ -90,7 +110,8 @@ class MatrixStack:
 		
 	public def Load(m as Matrix4):
 		Matrices[Position] = m
-		OpenTK.Graphics.OpenGL.GL.LoadMatrix(Matrices[Position])
+		if AutoLoad:
+			GL.LoadMatrix(Matrices[Position])
 		
 	public def LoadIdentity():
 		Load(Matrix4.Identity)

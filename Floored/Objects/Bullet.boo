@@ -19,7 +19,7 @@ class Bullet(GameObject):
 		bodyDef = BodyDef()
 		bodyDef.Position = Vec2(0, 0)
 		body = world.CreateBodyFromShape(bodyDef, box.CreatePhysicalRepresentation(), 0.3f, 0.3f, 0.1f)
-		body.SetBullet(true)
+		//body.SetBullet(true)
 		body.GetShapeList().FilterData.CategoryBits = cast(ushort, CollisionGroups.Projectiles)
 		body.GetShapeList().FilterData.MaskBits = cast(ushort, CollisionGroups.Player | CollisionGroups.Background)
 		
@@ -33,11 +33,12 @@ class Bullet(GameObject):
 		super(box, body)
 		
 	public override def Tick(dt as single):
-		TimeToLife -= dt
+		pass
+		/*TimeToLife -= dt
 		if TimeToLife < 0f:
 			print "Destroying bullet!"
 			Destroy()
-			Destroyed = true
+			Destroyed = true*/
 			
 	public override def Render():
 		super.Render()

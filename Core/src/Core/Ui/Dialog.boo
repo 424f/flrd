@@ -3,12 +3,11 @@
 import System
 import System.Collections.Generic
 import OpenTK
-import OpenTK.Graphics
 import OpenTK.Graphics.OpenGL
 import Core.Graphics
 import AwesomiumDotNet
 
-class Dialog:
+class Dialog(IDisposable):
 	static protected WebCore as WebCore
 	static public def Update():
 		WebCore.Update()
@@ -35,9 +34,8 @@ class Dialog:
 
 	public def constructor(width as int, height as int):
 		if WebCore == null:
-			WebCore = AwesomiumDotNet.WebCore()
-		
-		pbo = PixelBufferObject(512, 512)
+			WebCore = AwesomiumDotNet.WebCore(LogLevel.Normal, false, AwesomiumDotNet.PixelFormat.RGBA)
+		pbo = PixelBufferObject(width, height)
 		
 		_Width = width
 		_Height = height
@@ -85,7 +83,6 @@ class Dialog:
 		GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, cast(int, TextureMagFilter.Linear))		
 		
 		Buffer = array(byte, Width*Height*4)
-		pbo = PixelBufferObject(Width, Height)
 		
 		Dialogs.Add(self)
 	
@@ -99,22 +96,15 @@ class Dialog:
 		if WebView.IsDirty():
 			bytesPerRow = 4*Width
 			rect = System.Drawing.Rectangle(0, 0, Width, Height)
-			//WebView.Render(Buffer, bytesPerRow, 4) //, rect)
 			
 			pbo.BeginUsage()
 			ptr as IntPtr = pbo.MapUnpackBuffer()
 			WebView.Render(ptr.ToInt32(), bytesPerRow, 4)
 			pbo.UnmapBuffer()
-			
-			/*if rect.Width != width or rect.Height != height:
-				needed = array(byte, rect.Width*rect.Height*4)
-				for i in range(rect.Top, rect.Bottom):
-					Buffer.BlockCopy(buffer, bytesPerRow*i + rect.Left*4, needed, rect.Width*4*(i - rect.Top), rect.Width*4)
-				buffer = needed*/
+
 			GL.ActiveTexture(TextureUnit.Texture0)
 			GL.BindTexture(TextureTarget.Texture2D, _Texture)
-			//OpenTK.Graphics.OpenGL.GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, Width, Height, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, Buffer)		
-			GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, Width, Height, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, IntPtr.Zero)		
+			GL.TexSubImage2D(TextureTarget.Texture2D, 0, rect.X, rect.Y, rect.Width, rect.Height, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, IntPtr.Zero)		
 			pbo.EndUsage()
 	
 	public def Render():
@@ -137,3 +127,7 @@ class Dialog:
 		GL.Vertex3(Position.X, Position.Y, 0)
 		GL.End()				
 		GL.DepthMask(true)
+		
+	public def Dispose():
+		WebView.Dispose()
+		Dialogs.Remove(self)

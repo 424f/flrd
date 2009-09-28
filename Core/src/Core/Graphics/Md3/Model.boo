@@ -132,12 +132,12 @@ class Model(AbstractRenderable):
 
 			MatrixStacks.Push()			
 			a = tag.Axis			
-			rotationMatrix = ( a[0].X, a[0].Y, a[0].Z, 0,
-			                   a[1].X, a[1].Y, a[1].Z, 0,
-			                   a[2].X, a[2].Y, a[2].Z, 0,
-			                   0.0f,   0.0f,   0.0f,   1.0f )
+			rotationMatrix = Matrix4(a[0].X, a[0].Y, a[0].Z, 0,
+			                         a[1].X, a[1].Y, a[1].Z, 0,
+			                         a[2].X, a[2].Y, a[2].Z, 0,
+			                         0.0f,   0.0f,   0.0f,   1.0f)
 			MatrixStacks.Translate(tag.Origin.X, tag.Origin.Y, tag.Origin.Z)
-			MatrixStacks.Multiply(Core.Util.Matrices.FromArray(rotationMatrix))
+			MatrixStacks.Multiply(rotationMatrix)
 			return true
 		return false
 		

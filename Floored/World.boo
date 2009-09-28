@@ -46,6 +46,7 @@ class World:
 			Objects.Remove(o)
 			Physics.DestroyBody(o.Body)
 		DestroyList.Clear()
+		AddList.Clear()
 		
 		velocityIterations = 10
 		positionIterations = 1

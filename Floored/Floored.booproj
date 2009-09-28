@@ -73,7 +73,7 @@
     <Compile Include="Objects\IDamageable.boo" />
     <Compile Include="Objects\Player.boo" />
     <Compile Include="Objects\Weapons\IWeapon.boo" />
-    <Compile Include="Program.boo" />
+    <Compile Include="Game.boo" />
     <Compile Include="RenderState.boo" />
     <Compile Include="Shapes\Box.boo" />
     <Compile Include="Shapes\IShape.boo" />

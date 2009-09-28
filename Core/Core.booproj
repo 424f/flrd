@@ -76,6 +76,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="src\Core\AbstractGame.boo" />
     <Compile Include="src\Core\Common\FPSCounter.boo" />
     <Compile Include="src\Core\Common\World.boo">
       <SubType>Code</SubType>
