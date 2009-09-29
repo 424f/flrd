@@ -68,9 +68,9 @@ abstract class AbstractGame(OpenTK.GameWindow):
 			if webView != null:			
 				webView.WebView.InjectMouseUp(convert(e.Button))
 
-		KeyPress += def(sender as object, e as OpenTK.KeyPressEventArgs):
+		/*KeyPress += def(sender as object, e as OpenTK.KeyPressEventArgs):
 			if FocusedDialog != null:
-				FocusedDialog.WebView.InjectKeyboardEvent(IntPtr.Zero, AwesomiumDotNet.WM.Char, cast(int, e.KeyChar), 0)
+				FocusedDialog.WebView.InjectKeyboardEvent(IntPtr.Zero, AwesomiumDotNet.WM.Char, cast(int, e.KeyChar), 0)*/
 
 	protected def UpdateViewport():
 		GL.Viewport(0, 0, self.Width, self.Height)

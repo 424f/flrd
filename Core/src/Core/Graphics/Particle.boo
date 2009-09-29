@@ -70,7 +70,7 @@ TODO: completely rewrite
 		glDepthMask(true)
 		
 	def Add(Position as Vector3, velocity as Vector3, color as Vector4):
-		color = Vector4(0.6, 0.3, 0.1, 1)
+		//color = Vector4(0.6, 0.3, 0.1, 1)
 		p = Particle()
 		p.Color = color
 		p.Position = Position

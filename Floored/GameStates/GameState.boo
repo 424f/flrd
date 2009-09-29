@@ -57,7 +57,7 @@ class GameState(State):
 			Game.FPSDialog.WebView.ExecuteJavaScript("updateFPS(${Game.FpsCounter.FramesPerSecond})")			
 		
 		if Game.LoadingDialog != null:
-			Game.LoadingDialog.Opacity -= dt * 0.3f
+			Game.LoadingDialog.Opacity -= dt * 1.0f
 			if Game.LoadingDialog.Opacity <= 0f:
 				Game.LoadingDialog.Dispose()
 				Game.LoadingDialog = null
@@ -101,8 +101,6 @@ class GameState(State):
 		Game.Camera.LookAt = Game.Player.Position + Vector3(0f, 1f, 0f)
 	
 		// Set up scene
-		GL.ClearColor(System.Drawing.Color.SkyBlue)
-		GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit)
 		GL.Fog(FogParameter.FogColor, (0.6f, 0.6f, 0.6f, 1f))
 		GL.Fog(FogParameter.FogDensity, 0.3f)
 		

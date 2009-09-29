@@ -16,7 +16,7 @@ class Player(GameObject, IDamageable):
 	LastJump = 100f
 	JumpEnergy = 0f
 	Height = 1.8f
-	
+	public IsNPC = false
 	
 	public Weapon:
 		set:
@@ -86,11 +86,19 @@ class Player(GameObject, IDamageable):
 		
 		super(character, PlayerBody)
 		
+	static r = System.Random()		
 	public override def Tick(dt as single):
 		// Is player on solid ground?
 		OnGround = (FeetShape.UserData as SensorInformation).Contacts.Count > 0
-		dir = Body.GetLinearVelocity()
+		dir = Body.GetLinearVelocity()	
 		
+		if IsNPC:
+			if r.NextDouble() < dt*0.3:
+				WalkDirection.X = 2f * (r.NextDouble() - 0.5f)
+			if r.NextDouble() < dt*0.2:
+				DoJump = true
+			else:
+				DoJump = false
 		if Health > 0.0f:
 			// User controls
 			if WalkDirection.Length >= 0.2f:
@@ -186,8 +194,8 @@ class Player(GameObject, IDamageable):
 	public def Damage(amount as single, inflictedBy as GameObject):
 		Health -= amount
 		if Health <= 0.0f:
-			Character.LowerAnimation = Character.Model.GetAnimation(Md3.AnimationId.BOTH_DEATH_1)
-			Character.UpperAnimation = Character.Model.GetAnimation(Md3.AnimationId.BOTH_DEATH_1)
+			Character.LowerAnimation = Character.Model.GetAnimation(Md3.AnimationId.BOTH_DEATH_2)
+			Character.UpperAnimation = Character.Model.GetAnimation(Md3.AnimationId.BOTH_DEATH_2)
 			BodyShape.FilterData.CategoryBits = 0 
 	
 	public override def Collide(other as GameObject, contact as ContactResult):

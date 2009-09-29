@@ -23,6 +23,7 @@ class Task:
 class LoadingState(State):
 	Game as Game
 	Tasks = List[of Task]()
+	TasksProcessed = 0
 	
 	def constructor(game as Game):
 		Game = game
@@ -87,11 +88,12 @@ class LoadingState(State):
 		
 		t = def():
 			// Create NPCs
-			npcModel = Md3.CharacterModel("../Data/Models/Players/mistress/")
+			npcModel = Md3.CharacterModel("../Data/Models/Players/magdalena/")
 			//skin = Model.Skins["default"]
-			for i in range(3):
+			for i in range(8):
 				skin = npcModel.Skins["default"]
 				npc = Objects.Player(skin)
+				npc.IsNPC = true
 				npc.Position = Vector3(i * 2.0f, 30.0f, 0.0f)
 				Game.World.Objects.Add(npc)
 		Tasks.Add(Task("Loading npc model", t))
@@ -127,6 +129,9 @@ class LoadingState(State):
 		passedStr = passed.Ticks / 10000000.0f
 		description = task.Description + " (${passedStr}s)"
 		description = description.Replace("\"", "\\\"")
+		TasksProcessed += 1
+		progress = TasksProcessed / cast(single, TasksProcessed + Tasks.Count)
+		Game.LoadingDialog.WebView.ExecuteJavaScript("setProgress(${progress})")
 		Game.LoadingDialog.WebView.ExecuteJavaScript("finishedTask(\"${description}\")")
 		return self
 

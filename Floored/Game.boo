@@ -86,8 +86,6 @@ class Game(AbstractGame):
 		FpsCounter = Core.Common.FPSCounter()
 		
 		State = LoadingState(self)
-		
-		self.KeyPress += { print "KeyPress" }
 
 	public override def OnUpdateFrame(e as FrameEventArgs):		
 		System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
@@ -97,6 +95,8 @@ class Game(AbstractGame):
 		
 	public override def OnRenderFrame(e as FrameEventArgs):
 		UpdateGui()
+		GL.ClearColor(System.Drawing.Color.Black)
+		GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit)		
 		State.Render()
 		RenderGui()
 		
