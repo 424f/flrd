@@ -66,7 +66,7 @@ class LoadingState(State):
 		
 		// Load a character with weapon
 		t = def():
-			Model = Md3.CharacterModel("../Data/Models/Players/police/")
+			Model = Md3.CharacterModel("../Data/Models/Players/bender/")
 			Game.Skin = Model.Skins["default"]
 		Tasks.Add(Task("Loading player model", t))			
 		
@@ -87,7 +87,7 @@ class LoadingState(State):
 		
 		t = def():
 			// Create NPCs
-			npcModel = Md3.CharacterModel("../Data/Models/Players/sergei/")
+			npcModel = Md3.CharacterModel("../Data/Models/Players/mistress/")
 			//skin = Model.Skins["default"]
 			for i in range(3):
 				skin = npcModel.Skins["default"]

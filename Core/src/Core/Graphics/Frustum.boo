@@ -2,6 +2,7 @@
 
 import System
 import OpenTK
+import OpenTK.Graphics
 import OpenTK.Graphics.OpenGL
 import Core.Math
 

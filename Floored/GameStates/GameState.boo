@@ -22,6 +22,7 @@ class GameState(State):
 	Game as Game
 	Frustum = Frustum()
 	ConfigDialog as Ui.ConfigDialog
+	ConsoleDialog as Ui.Dialog
 	
 	VisualizePhysics = ConfigProperty("VisualizePhysics", JSValue(false))
 	UpdateFrustum = ConfigProperty("UpdateFrustum", JSValue(true))
@@ -29,6 +30,10 @@ class GameState(State):
 	def constructor(game as Game):
 		Game = game
 		Game.FPSDialog.LoadUrl(IO.Path.Combine(IO.Directory.GetCurrentDirectory(), """../Data/UI/FPSDialog.htm"""))			
+		
+		// Set up console
+		ConsoleDialog = Ui.Dialog(Game.Width, 200)
+		ConsoleDialog.LoadUrl(IO.Path.Combine(IO.Directory.GetCurrentDirectory(), """../Data/UI/ConsoleDialog.htm"""))			
 		
 		// Set up configuration dialog
 		ConfigDialog = Ui.ConfigDialog()
@@ -56,6 +61,8 @@ class GameState(State):
 			if Game.LoadingDialog.Opacity <= 0f:
 				Game.LoadingDialog.Dispose()
 				Game.LoadingDialog = null
+		
+		ConsoleDialog.Position.Y = Game.Height - ConsoleDialog.Height
 		
 		# We ignore big steps
 		dt = System.Math.Min(0.16f, dt)
@@ -170,6 +177,8 @@ class GameState(State):
 		
 		//print "--"
 		RenderState.Instance.ApplyProgram(null)
+			
+		Game.Particles.Render()
 			
 		if not Game.UpdateFrustum:
 			Frustum.Render()

@@ -13,6 +13,7 @@ import Core.Graphics
 abstract class AbstractGame(OpenTK.GameWindow):	
 	public FPSDialog as Ui.Dialog
 	public LoadingDialog as Ui.Dialog
+	public FocusedDialog as Ui.Dialog
 
 	public def constructor():
 		super(1280, 720, OpenTK.Graphics.GraphicsMode(ColorFormat(32), 32, 32, 0, ColorFormat(32)), "FLOORED")
@@ -38,6 +39,7 @@ abstract class AbstractGame(OpenTK.GameWindow):
 
 		def findWebViewAt(x as int, y as int):
 			for dialog in Ui.Dialog.Dialogs:
+				continue if dialog.Opacity <= 0f
 				if dialog.Position.X <= x and dialog.Position.Y <= y and dialog.Position.X + dialog.Width >= x and dialog.Position.Y + dialog.Height >= y:
 				   	return dialog
 			return null
@@ -58,12 +60,17 @@ abstract class AbstractGame(OpenTK.GameWindow):
 		Mouse.ButtonDown += def(sender as object, e as OpenTK.Input.MouseButtonEventArgs):
 			webView = findWebViewAt(e.X, e.Y)
 			if webView != null:			
+				FocusedDialog = webView
 				webView.WebView.InjectMouseDown(convert(e.Button))
 		
 		Mouse.ButtonUp += def(sender as object, e as OpenTK.Input.MouseButtonEventArgs):
 			webView = findWebViewAt(e.X, e.Y)
 			if webView != null:			
 				webView.WebView.InjectMouseUp(convert(e.Button))
+
+		KeyPress += def(sender as object, e as OpenTK.KeyPressEventArgs):
+			if FocusedDialog != null:
+				FocusedDialog.WebView.InjectKeyboardEvent(IntPtr.Zero, AwesomiumDotNet.WM.Char, cast(int, e.KeyChar), 0)
 
 	protected def UpdateViewport():
 		GL.Viewport(0, 0, self.Width, self.Height)
