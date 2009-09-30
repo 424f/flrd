@@ -4,6 +4,7 @@ import System
 import System.IO
 import Core.Graphics
 import OpenTK.Graphics.OpenGL
+import OpenTK
 
 class Model(AbstractRenderable):
 	static loadedModels = Collections.Generic.Dictionary[of string, Model]()
@@ -15,6 +16,8 @@ class Model(AbstractRenderable):
 	
 	Faces = List[of Face]()
 	Vertices = List[of Vertex]()
+	Normals = List[of Vector3]()
+	TexCoords = List[of Vector2]()
 	
 	static public def Load(filename as string):
 		file = Path.GetFullPath(filename)
@@ -50,6 +53,10 @@ class Model(AbstractRenderable):
 				OnGroup(vals)
 			elif vals[0] == "v":
 				OnVertex(vals)
+			elif vals[0] == "vn":
+				OnNormal(vals)
+			elif vals[0] == "vt":
+				OnTexCoord(vals)
 			elif vals[0] == "f":
 				OnFace(vals)
 
@@ -63,11 +70,27 @@ class Model(AbstractRenderable):
 		v.Vector.X = single.Parse(params[1])
 		v.Vector.Y = single.Parse(params[2])
 		v.Vector.Z = single.Parse(params[3])
-		v.Vector *= 0.01f
+		v.Vector *= 0.01f // TODO: scaling factor (configurable)
 		
 		Vertices.Add(v)
+
+	def OnNormal(params as (string)):
+		v = Vector3()
+		v.X = single.Parse(params[1])
+		v.Y = single.Parse(params[2])
+		v.Z = single.Parse(params[3])
 		
-	def OnFace(params as (string)):
+		Normals.Add(v)
+
+	def OnTexCoord(params as (string)):
+		v = Vector2()
+		v.X = single.Parse(params[1])
+		v.Y = single.Parse(params[2])
+		
+		TexCoords.Add(v)
+		
+	def OnFace(params as (string)):		
+		// Vertices
 		parsed = [(int.Parse(params[x + 1].Split(char.Parse('/'))[0]) - 1) for x in range(3)]
 		i1 = parsed[0]
 		i2 = parsed[1]
@@ -76,15 +99,44 @@ class Model(AbstractRenderable):
 		v2 = Vertices[i2]
 		v3 = Vertices[i3]
 		f = Face(v1, v2, v3)
+
+		// TexCoords
+		try:
+			parsed = [(int.Parse(params[x + 1].Split(char.Parse('/'))[1]) - 1) for x in range(3)]
+			i1 = parsed[0]
+			i2 = parsed[1]
+			i3 = parsed[2]
+			t1 = TexCoords[i1]
+			t2 = TexCoords[i2]
+			t3 = TexCoords[i3]
+			f.V1.UV = t1
+			f.V2.UV = t2
+			f.V3.UV = t3
+		except:
+			pass
+		
+		// Normals
+		//parsed = [(int.Parse(params[x + 1].Split(char.Parse('/'))[2]) - 1) for x in range(3)]
+		//i1 = parsed[0]
+		//i2 = parsed[1]
+		//i3 = parsed[2]
+		n = Vector3.Cross(v2.Vector - v1.Vector, v3.Vector - v1.Vector)
+		n.Normalize()
+		f.N1 = n
+		f.N2 = n
+		f.N3 = n
+		
 		Faces.Add(f)
 	
 	def Render():
-		GL.Color4(System.Drawing.Color.Red)
+		GL.Enable(EnableCap.Lighting)
+		GL.Color4(Drawing.Color.White)
 		GL.Begin(BeginMode.Triangles)
-		GL.Disable(EnableCap.CullFace)
 		for face in Faces:
-			for v in (face.V1.Vector, face.V2.Vector, face.V3.Vector):
-				GL.Vertex3(v.X, v.Y, v.Z)
+			for v in (face.V1, face.V2, face.V3):
+				GL.Normal3(face.N1)
+				GL.TexCoord2(v.UV)
+				GL.Vertex3(v.Vector.X, v.Vector.Y, v.Vector.Z)
 		GL.End()
 		
 	def LoadMaterials():

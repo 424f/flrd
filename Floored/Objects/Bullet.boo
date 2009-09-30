@@ -14,15 +14,21 @@ class Bullet(GameObject):
 	static BulletMissSource as Core.Sound.Source
 	TimeToLife = 5.0f
 	
-	public def constructor(world as World):
+	public Shooter as GameObject
+	public Direction as Vec2
+	
+	public def constructor(world as World, shooter as Player):
 		World = world
+		Shooter = shooter
+		
 		box = Shapes.Box(Vector3(0.05f, 0.05f, 0.05f))
 		bodyDef = BodyDef()
 		bodyDef.Position = Vec2(0, 0)
 		body = world.CreateBodyFromShape(bodyDef, box.CreatePhysicalRepresentation(), 0.3f, 0.3f, 0.1f)
-		//body.SetBullet(true)
+		body.SetBullet(true)
 		body.GetShapeList().FilterData.CategoryBits = cast(ushort, CollisionGroups.Projectiles)
 		body.GetShapeList().FilterData.MaskBits = cast(ushort, CollisionGroups.Player | CollisionGroups.Background)
+		body.GetShapeList().FilterData.GroupIndex = shooter.GroupIndex
 		
 		if BulletHitSound == null:
 			BulletHitSound = Core.Sound.Buffer("../Data/Sound/Weapons/bullet_hit.wav")
@@ -34,7 +40,8 @@ class Bullet(GameObject):
 		super(box, body)
 		
 	public override def Tick(dt as single):
-		pass
+		if Direction == Vec2.Zero:
+			Direction = Body.GetLinearVelocity()
 		/*TimeToLife -= dt
 		if TimeToLife < 0f:
 			print "Destroying bullet!"
@@ -51,7 +58,8 @@ class Bullet(GameObject):
 		
 		if other isa IDamageable:
 			(other as IDamageable).Damage(25f, self)
-			print "HIT ${other}"
+			other.Body.ApplyImpulse(Direction*30f, Vec2.Zero)
+			
 			Source.Position = Position
 			Source.Play()
 			particles.Add(Vector3(Position.X, Position.Y, 0.0f), Vector3.Normalize(self.Body.GetLinearVelocity().AsVector3())*5f, Vector4(1.0f, 0.0f, 0.0f, 1.0f))	

@@ -14,7 +14,13 @@ class CharacterModel:
 	
 	[Getter(AnimationSet)] _animationSet as AnimationSet
 	
-	def constructor(path as string):
+	static private Models = Dictionary[of string, CharacterModel]()
+	static public def Load(path as string):
+		if not Models.ContainsKey(path):
+			Models[path] = CharacterModel(path)
+		return Models[path]
+	
+	private def constructor(path as string):
 		if not Directory.Exists(path):
 			raise Exception("Directory ${path} does not exits")
 		_path = path		

@@ -42,21 +42,17 @@ class Source(System.IDisposable):
 			alSourcei(_id, AL_BUFFER, value.Id)
 	private _Buffer as Buffer
 	
-	def constructor(buffer as Buffer):
+	def constructor():
 		ids = array(int, 1)
 		alGenSources(1, ids)
 		Sound.HandleErrors()
 		_id = ids[0]
-		
-		alSourcei(_id, AL_BUFFER, buffer.Id)
 		Sound.HandleErrors()
 		
 		//alSourcef(_id, AL_REFERENCE_DISTANCE, 30.0f)
 		
-		self.Position = Vector3(0.0f, 0.0f, 0.0f)
-		self.Velocity = Vector3(0.0f, 0.0f, 0.0f)
-		self.Direction = Vector3(0.0f, 0.0f, 0.0f)
-		
+	def constructor(buffer as Buffer):
+		self()
 		Buffer = buffer
 		
 	def Play():

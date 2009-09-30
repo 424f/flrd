@@ -67,7 +67,7 @@ class LoadingState(State):
 		
 		// Load a character with weapon
 		t = def():
-			Model = Md3.CharacterModel("../Data/Models/Players/bender/")
+			Model = Md3.CharacterModel.Load("../Data/Models/Players/bender/")
 			Game.Skin = Model.Skins["default"]
 		Tasks.Add(Task("Loading player model", t))			
 		
@@ -87,13 +87,9 @@ class LoadingState(State):
 		Tasks.Add(Task("Creating player", t))		
 		
 		t = def():
-			// Create NPCs
-			npcModel = Md3.CharacterModel("../Data/Models/Players/magdalena/")
-			//skin = Model.Skins["default"]
+			// Create NPCsa
 			for i in range(8):
-				skin = npcModel.Skins["default"]
-				npc = Objects.Player(skin)
-				npc.IsNPC = true
+				npc = Objects.Bug()
 				npc.Position = Vector3(i * 2.0f, 30.0f, 0.0f)
 				Game.World.Objects.Add(npc)
 		Tasks.Add(Task("Loading npc model", t))

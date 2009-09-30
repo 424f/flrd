@@ -66,6 +66,7 @@
     <Compile Include="GameStates\GameState.boo" />
     <Compile Include="GameStates\LoadingState.boo" />
     <Compile Include="Levels\Level.boo" />
+    <Compile Include="Objects\Bug.boo" />
     <Compile Include="Objects\Bullet.boo" />
     <Compile Include="Objects\Collectable.boo" />
     <Compile Include="Objects\Environment\Elevator.boo" />
@@ -80,6 +81,7 @@
     <Compile Include="Shapes\Triangle.boo" />
     <Compile Include="Shapes\TriangleMesh.boo" />
     <Compile Include="Shapes\Vertex.boo" />
+    <Compile Include="SoundCollection.boo" />
     <Compile Include="World.boo" />
     <Content Include="ProfilingSessions\Session20090923_010603.sdps" />
     <Content Include="ProfilingSessions\Session20090923_230613.sdps" />

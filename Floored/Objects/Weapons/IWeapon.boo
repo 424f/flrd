@@ -48,9 +48,10 @@ class MachineGun(AbstractWeapon):
 	public def PrimaryFire():
 		if LastFired >= FireInterval:
 			world = Game.Instance.World
-			bullet = Bullet(world)
+			bullet = Bullet(world, Carrier)
 			look = Carrier.LookDirection
 			look2 = Box2DX.Common.Vec2(look.X, look.Y) 
+			look2.Normalize()
 			bullet.Position = Carrier.Position + Carrier.CalculateWeaponOffset() + 0.7f*Vector3(look.X, look.Y, 0)
 			bullet.Body.SetLinearVelocity(look2*50)
 			world.Add(bullet)
@@ -65,7 +66,7 @@ class MachineGun(AbstractWeapon):
 			o = Objects.Grenade(world)
 			look = Vector3(Vector2.Normalize(Carrier.LookDirection))
 			o.Body.SetXForm(((Carrier.Position) + (look * 0.7f)).AsVec2(), 0.0f)
-			o.Body.ApplyImpulse(o.Body.GetMass() * look.AsVec2() * 30.0f, Vec2.Zero)
+			o.Body.ApplyImpulse(o.Body.GetMass() * look.AsVec2() * 100.0f, Vec2.Zero)
 			world.Add(o)
 			LastFired = 0f
 		

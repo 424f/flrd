@@ -71,6 +71,8 @@ class Game(AbstractGame):
 	public State as State
 	public TakeScreenshot = false
 	
+	public CameraShakeMagnitude = 0f
+	
 	public override def OnLoad(e as EventArgs):
 		super.OnLoad(e)
 

@@ -17,6 +17,9 @@ class World:
 	protected DestroyList = List[of GameObject]()
 	protected AddList = List[of GameObject]()
 	
+	protected PositiveGroupIndex = 0
+	protected NegativeGroupIndex = 0
+	
 	public def constructor(worldAABB as AABB, gravity as Vec2, groundY as single):
 		/*worldAAB.LowerBound.Set(-200.0f, -200.0f);
 		worldAAB.UpperBound.Set(200.0f, 200.0f);*/
@@ -120,3 +123,11 @@ class World:
 		GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill)
 	
 		GL.Enable(EnableCap.DepthTest)		
+		
+	public def CreateGroupIndex(positive as bool):
+		if positive:
+			PositiveGroupIndex += 1
+			return PositiveGroupIndex
+		else:
+			NegativeGroupIndex -= 1
+			return NegativeGroupIndex

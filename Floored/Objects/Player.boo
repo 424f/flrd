@@ -16,6 +16,7 @@ class Player(GameObject, IDamageable):
 	LastJump = 100f
 	JumpEnergy = 0f
 	Height = 1.8f
+	[Getter(GroupIndex)] _GroupIndex as int
 	public IsNPC = false
 	
 	public Weapon:
@@ -24,6 +25,9 @@ class Player(GameObject, IDamageable):
 			_Weapon.Carrier = self
 		get: return _Weapon
 	_Weapon as Weapons.IWeapon
+
+	public IsAlive as bool:
+		get: return Health > 0f
 	
 	// -- Controls --
 	// TODO: refactor
@@ -32,10 +36,9 @@ class Player(GameObject, IDamageable):
 	public DoSecondaryFire = false
 	public LookDirection as Vector2 = Vector2.Zero	
 	public WalkDirection as Vector2 = Vector2.Zero
-		/*
-		shape = PlayerBody.CreateShape(shapeDef);
-		shape.FilterData.MaskBits = ~cast(ushort, CollisionGroups.Player)
-		shape.FilterData.CategoryBits = cast(ushort, CollisionGroups.Player)*/
+
+	Sounds as SoundCollection
+	Source as Core.Sound.Source
 		
 	public def constructor(skin as Md3.CharacterSkin):
 		# Instantiate model
@@ -51,6 +54,7 @@ class Player(GameObject, IDamageable):
 		bodyDef = BodyDef()
 
 		PlayerBody = Game.Instance.World.Physics.CreateBody(bodyDef)
+		_GroupIndex = Game.Instance.World.CreateGroupIndex(false)
 		
 		shapeDef = PolygonDef()
 		shapeDef.SetAsBox(0.5f, 0.9f, Vec2(0, 0.05f), 0f)
@@ -61,6 +65,7 @@ class Player(GameObject, IDamageable):
 		x as ushort = CollisionGroups.Player
 		shapeDef.Filter.MaskBits = ~x
 		shapeDef.Filter.CategoryBits = CollisionGroups.Player
+		shapeDef.Filter.GroupIndex = GroupIndex
 		
 		BodyShape = PlayerBody.CreateShape(shapeDef)
 
@@ -83,6 +88,10 @@ class Player(GameObject, IDamageable):
 		PlayerBody.AllowSleeping(false)
 		
 		Shader = Game.Instance.Md3Shader
+		
+		// Sounds
+		Sounds = SoundCollection.Load("../Data/Sound/Players/sarge/")
+		Source = Core.Sound.Source()		
 		
 		super(character, PlayerBody)
 		
@@ -110,9 +119,11 @@ class Player(GameObject, IDamageable):
 					Character.LookDirection = Character.WalkDirection	*/
 			
 			// TODO: replace with real controls
-			if Character.WalkDirection.Length >= 0.1f:
-				Character.LookDirection = Character.WalkDirection 
-				LookDirection = Vector2(Character.LookDirection.X, Character.LookDirection.Y)
+			/*if Character.WalkDirection.Length >= 0.1f:
+				
+				
+				LookDirection = Vector2(Character.LookDirection.X, Character.LookDirection.Y)*/
+			Character.LookDirection = Vector3(LookDirection.X, LookDirection.Y, 0)
 			
 			// Walking
 			maxWalkVelocity = 7.0f
@@ -131,13 +142,11 @@ class Player(GameObject, IDamageable):
 				Body.ApplyImpulse(Body.GetMass()*Vec2(0f, 8f), Vec2.Zero)
 				JumpEnergy = 0.3f
 				LastJump = 0f
-				print "Start jump"
+				Sounds.Play("jump", Position, Source)				
 				
 			if DoJump and JumpEnergy > 0f:
 				Body.ApplyForce(Body.GetMass()*Vec2(0f, 35f), Vec2.Zero)
 				JumpEnergy -= dt
-				print "Jump force"
-				print JumpEnergy
 			
 			if not DoJump and not OnGround:
 				JumpEnergy = 0f
@@ -146,10 +155,6 @@ class Player(GameObject, IDamageable):
 			Dir = Body.GetLinearVelocity()
 			walkingThreshold = 2f
 			runningThreshold = 4f
-			/*maxSpeed = 10.5f
-			accel = 2.0f
-			walking = Dir.Length() >= walkingThreshold
-			running = Dir.Length() >= runningThreshold*/
 			
 			if not OnGround:
 				if Dir.Y > 0.1f:
@@ -192,11 +197,16 @@ class Player(GameObject, IDamageable):
 		super.Render()
 
 	public def Damage(amount as single, inflictedBy as GameObject):
+		if Game.Instance.Player == self:
+			Game.Instance.CameraShakeMagnitude = 1f
+		Sounds.Play("pain", Position, Source)
 		Health -= amount
 		if Health <= 0.0f:
-			Character.LowerAnimation = Character.Model.GetAnimation(Md3.AnimationId.BOTH_DEATH_2)
-			Character.UpperAnimation = Character.Model.GetAnimation(Md3.AnimationId.BOTH_DEATH_2)
-			BodyShape.FilterData.CategoryBits = 0 
+			Sounds.Play("death", Position, Source)
+			ani = (Md3.AnimationId.BOTH_DEATH_1, Md3.AnimationId.BOTH_DEATH_2, Md3.AnimationId.BOTH_DEATH_3)[r.Next(3)]
+			Character.LowerAnimation = Character.Model.GetAnimation(ani)
+			Character.UpperAnimation = Character.Model.GetAnimation(ani)
+			//BodyShape.FilterData.CategoryBits = 0 
 	
 	public override def Collide(other as GameObject, contact as ContactResult):
 		if FeetShape in (contact.Shape1, contact.Shape2):
