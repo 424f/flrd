@@ -60,12 +60,11 @@ class Level:
 		crate.NormalTexture = Texture.Load('../Data/Textures/wood_n.jpg')
 		
 		Boxes = List[of GameObject]()
-		/*Boxes.Add(CreateBox(wall, Vector3(0, 0, 0), Vector3(30.0F, 2.0F, 4.0F), false))
+		Boxes.Add(CreateBox(wall, Vector3(0, 0, 0), Vector3(30.0F, 2.0F, 4.0F), false))
 		Boxes.Add(BackgroundBox(wall, Vector3(0, 0, 8.0F), Vector3(30.0F, 2.0F, 4.0F)))
 		Boxes.Add(BackgroundBox(wall, Vector3(0, 0, -8.0F), Vector3(30.0F, 2.0F, 4.0F)))
 		//Boxes.Add(BackgroundBox(wall, Vector3(0, 4.0F, -18f), Vector3(30f, 10f, 0.2f)))
 		Boxes.Add(CreateBox(wall, Vector3(20.0F, 13.0F, 0), Vector3(20.0F, 0.20000000298F, 12.0F), false))
-		*/
 		
 		Boxes.Add(CreateBox(crate, Vector3(15.0F, 30.0F, 0.0F), Vector3(2.0F, 2.0F, 2.0F), true))
 		Boxes.Add(CreateBox(crate, Vector3(12.0F, 30.0F, 0.0F), Vector3(2.0F, 2.0F, 2.0F), true))
@@ -75,7 +74,7 @@ class Level:
 		Boxes.Add(CreateBox(crate, Vector3(-12.0F, 4.0F, 0), Vector3(2.0F, 2.0F, 2.0F), true))
 		
 		
-		/*Boxes.Add(BackgroundBox(wall, Vector3(-15.0F, 12.0F, 0.0F), Vector3(0.5F, 1.5F, 12.0F)))
+		Boxes.Add(BackgroundBox(wall, Vector3(-15.0F, 12.0F, 0.0F), Vector3(0.5F, 1.5F, 12.0F)))
 		Boxes.Add(BackgroundBox(wall, Vector3(-15.0F, 5.0F, 8.0F), Vector3(0.5F, 6.0F, 4.0F)))
 		Door = CreateBox(wood, Vector3(-15.0F, 5.0F, 0), Vector3(0.20000000298F, 6.0F, 4.0F), false)
 		Boxes.Add(Door)
@@ -84,8 +83,6 @@ class Level:
 		Boxes.Add(BackgroundBox(wall, Vector3(15.0F, 5.0F, 8.0F), Vector3(0.5F, 6.0F, 4.0F)))
 		Door = CreateBox(wood, Vector3(15.0F, 5.0F, 0), Vector3(0.20000000298F, 6.0F, 4.0F), false)
 		Boxes.Add(Door)
-		Boxes.Add(BackgroundBox(wall, Vector3(15.0F, 5.0F, -8.0F), Vector3(0.5F, 6.0F, 4.0F)))*/
-
 		for box in Boxes:
 			World.Objects.Add(box)
 			
