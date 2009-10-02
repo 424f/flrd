@@ -20,6 +20,7 @@ struct ModelHeader:
 	OffsetMeshes as Int32
 	OffsetEOF as Int32
 
+[StructLayout(LayoutKind.Sequential)]
 struct Vec3f:
 	X as single
 	Y as single
@@ -62,6 +63,7 @@ struct MeshHeader:
 	OffsetVertices as Int32
 	OffsetEOF as Int32
 
+[StructLayout(LayoutKind.Sequential)]
 struct Triangle:
 	I1 as Int32
 	I2 as Int32
@@ -93,11 +95,12 @@ struct EncodedVertex:
 	Normal1:
 		get: return Normals & 255
 
+[StructLayout(LayoutKind.Sequential)]
 struct Vertex:
-	Pos as Vec3f
-	Normal as Vec3f
 	Tu as single
 	Tv as single
+	Normal as Vec3f
+	Pos as Vec3f
 
 struct Tag:
 	[MarshalAs(UnmanagedType.ByValTStr, SizeConst:64)] Name as string

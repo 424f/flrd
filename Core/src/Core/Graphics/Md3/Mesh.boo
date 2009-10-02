@@ -3,8 +3,10 @@ namespace Core.Graphics.Md3
 import System
 import System.IO
 import System.Runtime.InteropServices
+import System.Collections.Generic
 
 import Tao.OpenGl.Gl
+import OpenTK.Graphics.OpenGL
 import Core.Graphics
 
 class Mesh:
@@ -12,35 +14,48 @@ class Mesh:
 Is a simple meshthat is part of a Model. To improve performance, frames are automatically 
 cached as display lists.
 """
+	private static final MESH_ID = 0x33504449
+	private static final COORD_FACTOR = 1.0f / 64.0f
+	private static final TRIANGLE_SIZE = 4 * 3
+	private static final NORMAL_SIZE = 4 * 3
+	private static final VERTEX_SIZE = 4 * 3
+	private static final TEX_COORDS_SIZE = 4 * 2
+
 	[Getter(Model)] _model as Model
 	[Getter(Header)] _header as MeshHeader
 	[Getter(Triangles)] _triangles as (Triangle)
 	[Getter(TexCoords)] _texCoords as (TexCoords)
-	[Getter(Frames)] _frames as (Vertex, 2)
-	[Getter(DisplayLists)] _displayLists as (int)
+	[Getter(Frames)] _frames as List[of (Md3.Vertex)]
 	[Getter(Texture)] _texture as Texture
-
-	private static final MESH_ID = 0x33504449
-	private static final COORD_FACTOR = 1.0f / 64.0f
+	
+	protected Vbos as (VertexBufferObject)
+	protected Ibo as IndexBufferObject
 
 	def constructor(model as Model, stream as IO.Stream):
 		_model = model
-		rawArrayIndexing: 	
-			offset = stream.Position
-			_header = Core.Util.Structs.Create(stream, MeshHeader)
-			assert _header.Ident == MESH_ID
-			
 	
-			LoadSkins(stream, offset)	
-			LoadTriangles(stream, offset)
-			LoadTexCoords(stream, offset)
-			LoadVertices(stream, offset)
-			
-			# Allocate space for display lists
-			_displayLists = array(int, _header.NumFrames)
-			
-			# Jump to end of file
-			stream.Seek(offset + _header.OffsetEOF, IO.SeekOrigin.Begin)
+		offset = stream.Position
+		_header = Core.Util.Structs.Create(stream, MeshHeader)
+		assert _header.Ident == MESH_ID
+		
+
+		LoadSkins(stream, offset)	
+		LoadTriangles(stream, offset)
+		LoadTexCoords(stream, offset)
+		LoadVertices(stream, offset)
+		
+		# Create Ibo
+		Ibo = IndexBufferObject()
+		Ibo.BeginUsage()
+		GL.BufferData[of Triangle](BufferTarget.ElementArrayBuffer, IntPtr(TRIANGLE_SIZE*_header.NumTriangles), _triangles, BufferUsageHint.StaticDraw)
+		Ibo.EndUsage()
+		_triangles = null
+		
+		# Create space for VBOs
+		Vbos = array(VertexBufferObject, _header.NumFrames)		
+				
+		# Jump to end of file
+		stream.Seek(offset + _header.OffsetEOF, IO.SeekOrigin.Begin)
 	
 	protected def LoadSkins(stream as IO.Stream, offset as int):
 		# Load skins
@@ -63,9 +78,7 @@ cached as display lists.
 		buf = array(byte, Marshal.SizeOf(Triangle)*_header.NumTriangles)
 		stream.Read(buf, 0, buf.Length)
 		unsafe ptr as void = _triangles:
-			Marshal.Copy(buf, 0, IntPtr(ptr), buf.Length)
-		/*for i in range(_header.NumTriangles):
-			_triangles[i] = Core.Util.Structs.Create(stream, Triangle)*/
+			Marshal.Copy(buf, 0, IntPtr(ptr), buf.Length)		
 	
 	protected def LoadTexCoords(stream as IO.Stream, offset as int):
 		# Load texture coordinates
@@ -77,16 +90,13 @@ cached as display lists.
 			Marshal.Copy(buf, 0, IntPtr(ptr), buf.Length)
 		for i in range(_header.NumVertices):
 			_texCoords[i].V = 1.0f - _texCoords[i].V
-		
-		/*	
-			c as TexCoords = Core.Util.Structs.Create(stream, Md3.TexCoords)
-			c.V = 1.0f - c.V
-			_texCoords[i] = c*/		
 	
 	protected def LoadVertices(stream as IO.Stream, offset as int):
 		# Load vertices
 		stream.Seek(offset + _header.OffsetVertices, IO.SeekOrigin.Begin)
-		_frames = matrix(Vertex, _header.NumFrames, _header.NumVertices)
+		_frames = List[of (Vertex)](_header.NumFrames)
+		for i in range(_header.NumFrames):
+			_frames.Add(array(Vertex, _header.NumVertices))
 		buf = array(byte, Marshal.SizeOf(Md3.EncodedVertex)*_header.NumVertices)
 		encoded = array(EncodedVertex, _header.NumVertices)
 		
@@ -98,7 +108,7 @@ cached as display lists.
 			for i in range(_header.NumVertices):
 				rawArrayIndexing: 	
 					raw as EncodedVertex = encoded[i]
-				v as Vertex
+				v as Md3.Vertex
 				
 				# Decode Position (mind that we swap y <--> z values)
 				v.Pos = Md3.Util.DecodeVector(Vec3f(cast(single, raw.X) * COORD_FACTOR,
@@ -115,49 +125,45 @@ cached as display lists.
 				# Add texture coordinates
 				rawArrayIndexing: 	
 					v.Tu = _texCoords[i].U
-				rawArrayIndexing: 	
 					v.Tv = _texCoords[i].V
-				
-				rawArrayIndexing:
-					_frames[j, i] = v		
+					_frames[j][i] = v		
 	
 	def Render(frame as int):
 		frame = frame % _header.NumFrames
-		dl = _displayLists[frame]
-		if dl == 0:
-			CreateDisplayList(frame)
-		glCallList(_displayLists[frame])
-		
-	def CreateDisplayList(frame as int):
-		index as int = glGenLists(1)
-		_displayLists[frame] = index
-		glNewList(index, GL_COMPILE)
+		GL.FrontFace(FrontFaceDirection.Cw)
+		//GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line)
+		vbo = Vbos[frame]
+		if vbo == null:
+			// Create vbo
+			Vbos[frame] = VertexBufferObject()
+			vbo = Vbos[frame]			
+			vbo.BeginUsage()
+			vs = _frames[frame]
+			GL.BufferData(BufferTarget.ArrayBuffer, IntPtr(4*8*vs.Length), vs, BufferUsageHint.StaticDraw)
+			vbo.EndUsage()
+
 		if _texture is not null:
 			_texture.Bind()
-		glBegin(GL_TRIANGLES)
-		for i in range(_header.NumTriangles):
-			indices = _triangles[i].Indices
-			for j in range(2, -1, -1):
-				a = indices[j]
-				glNormal3f(_frames[frame, a].Normal.X,
-				           _frames[frame, a].Normal.Y,
-				           _frames[frame, a].Normal.Z)
-				glTexCoord2f(_texCoords[a].U, _texCoords[a].V)
-				pos = _frames[frame, a].Pos
-				glVertex3f(pos.X, pos.Y, pos.Z)
-		glEnd()		
+			
+		vbo = Vbos[frame]
+		vbo.BeginUsage()
+		Ibo.BeginUsage()
+
+		GL.EnableClientState(EnableCap.VertexArray)
+		GL.EnableClientState(EnableCap.NormalArray)
+		GL.EnableClientState(EnableCap.TextureCoordArray)
+			
+		GL.NormalPointer(3, NormalPointerType.Float, 4*8, 4*2)
+		GL.VertexPointer(3, VertexPointerType.Float, 4*8, 4*5)
+		GL.TexCoordPointer(2, TexCoordPointerType.Float, 4*8, IntPtr.Zero)
 		
-		// Draw normals
-		/*glBegin(GL_LINES)
-		for i in range(_header.NumTriangles):
-			indices = _triangles[i].Indices
-			for j in range(2, -1, -1):
-				a = indices[j]
-				pos = _frames[frame, a].Pos
-				glVertex3f(pos.X, pos.Y, pos.Z)		
-				glVertex3f(pos.X + _frames[frame, a].Normal.X, \
-				           pos.Y + _frames[frame, a].Normal.Y, \
-				           pos.Z + _frames[frame, a].Normal.Z)
-		glEnd()*/
+		GL.DrawElements(BeginMode.Triangles, 3*_header.NumTriangles, DrawElementsType.UnsignedInt, IntPtr.Zero)
 		
-		glEndList()
+		GL.DisableClientState(EnableCap.VertexArray)
+		GL.DisableClientState(EnableCap.NormalArray)	
+		GL.DisableClientState(EnableCap.TextureCoordArray)
+		
+		Ibo.EndUsage()
+		vbo.EndUsage()		
+
+		GL.FrontFace(FrontFaceDirection.Ccw)

@@ -149,5 +149,5 @@ class Game(AbstractGame):
 
 game = Game.Instance
 game.Run()
-print "Floored"
+game.Dispose()
 

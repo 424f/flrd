@@ -8,6 +8,8 @@ Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "Floored", "..\Floored\Floor
 EndProject
 Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "Examples", "..\Examples\Examples.booproj", "{68FA8B3C-BF4C-4104-9DC1-AD47AF0BF8E1}"
 EndProject
+Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "ModelHull", "..\ModelHull\ModelHull.booproj", "{F9E0C09D-8DFF-4C12-A2F6-EC234C61E0A9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,5 +28,9 @@ Global
 		{68FA8B3C-BF4C-4104-9DC1-AD47AF0BF8E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{68FA8B3C-BF4C-4104-9DC1-AD47AF0BF8E1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{68FA8B3C-BF4C-4104-9DC1-AD47AF0BF8E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9E0C09D-8DFF-4C12-A2F6-EC234C61E0A9}.Debug|Any CPU.Build.0 = Debug|x86
+		{F9E0C09D-8DFF-4C12-A2F6-EC234C61E0A9}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{F9E0C09D-8DFF-4C12-A2F6-EC234C61E0A9}.Release|Any CPU.Build.0 = Release|x86
+		{F9E0C09D-8DFF-4C12-A2F6-EC234C61E0A9}.Release|Any CPU.ActiveCfg = Release|x86
 	EndGlobalSection
 EndGlobal

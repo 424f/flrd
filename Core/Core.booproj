@@ -88,6 +88,10 @@
     <Compile Include="src\Core\Graphics\Font.boo" />
     <Compile Include="src\Core\Graphics\Frustum.boo">
     </Compile>
+    <Compile Include="src\Core\Graphics\HardwareBufferObjects\HardwareBufferObject.boo" />
+    <Compile Include="src\Core\Graphics\HardwareBufferObjects\IndexBufferObject.boo" />
+    <Compile Include="src\Core\Graphics\HardwareBufferObjects\PixelBufferObject.boo" />
+    <Compile Include="src\Core\Graphics\HardwareBufferObjects\VertexBufferObject.boo" />
     <Compile Include="src\Core\Graphics\ITexture.boo" />
     <Compile Include="src\Core\Graphics\Light.boo" />
     <Compile Include="src\Core\Graphics\Material.boo" />
@@ -95,11 +99,11 @@
     <Compile Include="src\Core\Graphics\Md3\AnimationSet.boo" />
     <Compile Include="src\Core\Graphics\Md3\Util.boo" />
     <Compile Include="src\Core\Graphics\NullRenderable.boo" />
-    <Compile Include="src\Core\Graphics\PixelBufferObject.boo" />
     <Compile Include="src\Core\Graphics\Shader.boo" />
     <Compile Include="src\Core\Graphics\ShaderProgram.boo" />
     <Compile Include="src\Core\Graphics\Skydome.boo" />
     <Compile Include="src\Core\Graphics\Terrain.boo" />
+    <Compile Include="src\Core\Graphics\TriangleMesh.boo" />
     <Compile Include="src\Core\Graphics\Wavefront\Material.boo" />
     <Compile Include="src\Core\Graphics\Wavefront\Mesh.boo" />
     <Compile Include="src\Core\Graphics\Wavefront\Model.boo" />
@@ -118,7 +122,8 @@
     <Compile Include="src\Core\Graphics\IRenderable.boo">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\Core\Graphics\Skybox.boo" />
+    <Compile Include="src\Core\Graphics\Skybox.boo">
+    </Compile>
     <Compile Include="src\Core\Graphics\Texture.boo" />
     <Compile Include="src\Core\Input\Input.boo">
       <SubType>Code</SubType>
@@ -164,6 +169,7 @@
     <Folder Include="src\Core" />
     <Folder Include="src\Core\Graphics" />
     <Folder Include="src\Core\Graphics\Md3" />
+    <Folder Include="src\Core\Graphics\HardwareBufferObjects" />
     <Folder Include="src\Core\Graphics\Wavefront" />
     <Folder Include="src\Core\Input" />
     <Folder Include="src\Core\Math" />

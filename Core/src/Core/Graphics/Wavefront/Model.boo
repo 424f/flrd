@@ -15,7 +15,7 @@ class Model(AbstractRenderable):
 	meshes = Collections.Generic.List[of Mesh]()
 	
 	Faces = List[of Face]()
-	Vertices = List[of Vertex]()
+	Vertices = List[of Wavefront.Vertex]()
 	Normals = List[of Vector3]()
 	TexCoords = List[of Vector2]()
 	

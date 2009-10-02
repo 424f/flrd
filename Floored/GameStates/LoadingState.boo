@@ -67,7 +67,7 @@ class LoadingState(State):
 		
 		// Load a character with weapon
 		t = def():
-			Model = Md3.CharacterModel.Load("../Data/Models/Players/bender/")
+			Model = Md3.CharacterModel.Load("../Data/Models/Players/bunker/")
 			Game.Skin = Model.Skins["default"]
 		Tasks.Add(Task("Loading player model", t))			
 		
