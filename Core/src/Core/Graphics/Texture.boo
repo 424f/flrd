@@ -7,10 +7,11 @@ import System.Collections
 import Tao.OpenGl.Gl
 import Tao.DevIl.Il
 import Tao.DevIl.Ilut
+import OpenTK.Graphics.OpenGL
 
 import Core.Math
 
-class Texture(ITexture):
+class Texture(ITexture, IDisposable):
 """Wraps an OpenGL texture"""
 
 	[Property(Id)] _id as int
@@ -22,8 +23,9 @@ class Texture(ITexture):
 	private static _cachedImages = Generic.Dictionary[of string, Texture]()
 	"""Used to make sure textures aren't loaded more than once"""
 
-	static public def Load(filename as string):
-		fullPath = Path.GetFullPath(filename)
+	static public def Load(path as string):
+	"""Loads a texture located at the given path"""
+		fullPath = Path.GetFullPath(path)
 		if not _cachedImages.ContainsKey(fullPath):
 			_cachedImages[fullPath] = Texture(fullPath)
 		return _cachedImages[fullPath]
@@ -50,7 +52,13 @@ class Texture(ITexture):
 		_id = ilutGLBindMipmaps()
 		# Remove DevIl texture
 		ilDeleteImages(1, id)
-		
+	
+	public def constructor(width as int, height as int, pixelInternalFormat as PixelInternalFormat, pixelFormat as PixelFormat, pixelType as PixelType):
+		Id = GL.GenTexture()
+		Bind()
+		GL.TexImage2D(TextureTarget.Texture2D, 0, pixelInternalFormat, width, height, 0, pixelFormat, pixelType, IntPtr.Zero)
+		GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, cast(int, TextureMinFilter.Nearest))
+	
 	def Bind():
 		glBindTexture(GL_TEXTURE_2D, _id)
 
@@ -78,3 +86,6 @@ class Texture(ITexture):
 		glTexCoord2f(dX, dY); glVertex3f(dest.Right, dest.Top, 0)
 		glTexCoord2f(dX, oY); glVertex3f(dest.Right, dest.Bottom, 0)
 		glEnd()		
+
+	public def Dispose():
+		GL.DeleteTexture(Id)

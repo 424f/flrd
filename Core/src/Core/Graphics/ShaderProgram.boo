@@ -2,6 +2,7 @@
 
 import System
 import System.Collections.Generic
+import OpenTK
 import OpenTK.Graphics.OpenGL
 
 public class ShaderProgram:
@@ -12,27 +13,26 @@ public class ShaderProgram:
 	[Getter(IsLinked)] _IsLinked = false
 	"""Has the program already been linked?"""
 
-	// TODO: multiple shaders are possible (see glAttachShader doc)
-	[Getter(VertexShader)] _VertexShader as Shader
-	[Getter(FragmentShader)] _FragmentShader as Shader
+	[Getter(VertexShaders)] _VertexShaders = List[of Shader]()
+	[Getter(FragmentShaders)] _FragmentShaders = List[of Shader]()
 	
 	protected UniformLocations = Dictionary[of string, int]()
 
 	public def constructor():
 		_Handle = GL.CreateProgram()
 		
-	public def constructor(vertexShaderPath as string, fragmentShaderPath as string):
+	public def constructor(vertexShaderPath as string, fragmentShaderPath as string, doLink as bool):
+		self()
 		Attach(Shader(ShaderType.VertexShader, vertexShaderPath))
 		Attach(Shader(ShaderType.FragmentShader, fragmentShaderPath))
-		Link()
+		if doLink:
+			Link()
 		
 	public def Attach(shader as Shader):
 		if shader.ShaderType == ShaderType.FragmentShader:
-			raise Exception("There is already a fragment shader attached to this program.") if _FragmentShader != null
-			_FragmentShader = shader				
+			_FragmentShaders.Add(shader)
 		elif shader.ShaderType == ShaderType.VertexShader:
-			raise Exception("There is already a vertex shader attached to this program.") if _VertexShader != null
-			_VertexShader = shader
+			_VertexShaders.Add(shader)
 		GL.AttachShader(Handle, shader.Handle)
 		
 	public def Link():
@@ -55,10 +55,11 @@ public class ShaderProgram:
 	public def Reload():
 	"""Reloads all the shaders attached to this program"""
 		UniformLocations.Clear()
-		for v in (_VertexShader, _FragmentShader):
-			GL.DetachShader(Handle, v.Handle)
-			v.Reload() if v != null
-			GL.AttachShader(Handle, v.Handle)
+		for vs in (_VertexShaders, _FragmentShaders):
+			for v in vs:
+				GL.DetachShader(Handle, v.Handle)
+				v.Reload() if v != null
+				GL.AttachShader(Handle, v.Handle)
 		Link()
 		
 	public def BindUniformTexture(name as string, texture as Texture, textureUnit as int):
@@ -66,3 +67,8 @@ public class ShaderProgram:
 		GL.ActiveTexture(TextureUnit.Parse(TextureUnit, "Texture${textureUnit}"))
 		texture.Bind()		
 		GL.Uniform1(loc, textureUnit)
+		GL.ActiveTexture(TextureUnit.Texture0)
+		
+	public def BindUniformMatrix(name as string, m as Matrix4):
+		loc = GetUniformLocation(name)
+		GL.UniformMatrix4(loc, false, m)

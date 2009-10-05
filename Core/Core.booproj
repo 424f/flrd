@@ -88,6 +88,7 @@
     <Compile Include="src\Core\Graphics\Font.boo" />
     <Compile Include="src\Core\Graphics\Frustum.boo">
     </Compile>
+    <Compile Include="src\Core\Graphics\HardwareBufferObjects\FrameBufferObject.boo" />
     <Compile Include="src\Core\Graphics\HardwareBufferObjects\HardwareBufferObject.boo" />
     <Compile Include="src\Core\Graphics\HardwareBufferObjects\IndexBufferObject.boo" />
     <Compile Include="src\Core\Graphics\HardwareBufferObjects\PixelBufferObject.boo" />

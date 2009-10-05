@@ -18,8 +18,6 @@ class Camera:
 		MatrixStacks.MatrixMode(Graphics.OpenGL.MatrixMode.Modelview)
 		MatrixStacks.LoadIdentity()
 		MatrixStacks.LookAt(Eye, LookAt, Up)
-		glLoadIdentity()
-		gluLookAt(Eye.X, Eye.Y, Eye.Z, LookAt.X, LookAt.Y, LookAt.Z, Up.X, Up.Y, Up.Z)
 		MatrixStacks.Push()
 	
 	virtual def Pop():

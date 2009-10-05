@@ -5,7 +5,6 @@ import System.IO
 import System.Runtime.InteropServices
 import System.Collections.Generic
 
-import Tao.OpenGl.Gl
 import OpenTK.Graphics.OpenGL
 import Core.Graphics
 
@@ -127,6 +126,8 @@ cached as display lists.
 					v.Tu = _texCoords[i].U
 					v.Tv = _texCoords[i].V
 					_frames[j][i] = v		
+					
+		self._texCoords = null
 	
 	def Render(frame as int):
 		frame = frame % _header.NumFrames
@@ -141,6 +142,7 @@ cached as display lists.
 			vs = _frames[frame]
 			GL.BufferData(BufferTarget.ArrayBuffer, IntPtr(4*8*vs.Length), vs, BufferUsageHint.StaticDraw)
 			vbo.EndUsage()
+			_frames[frame] = null
 
 		if _texture is not null:
 			_texture.Bind()

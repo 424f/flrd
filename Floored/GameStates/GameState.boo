@@ -177,12 +177,12 @@ class GameState(State):
 		RenderState.Instance.ApplyProgram(Game.DefaultShader)
 		RenderState.Instance.ApplyMaterial(TankMaterial)
 		
-		MatrixStacks.Push()
+		/*MatrixStacks.Push()
 		MatrixStacks.Scale(3f, 3f, 3f)
 		MatrixStacks.Translate(0, 0.2f, 0)
 		//MatrixStacks.Rotate(Game.TimePassed * 45f, 0, 1, 0)
 		Tank.Render()
-		MatrixStacks.Pop()
+		MatrixStacks.Pop()*/
 		
 		
 		Game.Terrain.Render(Frustum)
