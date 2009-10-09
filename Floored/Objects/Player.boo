@@ -206,7 +206,7 @@ class Player(GameObject, IDamageable):
 			ani = (Md3.AnimationId.BOTH_DEATH_1, Md3.AnimationId.BOTH_DEATH_2, Md3.AnimationId.BOTH_DEATH_3)[r.Next(3)]
 			Character.LowerAnimation = Character.Model.GetAnimation(ani)
 			Character.UpperAnimation = Character.Model.GetAnimation(ani)
-			//BodyShape.FilterData.CategoryBits = 0 
+			BodyShape.FilterData.MaskBits = CollisionGroups.Background
 	
 	public override def Collide(other as GameObject, contact as ContactResult):
 		if FeetShape in (contact.Shape1, contact.Shape2):

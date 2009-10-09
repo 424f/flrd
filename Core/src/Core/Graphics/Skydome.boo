@@ -17,6 +17,7 @@ class Skydome:
 		_Radius = radius
 	
 	public def Render():
+		GL.Disable(EnableCap.CullFace)
 		GL.DepthMask(false)
 		OpenTK.Graphics.OpenGL.GL.ActiveTexture(OpenTK.Graphics.OpenGL.TextureUnit.Texture0)
 		GL.Enable(EnableCap.Texture2D)
@@ -78,6 +79,7 @@ class Skydome:
 		
 		glCallList(skyList)
 		GL.DepthMask(true)
+		GL.Enable(EnableCap.CullFace)
 
 	static private def SkydomeTex(v as Vector3):
 		v.Normalize()

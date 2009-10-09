@@ -41,9 +41,9 @@ class Terrain:
 	texMaple as Texture
 	ChunkSize = 4
 	Chunks as (TerrainChunk, 2)
-	
+	ShadowPass as ShadowMappingPass
 
-	public def constructor(textureLoader as callable(string) as Texture, sunDir as Vector3):
+	public def constructor(textureLoader as callable(string) as Texture, sunDir as Vector3, shadowPass as ShadowMappingPass):
 		/*texRock = textureLoader("""../Data/Textures/Terrain/SnowDirt.jpg""")
 		texGrass = textureLoader("""../Data/Textures/Terrain/Snow.jpg""")
 		texSand = textureLoader("""../Data/Textures/Terrain/Ice.jpg""")*/
@@ -53,6 +53,8 @@ class Terrain:
 		texMaple = textureLoader("""../Data/Textures/Billboards/Grass.png""")
 		
 		sunDir = Vector3.Normalize(sun)
+		
+		ShadowPass = shadowPass
 		
 		// Upper-most point
 		ceiling = -10000.0
@@ -176,6 +178,7 @@ class Terrain:
 		program = ShaderProgram()
 		program.Attach(vertexShader)
 		program.Attach(fragmentShader)
+		shadowPass.Inject(program)
 		program.Link()
 			
 	public def Render(frustum as Frustum):
@@ -188,6 +191,9 @@ class Terrain:
 		numChunks = GridLength / ChunkSize
 		
 		program.Apply()
+		if ShadowPass != null:
+			program.BindUniformMatrix("biasMatrix", ShadowPass.BiasMatrix)
+			program.BindUniformTexture("ShadowMap", ShadowPass.ShadowMap, 3)						
 
 		# Draw landscape
 		i = 0
@@ -237,13 +243,13 @@ class Terrain:
 								draw(i+1, j)
 								draw(i, j+1)
 				
-								draw(i+1, j+1)
+								draw(i, j+1)
 								draw(i+1, j)
-								draw(i, j+1)
+								draw(i+1, j+1)								
 							else:
-								draw(i, j+1)
-								draw(i+1, j+1)
 								draw(i, j)
+								draw(i+1, j+1)
+								draw(i, j+1)								
 				
 								draw(i+1, j)
 								draw(i+1, j+1)

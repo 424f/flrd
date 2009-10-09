@@ -70,9 +70,6 @@ class Game(AbstractGame):
 	vbo as VertexBufferObject
 	Ibo as IndexBufferObject
 	Character as Md3.CharacterInstance
-	
-	FrameBuffer as FrameBufferObject
-	ShadowMap as Texture
 
 	indices = (2, 1, 0, 0, 3, 2, 2, 1, 0, 0, 3, 2)
 	yy = -3f
@@ -89,6 +86,8 @@ class Game(AbstractGame):
 	dt as single
 	
 	FloorTexture as Texture
+	
+	ShadowMappingPass as ShadowMappingPass
 
 	public override def OnLoad(e as EventArgs):
 		super.OnLoad(e)
@@ -130,24 +129,6 @@ class Game(AbstractGame):
 		Character.Position.Y = -3f
 		Character.LowerAnimation = Model.GetAnimation(Md3.AnimationId.LEGS_WALK)
 		Character.UpperAnimation = Model.GetAnimation(Md3.AnimationId.TORSO_GESTURE)
-
-		
-		FrameBuffer = FrameBufferObject()
-		
-		ShadowMap = Core.Graphics.Texture(512, 512, PixelInternalFormat.DepthComponent, OpenTK.Graphics.OpenGL.PixelFormat.DepthComponent, PixelType.UnsignedByte)
-		ShadowMap.Bind()
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP );
-		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP );
-		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC_ARB, GL_LEQUAL);
-		glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE_ARB, GL_INTENSITY);	
-		FrameBuffer.BeginUsage()
-		FrameBuffer.Attach(ShadowMap, FramebufferAttachment.DepthAttachment)
-		Tao.OpenGl.Gl.glDrawBuffer(0)
-		//Tao.OpenGl.Gl.glReadBuffer(0)		
-		FrameBuffer.EndUsage()
 		
 		VisualizeDepthShader = Core.Graphics.ShaderProgram("../Data/Shaders/VisualizeDepth.vert", "../Data/Shaders/VisualizeDepth.frag", false)
 		VisualizeDepthShader.Attach(Shader(ShaderType.FragmentShader, "../Data/Shaders/ShadowMappingOut.frag"))
@@ -158,13 +139,15 @@ class Game(AbstractGame):
 		
 		FloorTexture = Texture.Load("../Data/Textures/wall.dds")
 		
+		ShadowMappingPass = ShadowMappingPass(512, 512)
+		
 	public override def OnRenderFrame(e as FrameEventArgs):
 		Character.Tick(e.Time)
 		TimePassed += e.Time
 		dt = e.Time
 		
 		Camera.Eye = Vector3(System.Math.Cos(TimePassed*0.5f)*12f, Camera.Eye.Y, System.Math.Sin(TimePassed*0.5f)*12f)
-		Light.Position = Vector4(System.Math.Cos(TimePassed)*20f, 30.0f, 20f*System.Math.Sin(TimePassed), 1f).AsArray()
+		Light.Position = Vector4(System.Math.Cos(TimePassed)*5f, 10.0f, 5f*System.Math.Sin(TimePassed), 1f).AsArray()
 		
 		// Set up scene
 		GL.ClearColor(System.Drawing.Color.SkyBlue)
@@ -174,29 +157,7 @@ class Game(AbstractGame):
 		//GL.Disable(EnableCap.CullFace)
 				
 		// First pass
-		glCullFace(GL_FRONT)
-		// setTextureMatrix	
-		FrameBuffer.BeginUsage()
-		GL.Viewport(0, 0, Width, Height)
-		GL.Clear(ClearBufferMask.DepthBufferBit)
-		GL.Enable(EnableCap.DepthTest)
-		OpenTK.Graphics.OpenGL.GL.DepthMask(true)
-		
-		MatrixStacks.MatrixMode(MatrixMode.Projection)
-		MatrixStacks.LoadIdentity()
-		MatrixStacks.Perspective(45.0, Width / cast(double, Height), 1.0, 300.0)
-		
-		MatrixStacks.MatrixMode(MatrixMode.Modelview)
-		MatrixStacks.LoadIdentity()
-		MatrixStacks.LookAt(Vector3(Light.Position[0], Light.Position[1], Light.Position[2]), Vector3(0, 0f, 0), Vector3(0, 1, 0))
-		
-		Pshadow = MatrixStacks.Projection.Matrix
-		Vshadow = MatrixStacks.ModelView.Matrix
-		
-		RenderScene()
-		FrameBuffer.EndUsage()
-
-		glCullFace(GL_BACK);
+		ShadowMappingPass.Run(Vector3(Light.Position[0], Light.Position[1], Light.Position[2]), Vector3.Zero, RenderScene)
 		
 		// -----------------------
 		
@@ -208,24 +169,18 @@ class Game(AbstractGame):
 		MatrixStacks.LoadIdentity()
 		MatrixStacks.Perspective(45.0, Width / cast(double, Height), 1.0, 300.0)
 		
+		if EyeView:
+			MatrixStacks.Ortho(20.0, 20.0, 0.5, 300.0)
+			
 		MatrixStacks.MatrixMode(MatrixMode.Modelview)
 		if not EyeView:
 			MatrixStacks.LoadIdentity()
 			Camera.Push()		
 		
 		Light.Enable()
-		Pframe = MatrixStacks.Projection.Matrix
-		Vframe = MatrixStacks.ModelView.Matrix	
-		bias = Matrix4(0.5, 0, 0, 0.5,
-		               0, 0.5, 0, 0.5,
-		               0, 0, 0.5, 0.5,
-		               0, 0, 0, 1)
-		bias.Transpose() // OpenGL is column-major, constructor of Matrix4 is row-major		
-		m = Matrix4.Invert(Vframe) * Vshadow * Pshadow * bias
-		
 		VisualizeDepthShader.Apply()
-		VisualizeDepthShader.BindUniformMatrix("biasMatrix", m)
-		VisualizeDepthShader.BindUniformTexture("ShadowMap", ShadowMap, 2)
+		VisualizeDepthShader.BindUniformMatrix("biasMatrix", ShadowMappingPass.BiasMatrix)
+		VisualizeDepthShader.BindUniformTexture("ShadowMap", ShadowMappingPass.ShadowMap, 2)
 		RenderScene()
 		VisualizeDepthShader.Remove()
 		if not EyeView:

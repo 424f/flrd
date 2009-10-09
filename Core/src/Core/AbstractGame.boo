@@ -85,6 +85,7 @@ abstract class AbstractGame(OpenTK.GameWindow):
 		Ui.Dialog.Update()
 
 	protected def RenderGui():
+		GL.Disable(EnableCap.CullFace)
 		MatrixStacks.MatrixMode(MatrixMode.Projection)
 		MatrixStacks.Push()
 		Core.Graphics.MatrixStacks.LoadIdentity()
@@ -113,3 +114,4 @@ abstract class AbstractGame(OpenTK.GameWindow):
 		MatrixStacks.Pop()		
 
 		GL.Disable(EnableCap.Blend)
+		GL.Enable(EnableCap.CullFace)

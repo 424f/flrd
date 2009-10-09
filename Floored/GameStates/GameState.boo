@@ -37,6 +37,9 @@ class GameState(State):
 	Tank as IRenderable
 	TankMaterial as Material
 	
+	ShadowPass as ShadowMappingPass
+	VisualizeDepthShader as ShaderProgram
+	
 	def constructor(game as Game):
 		Game = game
 		Game.FPSDialog.LoadUrl(IO.Path.Combine(IO.Directory.GetCurrentDirectory(), """../Data/UI/FPSDialog.htm"""))			
@@ -74,7 +77,13 @@ class GameState(State):
 		TankMaterial = Material('Tank')
 		TankMaterial.DiffuseTexture = Texture.Load('../Data/Textures/wood.jpg')
 		TankMaterial.NormalTexture = Texture.Load('../Data/Textures/wood_n.jpg')
-
+		
+		ShadowPass = ShadowMappingPass(1024, 1024)
+		VisualizeDepthShader = Core.Graphics.ShaderProgram("../Data/Shaders/VisualizeDepth.vert", "../Data/Shaders/VisualizeDepth.frag", false)
+		ShadowPass.Inject(VisualizeDepthShader)
+		VisualizeDepthShader.Link()
+		
+		Game.Terrain = Core.Graphics.Terrain({ file as string | Texture.Load(file) }, Vector3(1f, 2f, 4f), ShadowPass)
 	
 	override def Update(dt as single) as State:
 		Game.FpsCounter.Frame(dt)
@@ -127,11 +136,62 @@ class GameState(State):
 			Game.Listener.Position = Game.Player.Position + Vector3(0, 0, 2.0f)
 			Game.Listener.Orientation = Vector3(0, 0, -1)
 		return self
+	
+	def RenderObjects(frustum as Frustum):
+		renderables = List[of IRenderable]()
+		for o in Game.World.Objects:
+			sphere = Core.Math.Sphere(o.Position, 0.2f)
+			if frustum.ContainsSphere(sphere) != IntersectionResult.Out:
+				renderables.Add(o) if o.EnableRendering
 		
+		// Sort renderables by material, etc.
+		comparison = def(a as IRenderable, b as IRenderable) as int:
+			return -1 if a.Shader == null and b.Shader != null
+			return 1 if a.Shader != null and b.Shader == null
+			return 0 if a.Shader == b.Shader
+			x = a.Shader.GetHashCode().CompareTo(b.Shader.GetHashCode())
+			return x if x != 0
+			return -1 if a.Material == null and b.Material != null
+			return 1 if a.Material != null and b.Material == null
+			return 0 if a.Material == b.Material
+			x = a.Material.GetHashCode().CompareTo(b.Material.GetHashCode())
+			return x if x != 0
+			return 0
+
+
+		// Boxes
+		RenderState.Instance.ApplyProgram(null)
+		RenderState.Instance.ApplyProgram(Game.DefaultShader)
+		CurrentShader as ShaderProgram = Game.DefaultShader
+		CurrentMaterial as Material = null
+		
+		renderables.Sort(comparison)
+		RenderState.Instance.ApplyProgram(VisualizeDepthShader)
+		VisualizeDepthShader.BindUniformMatrix("biasMatrix", ShadowPass.BiasMatrix)
+		VisualizeDepthShader.BindUniformTexture("ShadowMap", ShadowPass.ShadowMap, 2)		
+		for renderable in renderables:
+			if renderable.Shader != CurrentShader and renderable.Shader != null:
+				//RenderState.Instance.ApplyProgram(renderable.Shader)
+				CurrentShader = renderable.Shader
+				CurrentMaterial = null
+				//print "Switching shader to ${CurrentShader}"
+			if renderable.Material != CurrentMaterial and renderable.Material != null:
+				RenderState.Instance.ApplyMaterial(renderable.Material)
+				CurrentMaterial = renderable.Material
+				//print "Switching material to ${CurrentMaterial.Name}"
+				
+			renderable.Render()
+		
+		//print "--"
+		RenderState.Instance.ApplyProgram(null)		
+	
 	override def Render():		
+		// shadow pass
+		ShadowPass.Run(Vector3(30, 30, 10) + Game.Player.Position, Game.Player.Position, RenderObjects)
+	
 		// Center camera
 		if Game.UpdateFrustum:
-			Game.Camera.Eye = Game.Player.Position + Vector3(0f, 1f, 20f)
+			Game.Camera.Eye = Game.Player.Position + Vector3(0f, 4f, 10f)
 		else:
 			if Game.Camera.Eye.Y < 50f:
 				Game.Camera.Eye.Y += Game.RenderTime * 10f
@@ -147,7 +207,10 @@ class GameState(State):
 		// Set up scene
 		GL.Fog(FogParameter.FogColor, (0.6f, 0.6f, 0.6f, 1f))
 		GL.Fog(FogParameter.FogDensity, 0.3f)
-		
+		GL.Viewport(0, 0, Game.Width, Game.Height)
+		MatrixStacks.MatrixMode(MatrixMode.Projection)
+		MatrixStacks.LoadIdentity()
+		MatrixStacks.Perspective(25.0, Game.Width / cast(double, Game.Height), 1.0, 300.0)
 		
 		GL.Disable(EnableCap.Texture2D)
 		GL.Enable(EnableCap.DepthTest)
@@ -187,49 +250,7 @@ class GameState(State):
 		
 		Game.Terrain.Render(Frustum)
 		
-		renderables = List[of IRenderable]()
-		for o in Game.World.Objects:
-			sphere = Core.Math.Sphere(o.Position, 0.2f)
-			if Frustum.ContainsSphere(sphere) != IntersectionResult.Out:
-				renderables.Add(o) if o.EnableRendering
-		
-		// Sort renderables by material, etc.
-		comparison = def(a as IRenderable, b as IRenderable) as int:
-			return -1 if a.Shader == null and b.Shader != null
-			return 1 if a.Shader != null and b.Shader == null
-			return 0 if a.Shader == b.Shader
-			x = a.Shader.GetHashCode().CompareTo(b.Shader.GetHashCode())
-			return x if x != 0
-			return -1 if a.Material == null and b.Material != null
-			return 1 if a.Material != null and b.Material == null
-			return 0 if a.Material == b.Material
-			x = a.Material.GetHashCode().CompareTo(b.Material.GetHashCode())
-			return x if x != 0
-			return 0
-
-
-		// Boxes
-		RenderState.Instance.ApplyProgram(null)
-		RenderState.Instance.ApplyProgram(Game.DefaultShader)
-		CurrentShader as ShaderProgram = Game.DefaultShader
-		CurrentMaterial as Material = null
-		
-		renderables.Sort(comparison)
-		for renderable in renderables:
-			if renderable.Shader != CurrentShader and renderable.Shader != null:
-				RenderState.Instance.ApplyProgram(renderable.Shader)
-				CurrentShader = renderable.Shader
-				CurrentMaterial = null
-				//print "Switching shader to ${CurrentShader}"
-			if renderable.Material != CurrentMaterial and renderable.Material != null:
-				RenderState.Instance.ApplyMaterial(renderable.Material)
-				CurrentMaterial = renderable.Material
-				//print "Switching material to ${CurrentMaterial.Name}"
-				
-			renderable.Render()
-		
-		//print "--"
-		RenderState.Instance.ApplyProgram(null)
+		RenderObjects(Frustum)
 			
 		Game.Particles.Render()
 			

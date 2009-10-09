@@ -108,11 +108,6 @@ class LoadingState(State):
 				Game.GSound = Core.Sound.Buffer("../Data/Sound/Weapons/grenlf1a.wav")
 				Game.GSource = Core.Sound.Source(Game.GSound)	
 		Tasks.Add(Task("Loading Sounds", t))	
-		
-		t = def():
-			// Terrain
-			Game.Terrain = Core.Graphics.Terrain({ file as string | Texture.Load(file) }, Vector3(1f, 2f, 4f))
-		Tasks.Add(Task("Loading terrain", t))	
 	
 	override def Update(dt as single) as State:
 		if Tasks.Count == 0:

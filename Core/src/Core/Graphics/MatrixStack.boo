@@ -74,6 +74,12 @@ class MatrixStacks:
 		raise "Not a projection matrix" if Current != Projection
 		Current.Load(m)
 
+	static public def Ortho(width as single, height as single, near as single, far as single):
+		m as Matrix4
+		OpenTK.Matrix4.CreateOrthographic(width, height, near, far, m)
+		raise "Not a projection matrix" if Current != Projection
+		Current.Load(m)
+
 
 class MatrixStack:
 """Description of MatrixStack"""

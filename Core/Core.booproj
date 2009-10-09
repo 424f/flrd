@@ -100,6 +100,7 @@
     <Compile Include="src\Core\Graphics\Md3\AnimationSet.boo" />
     <Compile Include="src\Core\Graphics\Md3\Util.boo" />
     <Compile Include="src\Core\Graphics\NullRenderable.boo" />
+    <Compile Include="src\Core\Graphics\ShadowMappingPass.boo" />
     <Compile Include="src\Core\Graphics\Shader.boo" />
     <Compile Include="src\Core\Graphics\ShaderProgram.boo" />
     <Compile Include="src\Core\Graphics\Skydome.boo" />
